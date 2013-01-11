@@ -770,6 +770,8 @@ bool suspend_debug_irq_pin(void)
 EXPORT_SYMBOL(suspend_debug_irq_pin);
 #endif
 
+bool pm_in_action;
+
 /**
  * pm_suspend - Externally visible function for suspending the system.
  * @state: System sleep state to enter.
@@ -786,6 +788,7 @@ int pm_suspend(suspend_state_t state)
 #ifdef CONFIG_LGE_PM
 	debug_irq_pin = true;
 #endif
+	pm_in_action = true;
 	pm_suspend_marker("entry");
 	pr_info("suspend entry (%s)\n", mem_sleep_labels[state]);
 	error = enter_state(state);
@@ -800,6 +803,7 @@ int pm_suspend(suspend_state_t state)
 #ifdef CONFIG_LGE_PM
 	debug_irq_pin = false;
 #endif
+	pm_in_action = false;
 	measure_wake_up_time();
 	return error;
 }
