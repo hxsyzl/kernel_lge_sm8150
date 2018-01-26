@@ -1065,12 +1065,12 @@ select_insn:
 		(*(s64 *) &DST) >>= IMM;
 		CONT;
 	ALU64_MOD_X:
-		div64_u64_rem(DST, SRC, &tmp);
-		DST = tmp;
+		div64_u64_rem(DST, SRC, &AX);
+		DST = AX;
 		CONT;
 	ALU_MOD_X:
-		tmp = (u32) DST;
-		DST = do_div(tmp, (u32) SRC);
+		AX = (u32) DST;
+		DST = do_div(AX, (u32) SRC);
 		CONT;
 	ALU64_MOD_K:
 		div64_u64_rem(DST, IMM, &tmp);
@@ -1084,9 +1084,9 @@ select_insn:
 		DST = div64_u64(DST, SRC);
 		CONT;
 	ALU_DIV_X:
-		tmp = (u32) DST;
-		do_div(tmp, (u32) SRC);
-		DST = (u32) tmp;
+		AX = (u32) DST;
+		do_div(AX, (u32) SRC);
+		DST = (u32) AX;
 		CONT;
 	ALU64_DIV_K:
 		DST = div64_u64(DST, IMM);
