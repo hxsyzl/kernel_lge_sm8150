@@ -18,8 +18,12 @@
 #ifndef __ASM_CMPXCHG_H
 #define __ASM_CMPXCHG_H
 
+#include <linux/build_bug.h>
+#include <linux/compiler.h>
+
 #include <asm/atomic.h>
 #include <asm/barrier.h>
+#include <asm/lse.h>
 
 /*
  * We need separate acquire parameters for ll/sc and lse, since the full
