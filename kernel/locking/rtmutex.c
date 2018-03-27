@@ -1271,7 +1271,11 @@ rt_mutex_slowlock(struct rt_mutex *lock, int state,
 	if (unlikely(ret)) {
 		__set_current_state(TASK_RUNNING);
 		remove_waiter(lock, &waiter);
+<<<<<<< HEAD
 		rt_mutex_handle_deadlock(ret, chwalk, lock, &waiter);
+=======
+		rt_mutex_handle_deadlock(ret, chwalk, &waiter);
+>>>>>>> aa057f08c2e1 (locking/rtmutex: Handle non enqueued waiters gracefully in remove_waiter())
 	}
 
 	/*
