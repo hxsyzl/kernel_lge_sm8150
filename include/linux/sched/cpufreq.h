@@ -36,7 +36,7 @@ bool cpufreq_can_do_remote_dvfs(struct cpufreq_policy *policy);
 static inline unsigned long map_util_perf(unsigned long util)
 {
 	return util + (util >> 2);
-
+}
 static inline unsigned long map_util_freq(unsigned long util,
 					unsigned long freq, unsigned long cap)
 {
