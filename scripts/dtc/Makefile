@@ -3,9 +3,7 @@
 
 # *** Also keep .gitignore in sync when changing ***
 hostprogs-y	:= dtc fdtoverlay
-ifeq ($(DTC_EXT),)
 always		:= $(hostprogs-y)
-endif
 
 dtc-objs	:= dtc.o flattree.o fstree.o data.o livetree.o treesource.o \
 		   srcpos.o checks.o util.o
