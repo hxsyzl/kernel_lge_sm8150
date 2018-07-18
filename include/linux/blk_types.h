@@ -296,6 +296,13 @@ enum req_exflag_bits {
 #define REQ_EX_ORDERED (1 << __REQ_EX_ORDERED)
 #endif
 
+enum stat_group {
+	STAT_READ,
+	STAT_WRITE,
+
+	NR_STAT_GROUPS
+};
+
 #define bio_op(bio) \
 	((bio)->bi_opf & REQ_OP_MASK)
 #define req_op(req) \
