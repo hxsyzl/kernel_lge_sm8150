@@ -6672,8 +6672,6 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
 	s64 this_eff_load, prev_eff_load;
 	unsigned long task_load;
 
-	this_eff_load = target_load(this_cpu, sd->wake_idx);
-	prev_eff_load = source_load(prev_cpu, sd->wake_idx);
 	this_eff_load = weighted_cpuload(cpu_rq(this_cpu));
 
 	if (sync) {
