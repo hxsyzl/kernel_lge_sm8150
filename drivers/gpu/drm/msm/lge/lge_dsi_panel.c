@@ -1210,7 +1210,7 @@ static void lge_mdss_panel_dead_notify(struct dsi_display *display)
 	}
 
 	pr_info("******** ESD detected!!!!LCD recovery function called!!!! ********\n");
-	display->panel->lge.panel_dead = true;
+	display->panel->lge.panel_dead = false;
 
 	if (display->panel->lge.bl_lvl_unset == -1 && display->panel->lge.allow_bl_update == false)
 		display->panel->lge.bl_lvl_recovery_unset = -1;
@@ -1273,12 +1273,14 @@ void lge_mdss_panel_dead_work(struct work_struct *work)
 		if (display->panel->lge.panel_dead_pending) {
 			mutex_unlock(&display->panel->panel_lock);
 			pr_info("re-trigger panel_dead after 5 secs\n");
-			schedule_delayed_work(&display->panel->lge.panel_dead_work,
+			pr_info("skipping retrigger to see what happens"); //dirty hack lets see if this works
+		schedule_delayed_work(&display->panel->lge.panel_dead_work,
 							msecs_to_jiffies(STATUS_CHECK_INTERVAL_MS));
 			return;
 		}
 		mutex_unlock(&display->panel->panel_lock);
 	}
+
 	mutex_unlock(&conn->lock);
 
 	mutex_lock(&display->panel->panel_lock);
@@ -1328,7 +1330,7 @@ void lge_mdss_report_panel_dead(void)
 		pr_err("already panel dead work scheduled\n");
 		mutex_unlock(&conn->lock);
 		return;
-	}
+	} 
 
 	mutex_unlock(&conn->lock);
 
