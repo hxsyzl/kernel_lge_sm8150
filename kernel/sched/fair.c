@@ -4775,27 +4775,7 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
 	struct sched_entity *se;
 	long task_delta, idle_task_delta, dequeue = 1;
-
-	raw_spin_lock(&cfs_b->lock);
-	/* This will start the period timer if necessary */
-	if (__assign_cfs_rq_runtime(cfs_b, cfs_rq, 1)) {
-		/*
-		 * We have raced with bandwidth becoming available, and if we
-		 * actually throttled the timer might not unthrottle us for an
-		 * entire period. We additionally needed to make sure that any
-		 * subsequent check_cfs_rq_runtime calls agree not to throttle
-		 * us, as we may commit to do cfs put_prev+pick_next, so we ask
-		 * for 1ns of runtime rather than just check cfs_b.
-		 */
-		dequeue = 0;
-	} else {
-		list_add_tail_rcu(&cfs_rq->throttled_list,
-				  &cfs_b->throttled_cfs_rq);
-	}
-	raw_spin_unlock(&cfs_b->lock);
-
-	if (!dequeue)
-		return false;  /* Throttle no longer required. */
+	bool empty;
 
 	se = cfs_rq->tg->se[cpu_of(rq_of(cfs_rq))];
 
@@ -4841,6 +4821,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
 	struct rq *rq = rq_of(cfs_rq);
 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
 	struct sched_entity *se;
+	int enqueue = 1;
 	long task_delta, idle_task_delta;
 	struct cfs_rq *tcfs_rq __maybe_unused = cfs_rq;
 
@@ -4871,6 +4852,7 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
 
 		cfs_rq->h_nr_running += task_delta;
 		cfs_rq->idle_h_nr_running += idle_task_delta;
+		walt_inc_throttled_cfs_rq_stats(&cfs_rq->walt_stats, tcfs_rq);
 
 		/* end evaluation on encountering a throttled cfs_rq */
 		if (cfs_rq_throttled(cfs_rq))
@@ -5552,7 +5534,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	struct cfs_rq *cfs_rq;
 	struct sched_entity *se = &p->se;
 	int task_new = !(flags & ENQUEUE_WAKEUP);
-	int idle_h_nr_running = task_has_idle_policy(p);
+	int idle_h_nr_running = idle_policy(p->policy);
 	bool prefer_idle = sched_feat(EAS_PREFER_IDLE) ?
 				(schedtune_prefer_idle(p) > 0) : 0;
 
@@ -5652,7 +5634,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	struct cfs_rq *cfs_rq;
 	struct sched_entity *se = &p->se;
 	int task_sleep = flags & DEQUEUE_SLEEP;
-	int idle_h_nr_running = task_has_idle_policy(p);
+	int idle_h_nr_running = idle_policy(p->policy);
 	bool was_sched_idle = sched_idle_rq(rq);
 
 	if (task_sleep && rq->nr_running == 1)
