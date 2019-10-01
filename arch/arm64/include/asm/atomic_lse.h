@@ -332,7 +332,8 @@ static inline long __lse_atomic64_dec_if_positive(atomic64_t *v)
 }
 
 #define __CMPXCHG_CASE(w, sfx, name, sz, mb, cl...)			\
-static inline u##sz __lse__cmpxchg_case_##name##sz(volatile void *ptr,	\
+static __always_inline u##sz						\
+__lse__cmpxchg_case_##name##sz(volatile void *ptr,			\
 					      u##sz old,		\
 					      u##sz new)		\
 {									\
@@ -373,7 +374,8 @@ __CMPXCHG_CASE(x,  ,  mb_, 64, al, "memory")
 #undef __CMPXCHG_CASE
 
 #define __CMPXCHG_DBL(name, mb, cl...)					\
-static inline long __lse__cmpxchg_double##name(unsigned long old1,	\
+static __always_inline long						\
+__lse__cmpxchg_double##name(unsigned long old1,				\
 					 unsigned long old2,		\
 					 unsigned long new1,		\
 					 unsigned long new2,		\
