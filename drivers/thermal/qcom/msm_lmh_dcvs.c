@@ -201,6 +201,7 @@ static unsigned long limits_mitigation_notify(struct limits_dcvs_hw *hw)
 		cpufreq_cpu_put(policy);
 		arch_set_thermal_pressure(&hw->core_map, max_capacity - capacity);
 	}
+	arch_set_max_thermal_scale(&hw->core_map, max_limit);
 	pr_debug("CPU:%d max limit:%lu\n", cpumask_first(&hw->core_map),
 			max_limit);
 	trace_lmh_dcvs_freq(cpumask_first(&hw->core_map), max_limit);
