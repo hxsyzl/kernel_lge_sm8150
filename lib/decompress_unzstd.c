@@ -85,6 +85,8 @@
  */
 #define ZSTD_IOBUF_SIZE		(1 << 17)
 
+#define UINTPTR_MAX		(~0UL)
+
 static int INIT handle_zstd_error(size_t ret, void (*error)(char *x))
 {
 	const zstd_error_code err = zstd_get_error_code(ret);
