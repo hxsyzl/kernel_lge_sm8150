@@ -908,7 +908,6 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
 				 void *arg)
 {
 	unsigned int nr_pages = hpage_nr_pages(page);
-	enum lru_list lru = page_lru(page);
 	bool active = is_active_lru(lru);
 	bool file = is_file_lru(lru);
 	bool new = (bool)arg;
@@ -929,7 +928,7 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
 			SetPageWorkingset(page);
 	}
 
-	trace_mm_lru_insertion(page, lru);
+	trace_mm_lru_insertion(page);
 }
 
 /*
