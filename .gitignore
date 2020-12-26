@@ -131,4 +131,5 @@ all.config
 kernel/configs/android-*.cfg
 
 out
+build.log
 release
