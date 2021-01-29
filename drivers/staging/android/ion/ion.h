@@ -29,7 +29,6 @@
 #include <linux/types.h>
 #include <linux/miscdevice.h>
 #include <linux/bitops.h>
-#include <linux/msm_dma_iommu_mapping.h>
 #include "ion_kernel.h"
 #include "../uapi/ion.h"
 #include "../uapi/msm_ion.h"
@@ -139,15 +138,6 @@ struct ion_buffer {
 	struct sg_table *sg_table;
 	struct list_head attachments;
 	struct list_head vmas;
-	struct msm_iommu_data iommu_data;
-
-#ifdef CONFIG_MIGRATE_HIGHORDER
-	size_t highorder_size;
-#endif
-	char task_comm[TASK_COMM_LEN];
-	pid_t pid;
-	char thread_comm[TASK_COMM_LEN];
-	pid_t tid;
 };
 
 void ion_buffer_destroy(struct ion_buffer *buffer);
@@ -167,7 +157,6 @@ struct ion_device {
 	struct rw_semaphore lock;
 	struct plist_head heaps;
 	struct dentry *debug_root;
-	struct dentry *heaps_debug_root;
 	int heap_cnt;
 };
 
@@ -264,14 +253,8 @@ struct ion_heap {
 	wait_queue_head_t waitqueue;
 	struct task_struct *task;
 	atomic_long_t total_allocated;
-	atomic_long_t total_allocated_peak;
 
 	int (*debug_show)(struct ion_heap *heap, struct seq_file *, void *);
-
-#ifdef CONFIG_MIGRATE_HIGHORDER
-	size_t free_highorder_size;
-#endif
-
 };
 
 /**
