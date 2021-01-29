@@ -10,12 +10,21 @@
 #include "sched.h"
 
 #ifdef CONFIG_UCLAMP_TASK
-static unsigned int sysctl_sched_min_task_util_for_uclamp = 51;
 
 static inline bool uclamp_boosted(struct task_struct *p)
 {
-	return ((uclamp_eff_value(p, UCLAMP_MIN) > 0) &&
-			(task_util(p) > sysctl_sched_min_task_util_for_uclamp));
+	struct cgroup_subsys_state *css = task_css(p, cpuset_cgrp_id);
+	struct task_group *tg;
+
+	if (!css)
+		return false;
+
+	if (!strlen(css->cgroup->kn->name))
+		return 0;
+
+	tg = container_of(css, struct task_group, css);
+
+	return tg->boosted;
 }
 
 static inline bool uclamp_latency_sensitive(struct task_struct *p)
