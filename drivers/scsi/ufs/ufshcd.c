@@ -3944,7 +3944,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
 			if (has_read_lock)
 				ufshcd_put_read_lock(hba);
 			cmd->scsi_done(cmd);
-			return 0;
+			err = 0;
+			goto out_pm_qos;
 		}
 		goto out;
 	}
@@ -11456,6 +11457,14 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
 	 * status is cleared before registering UFS interrupt handler.
 	 */
 	ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
+
+	mutex_init(&hba->pm_qos.lock);
+	INIT_WORK(&hba->pm_qos.get_work, ufshcd_pm_qos_get_worker);
+	INIT_WORK(&hba->pm_qos.put_work, ufshcd_pm_qos_put_worker);
+	hba->pm_qos.req.type = PM_QOS_REQ_AFFINE_IRQ;
+	hba->pm_qos.req.irq = irq;
+	pm_qos_add_request(&hba->pm_qos.req, PM_QOS_CPU_DMA_LATENCY,
+			   PM_QOS_DEFAULT_VALUE);
 
 	mutex_init(&hba->pm_qos.lock);
 	INIT_WORK(&hba->pm_qos.get_work, ufshcd_pm_qos_get_worker);
