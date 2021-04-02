@@ -32,6 +32,7 @@
 #include <linux/delay.h>
 
 #include <linux/kthread.h>
+#include <linux/scs.h>
 
 #include <asm/switch_to.h>
 #include <linux/msm_rtb.h>
@@ -5369,8 +5370,12 @@ SYSCALL_DEFINE0(sched_yield)
 	schedstat_inc(rq->yld_count);
 	current->sched_class->yield_task(rq);
 
+	/*
+	 * Since we are going to call schedule() anyway, there's
+	 * no need to preempt or enable interrupts:
+	 */
 	preempt_disable();
-	rq_unlock_irq(rq, &rf);
+	rq_unlock(rq, &rf);
 	sched_preempt_enable_no_resched();
 
 	schedule();
@@ -7182,8 +7187,8 @@ static void sched_update_down_migrate_values(int cap_margin_levels,
 		 * Because there is no downmigration to it.
 		 */
 		for (i = 0; i < cap_margin_levels; i++)
-			if (cluster_cpus[i])
-				for_each_cpu(cpu, cluster_cpus[i])
+			if (cluster_cpus[i+1])
+				for_each_cpu(cpu, cluster_cpus[i+1])
 				    sched_capacity_margin_down_array[cpu] =
 				    sysctl_sched_capacity_margin_down_array[i];
 	} else {

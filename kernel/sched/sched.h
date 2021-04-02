@@ -265,6 +265,30 @@ struct rt_bandwidth {
 
 void __dl_clear_params(struct task_struct *p);
 
+/*
+ * To keep the bandwidth of -deadline tasks and groups under control
+ * we need some place where:
+ *  - store the maximum -deadline bandwidth of the system (the group);
+ *  - cache the fraction of that bandwidth that is currently allocated.
+ *
+ * This is all done in the data structure below. It is similar to the
+ * one used for RT-throttling (rt_bandwidth), with the main difference
+ * that, since here we are only interested in admission control, we
+ * do not decrease any runtime while the group "executes", neither we
+ * need a timer to replenish it.
+ *
+ * With respect to SMP, the bandwidth is given on a per-CPU basis,
+ * meaning that:
+ *  - dl_bw (< 100%) is the bandwidth of the system (group) on each CPU;
+ *  - dl_total_bw array contains, in the i-eth element, the currently
+ *    allocated bandwidth on the i-eth CPU.
+ * Moreover, groups consume bandwidth on each CPU, while tasks only
+ * consume bandwidth on the CPU they're running on.
+ * Finally, dl_total_bw_cpu is used to cache the index of dl_total_bw
+ * that will be shown the next time the proc or cgroup controls will
+ * be red. It on its turn can be changed by writing on its own
+ * control.
+ */
 struct dl_bandwidth {
 	raw_spinlock_t dl_runtime_lock;
 	u64 dl_runtime;
@@ -276,24 +300,6 @@ static inline int dl_bandwidth_enabled(void)
 	return sysctl_sched_rt_runtime >= 0;
 }
 
-/*
- * To keep the bandwidth of -deadline tasks under control
- * we need some place where:
- *  - store the maximum -deadline bandwidth of each cpu;
- *  - cache the fraction of bandwidth that is currently allocated in
- *    each root domain;
- *
- * This is all done in the data structure below. It is similar to the
- * one used for RT-throttling (rt_bandwidth), with the main difference
- * that, since here we are only interested in admission control, we
- * do not decrease any runtime while the group "executes", neither we
- * need a timer to replenish it.
- *
- * With respect to SMP, bandwidth is given on a per root domain basis,
- * meaning that:
- *  - bw (< 100%) is the deadline bandwidth of each CPU;
- *  - total_bw is the currently allocated bandwidth in each root domain;
- */
 struct dl_bw {
 	raw_spinlock_t lock;
 	u64 bw, total_bw;
@@ -2159,8 +2165,7 @@ static inline unsigned long cpu_util_rt(int cpu)
 
 static inline unsigned long cpu_util(int cpu)
 {
-	return min(__cpu_util(cpu) + cpu_util_rt(cpu),
-		   capacity_orig_of(cpu));
+	return min(__cpu_util(cpu) + cpu_util_rt(cpu), capacity_orig_of(cpu));
 }
 
 static inline unsigned long
@@ -2168,6 +2173,7 @@ cpu_util_freq(int cpu, struct sched_walt_cpu_load *walt_load)
 {
 	return min(cpu_util(cpu), capacity_orig_of(cpu));
 }
+
 
 #define sched_ravg_window TICK_NSEC
 #define sysctl_sched_use_walt_cpu_util 0
@@ -2573,6 +2579,12 @@ enum sched_boost_policy {
 #define FULL_THROTTLE_BOOST 1
 #define CONSERVATIVE_BOOST 2
 #define RESTRAINED_BOOST 3
+/*
+ * Returns the rq capacity of any rq in a group. This does not play
+ * well with groups where rq capacity can change independently.
+ */
+#define group_rq_capacity(group) cpu_capacity(group_first_cpu(group))
+
 #define FULL_THROTTLE_BOOST_DISABLE -1
 #define CONSERVATIVE_BOOST_DISABLE -2
 #define RESTRAINED_BOOST_DISABLE -3
@@ -2646,6 +2658,15 @@ extern int update_preferred_cluster(struct related_thread_group *grp,
 			struct task_struct *p, u32 old_load);
 extern void set_preferred_cluster(struct related_thread_group *grp);
 extern void add_new_task_to_grp(struct task_struct *new);
+
+#define NO_BOOST 0
+#define FULL_THROTTLE_BOOST 1
+#define CONSERVATIVE_BOOST 2
+#define RESTRAINED_BOOST 3
+#define FULL_THROTTLE_BOOST_DISABLE -1
+#define CONSERVATIVE_BOOST_DISABLE -2
+#define RESTRAINED_BOOST_DISABLE -3
+#define MAX_NUM_BOOST_TYPE (RESTRAINED_BOOST+1)
 
 static inline int cpu_capacity(int cpu)
 {
@@ -3149,7 +3170,12 @@ static inline int is_reserved(int cpu)
 	return 0;
 }
 
-extern void sched_boost_parse_dt(void);
+static inline enum sched_boost_policy sched_boost_policy(void)
+{
+	return SCHED_BOOST_NONE;
+}
+
+static inline void sched_boost_parse_dt(void) { }
 
 static inline void clear_ed_task(struct task_struct *p, struct rq *rq) { }
 
