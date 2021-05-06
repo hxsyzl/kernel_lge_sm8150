@@ -1054,6 +1054,12 @@ struct rq {
 	unsigned int ttwu_local;
 #endif
 
+#ifdef CONFIG_SMP
+#if SCHED_FEAT_TTWU_QUEUE
+	struct llist_head wake_list;
+#endif
+#endif
+
 #ifdef CONFIG_CPU_IDLE
 	/* Must be inspected within a rcu lock section */
 	struct cpuidle_state *idle_state;
@@ -1388,6 +1394,12 @@ queue_balance_callback(struct rq *rq,
 	head->next = rq->balance_callback;
 	rq->balance_callback = head;
 }
+
+#if SCHED_FEAT_TTWU_QUEUE
+extern void sched_ttwu_pending(void);
+#else
+static inline void sched_ttwu_pending(void) { }
+#endif
 
 #define rcu_dereference_check_sched_domain(p) \
 	rcu_dereference_check((p), \
