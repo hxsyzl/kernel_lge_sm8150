@@ -311,10 +311,15 @@ static int alarmtimer_suspend(struct device *dev)
 	if (min == 0)
 		return 0;
 
+<<<<<<< HEAD
 	if (ktime_to_ns(min) < 2 * NSEC_PER_SEC) {
 		__pm_wakeup_event(ws, ktime_to_ms(min) + 5);
 		return -EBUSY;
 	}
+=======
+	if (ktime_to_ns(min) < NSEC_PER_SEC / 2)
+		__pm_wakeup_event(ws, MSEC_PER_SEC / 2);
+>>>>>>> 582b0badae41 (alarmtimers: Don't fail on wakeup)
 
 	trace_alarmtimer_suspend(expires, type);
 
