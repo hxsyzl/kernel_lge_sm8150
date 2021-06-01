@@ -4052,6 +4052,8 @@ void scheduler_tick(void)
 	if (curr->sched_class == &rt_sched_class)
 		check_for_rt_migration(rq, curr);
 #endif
+	if (idle_cpu(cpu) && is_reserved(cpu))
+		clear_reserved(cpu);
 }
 
 #ifdef CONFIG_NO_HZ_FULL
