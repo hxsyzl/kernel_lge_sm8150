@@ -2669,7 +2669,7 @@ static void transfer_busy_time(struct rq *rq, struct related_thread_group *grp,
  * The children inherits the group id from the parent.
  */
 unsigned int __read_mostly sysctl_sched_enable_thread_grouping;
-unsigned int __read_mostly sysctl_sched_coloc_downmigrate_ns;
+unsigned int __read_mostly sysctl_sched_coloc_downmigrate_ns = 400000000;
 
 #ifdef CONFIG_UCLAMP_TASK_GROUP
 static inline bool uclamp_task_colocated(struct task_struct *p)
