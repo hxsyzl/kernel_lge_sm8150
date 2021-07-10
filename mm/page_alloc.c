@@ -4110,7 +4110,6 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
 	unsigned int zonelist_iter_cookie;
 	int reserve_flags;
 	bool woke_kswapd = false;
-	bool woke_kshrinkd = false;
 	bool used_vmpressure = false;
 
 	/*
@@ -4150,10 +4149,6 @@ restart:
 		if (!woke_kswapd) {
 			atomic_long_inc(&kswapd_waiters);
 			woke_kswapd = true;
-		}
-		if (!woke_kshrinkd) {
-			atomic_long_inc(&kshrinkd_waiters);
-			woke_kshrinkd = true;
 		}
 		if (!used_vmpressure)
 			used_vmpressure = vmpressure_inc_users(order);
@@ -4252,17 +4247,6 @@ retry:
 	/* Try direct reclaim and then allocating */
 	if (!used_vmpressure)
 		used_vmpressure = vmpressure_inc_users(order);
-	if (!woke_kshrinkd) {
-		/*
-		 * smp_mb__after_atomic() pairs with the wait_event_freezable()
-		 * in kshrinkd(). This is needed to order the waitqueue_active()
-		 * check inside wake_all_kshrinkds().
-		 */
-		atomic_long_inc(&kshrinkd_waiters);
-		smp_mb__after_atomic();
-		wake_all_kshrinkds(ac);
-		woke_kshrinkd = true;
-	}
 	page = __alloc_pages_direct_reclaim(gfp_mask, order, alloc_flags, ac,
 							&did_some_progress);
 	if (page)
@@ -4383,8 +4367,6 @@ fail:
 got_pg:
 	if (woke_kswapd)
 		atomic_long_dec(&kswapd_waiters);
-	if (woke_kshrinkd)
-		atomic_long_dec(&kshrinkd_waiters);
 	if (used_vmpressure)
 		vmpressure_dec_users();
 	if (!page)
