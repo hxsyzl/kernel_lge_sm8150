@@ -3474,12 +3474,6 @@ static noinline void __schedule_bug(struct task_struct *prev)
 		pr_cont("\n");
 	}
 	check_panic_on_warn("scheduling while atomic");
-
-#ifdef CONFIG_PANIC_ON_SCHED_BUG
-	BUG();
-#endif
-	dump_stack();
-	add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
 }
 
 /*
