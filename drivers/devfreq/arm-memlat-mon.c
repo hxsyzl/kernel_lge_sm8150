@@ -48,6 +48,7 @@ enum ev_index {
 struct event_data {
 	struct perf_event *pevent;
 	unsigned long prev_count;
+	bool any_cpu_readable;
 };
 
 struct cpu_pmu_stats {
@@ -100,7 +101,37 @@ static inline unsigned long read_event(struct event_data *event)
 	if (!event->pevent)
 		return 0;
 
-	total = perf_event_read_value(event->pevent, &enabled, &running);
+	if (event->any_cpu_readable) {
+		if (perf_event_read_local(event->pevent, &total))
+			return 0;
+	} else {
+		unsigned int ev_cpu = READ_ONCE(event->pevent->oncpu);
+		bool local_read;
+		int ret;
+
+		if (ev_cpu >= nr_cpu_ids)
+			return 0;
+
+		local_irq_disable();
+		if ((local_read = (ev_cpu == raw_smp_processor_id())))
+			ret = perf_event_read_local(event->pevent, &total);
+		local_irq_enable();
+
+		if (!local_read) {
+			/*
+			 * Some SCM calls take very long (20+ ms), so the perf
+			 * event IPI could lag on the CPU running the SCM call.
+			 */
+			if (under_scm_call(ev_cpu))
+				return 0;
+
+			total = perf_event_read_value(event->pevent, &enabled,
+						      &running);
+		} else if (ret) {
+			return ret;
+		}
+	}
+
 	ev_count = total - event->prev_count;
 	event->prev_count = total;
 	return ev_count;
@@ -185,6 +216,7 @@ static struct perf_event_attr *alloc_attr(void)
 
 static int set_events(struct cpu_grp_info *cpu_grp, int cpu)
 {
+	static struct cpumask all_cpu_mask = CPU_MASK_ALL;
 	struct perf_event *pevent;
 	struct perf_event_attr *attr;
 	int err, i;
@@ -208,6 +240,8 @@ static int set_events(struct cpu_grp_info *cpu_grp, int cpu)
 			goto err_out;
 		cpustats->events[i].pevent = pevent;
 		perf_event_enable(pevent);
+		cpustats->events[i].any_cpu_readable =
+			cpumask_equal(&pevent->readable_on_cpus, &all_cpu_mask);
 	}
 
 	kfree(attr);
