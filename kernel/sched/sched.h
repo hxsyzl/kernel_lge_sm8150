@@ -3046,11 +3046,7 @@ static inline void update_cgroup_boost_settings(void) { }
 static inline void restore_cgroup_boost_settings(void) { }
 #endif
 
-extern enum sched_boost_policy boost_policy;
-static inline enum sched_boost_policy sched_boost_policy(void)
-{
-	return boost_policy;
-}
+extern enum sched_boost_policy sched_boost_policy(void);
 
 extern unsigned int sched_boost_type;
 static inline int sched_boost(void)
@@ -3061,18 +3057,13 @@ static inline int sched_boost(void)
 
 static inline bool task_placement_boost_enabled(struct task_struct *p)
 {
-	if (task_sched_boost(p))
-		return sched_boost_policy() != SCHED_BOOST_NONE;
-
 	return false;
 }
 
 
 static inline enum sched_boost_policy task_boost_policy(struct task_struct *p)
 {
-	enum sched_boost_policy policy = task_sched_boost(p) ?
-							sched_boost_policy() :
-							SCHED_BOOST_NONE;
+	enum sched_boost_policy policy = SCHED_BOOST_NONE;
 	if (policy == SCHED_BOOST_ON_BIG) {
 		/*
 		 * Filter out tasks less than min task util threshold
@@ -3169,14 +3160,6 @@ static inline int is_reserved(int cpu)
 {
 	return 0;
 }
-
-static inline enum sched_boost_policy sched_boost_policy(void)
-{
-	return SCHED_BOOST_NONE;
-}
-
-static inline void sched_boost_parse_dt(void) { }
-
 static inline void clear_ed_task(struct task_struct *p, struct rq *rq) { }
 
 static inline bool early_detection_notify(struct rq *rq, u64 wallclock)
