@@ -28,6 +28,7 @@
 #include <linux/posix-timers.h>
 #include <linux/context_tracking.h>
 #include <linux/rq_stats.h>
+#include <linux/mm.h>
 
 #include <asm/irq_regs.h>
 
