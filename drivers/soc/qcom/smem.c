@@ -84,7 +84,7 @@
 #define SMEM_GLOBAL_HOST	0xfffe
 
 /* Max number of processors/hosts in a system */
-#define SMEM_HOST_COUNT		13
+#define SMEM_HOST_COUNT		14
 
 /* Entry range check
  * ptr >= start : Checks if ptr is greater than the start of access region
