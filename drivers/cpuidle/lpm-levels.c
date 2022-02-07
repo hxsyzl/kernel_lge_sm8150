@@ -641,7 +641,7 @@ static int cpu_power_select(struct cpuidle_device *dev,
 	struct power_params *pwr_params;
 	uint64_t bias_time = 0;
 
-	if (((sleep_disabled || sleep_disabled_touch) && !cpu_isolated(dev->cpu)) || sleep_us < 0)
+	if ((sleep_disabled && !cpu_isolated(dev->cpu)) || sleep_us < 0)
 		return best_level;
 
 	idx_restrict = cpu->nlevels + 1;
