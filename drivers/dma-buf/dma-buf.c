@@ -1400,8 +1400,8 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
 				buf_obj->size,
 				buf_obj->file->f_flags, buf_obj->file->f_mode,
 				file_count(buf_obj->file),
-				buf_obj->exp_name,
-				file_inode(buf_obj->file)->i_ino,
+				buf_obj->exp_name
+				file_inode(buf_obj->file) ? file_inode(buf_obj->file)->i_ino : 0,
 				buf_obj->name ?: "");
 
 		robj = buf_obj->resv;
@@ -1433,7 +1433,7 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
 		}
 		rcu_read_unlock();
 
-		seq_puts(s, "\tAttached Devices:\n");
+//		seq_puts(s, "\tAttached Devices:\n");
 		attach_count = 0;
 
 		list_for_each_entry(attach_obj, &buf_obj->attachments, node) {
@@ -1441,8 +1441,8 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
 			attach_count++;
 		}
 
-		seq_printf(s, "Total %d devices attached\n\n",
-				attach_count);
+//		seq_printf(s, "Total %d devices attached\n\n",
+//				attach_count);
 
 		dma_buf_ref_show(s, buf_obj);
 

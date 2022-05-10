@@ -90,8 +90,10 @@ struct inet_request_sock {
 				wscale_ok  : 1,
 				ecn_ok	   : 1,
 				acked	   : 1,
-				no_srccheck: 1,
 				smc_ok	   : 1;
+				no_srccheck: 1,
+				mptcp_rqsk : 1,
+				saw_mpc    : 1;
 	u32                     ir_mark;
 	union {
 		struct ip_options_rcu __rcu	*ireq_opt;

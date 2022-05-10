@@ -1090,9 +1090,24 @@ EXPORT_SYMBOL(drm_mode_equal_no_clocks);
 bool drm_mode_equal_no_clocks_no_stereo(const struct drm_display_mode *mode1,
 					const struct drm_display_mode *mode2)
 {
-	return drm_mode_match(mode1, mode2,
-			      DRM_MODE_MATCH_TIMINGS |
-			      DRM_MODE_MATCH_FLAGS);
+	if (mode1->hdisplay == mode2->hdisplay &&
+	    mode1->hsync_start == mode2->hsync_start &&
+	    mode1->hsync_end == mode2->hsync_end &&
+	    mode1->htotal == mode2->htotal &&
+	    mode1->hskew == mode2->hskew &&
+	    mode1->vdisplay == mode2->vdisplay &&
+	    mode1->vsync_start == mode2->vsync_start &&
+	    mode1->vsync_end == mode2->vsync_end &&
+	    mode1->vtotal == mode2->vtotal &&
+	    mode1->vscan == mode2->vscan &&
+#if IS_ENABLED(CONFIG_LGE_DISPLAY_COMMON)
+	    mode1->vrefresh == mode2->vrefresh &&
+#endif
+	    (mode1->flags & ~DRM_MODE_FLAG_3D_MASK) ==
+	     (mode2->flags & ~DRM_MODE_FLAG_3D_MASK))
+		return true;
+
+	return false;
 }
 EXPORT_SYMBOL(drm_mode_equal_no_clocks_no_stereo);
 
