@@ -1684,6 +1684,11 @@ decrypt_passphrase_encrypted_session_key(struct ecryptfs_auth_tok *auth_tok,
 	struct crypto_skcipher *tfm;
 	struct skcipher_request *req = NULL;
 	int rc = 0;
+#ifdef CONFIG_SD_ENCRYPTION_ADVANCED
+	char iv[ECRYPTFS_DEFAULT_IV_BYTES];
+	/* Initialize the IV */
+	memset(iv, 0, ECRYPTFS_DEFAULT_IV_BYTES);
+#endif
 
 	if (unlikely(ecryptfs_verbosity > 0)) {
 		ecryptfs_printk(
@@ -1747,7 +1752,11 @@ decrypt_passphrase_encrypted_session_key(struct ecryptfs_auth_tok *auth_tok,
 	}
 	skcipher_request_set_crypt(req, src_sg, dst_sg,
 				   auth_tok->session_key.encrypted_key_size,
+#ifdef CONFIG_SD_ENCRYPTION_ADVANCED
+				   iv);
+#else
 				   NULL);
+#endif
 	rc = crypto_skcipher_decrypt(req);
 	mutex_unlock(tfm_mutex);
 	if (unlikely(rc)) {
@@ -2222,6 +2231,11 @@ write_tag_3_packet(char *dest, size_t *remaining_bytes,
 	struct crypto_skcipher *tfm;
 	struct skcipher_request *req;
 	int rc = 0;
+#ifdef CONFIG_SD_ENCRYPTION_ADVANCED
+	char iv[ECRYPTFS_DEFAULT_IV_BYTES];
+	/* Initialize the IV */
+	memset(iv, 0, ECRYPTFS_DEFAULT_IV_BYTES);
+#endif
 
 	(*packet_size) = 0;
 	ecryptfs_from_hex(key_rec->sig, auth_tok->token.password.signature,
@@ -2335,7 +2349,11 @@ write_tag_3_packet(char *dest, size_t *remaining_bytes,
 	ecryptfs_printk(KERN_DEBUG, "Encrypting [%zd] bytes of the key\n",
 			crypt_stat->key_size);
 	skcipher_request_set_crypt(req, src_sg, dst_sg,
+#ifdef CONFIG_SD_ENCRYPTION_ADVANCED
+				   (*key_rec).enc_key_size, iv);
+#else
 				   (*key_rec).enc_key_size, NULL);
+#endif
 	rc = crypto_skcipher_encrypt(req);
 	mutex_unlock(tfm_mutex);
 	skcipher_request_free(req);

@@ -1049,6 +1049,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
 	}
 
 	task->signal->oom_score_adj = oom_adj;
+
 	if (!legacy && has_capability_noaudit(current, CAP_SYS_RESOURCE))
 		task->signal->oom_score_adj_min = (short)oom_adj;
 	trace_oom_score_adj_update(task);
@@ -1177,6 +1178,7 @@ static ssize_t oom_score_adj_write(struct file *file, const char __user *buf,
 	}
 
 	err = __set_oom_adj(file, oom_score_adj, false);
+
 out:
 	return err < 0 ? err : count;
 }
