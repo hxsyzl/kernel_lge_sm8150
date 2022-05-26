@@ -152,13 +152,13 @@
 	ap-vts {
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
-		thermal-governor = "user_space";
+		thermal-governor = "step_wise";
 	};
 
 	chg-vts {
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
-		thermal-governor = "user_space";
+		thermal-governor = "step_wise";
 	};
 };
 

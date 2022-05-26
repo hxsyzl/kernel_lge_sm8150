@@ -300,25 +300,25 @@
 	sub6-vts {
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
-		thermal-governor = "user_space";
+		thermal-governor = "step_wise";
 	};
 
 	mmw0-vts {
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
-		thermal-governor = "user_space";
+		thermal-governor = "step_wise";
 	};
 
 	mmw1-vts {
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
-		thermal-governor = "user_space";
+		thermal-governor = "step_wise";
 	};
 
 	mmw-ap-vts {
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
-		thermal-governor = "user_space";
+		thermal-governor = "step_wise";
 	};
 
 	mmw-pa2-lge {
