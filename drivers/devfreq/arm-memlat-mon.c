@@ -190,7 +190,8 @@ static unsigned long get_cnt(struct memlat_hwmon *hw)
 	ipd.cpu_grp = cpu_grp;
 
 	/* Dispatch asynchronous IPIs to each CPU to read the perf events */
-	migrate_disable();
+	cpus_read_lock();
+	preempt_disable();
 	this_cpu = raw_smp_processor_id();
 	cpus_read_mask = *cpumask_bits(&cpu_grp->cpus);
 	tmp_mask = cpus_read_mask & ~BIT(this_cpu);
@@ -213,7 +214,7 @@ static unsigned long get_cnt(struct memlat_hwmon *hw)
 	/* Read this CPU's events while the IPIs run */
 	if (cpus_read_mask & BIT(this_cpu))
 		read_perf_counters(&ipd, this_cpu);
-	migrate_enable();
+	preempt_enable();
 
 	/* Read any any-CPU events while the IPIs run */
 	read_any_cpu_events(&ipd, cpus_read_mask);
