@@ -130,8 +130,63 @@ static unsigned long get_cnt(struct memlat_hwmon *hw)
 	int cpu;
 	struct cpu_grp_info *cpu_grp = to_cpu_grp(hw);
 
-	for_each_cpu(cpu, &cpu_grp->cpus)
-		read_perf_counters(cpu, cpu_grp);
+	ipd.waiter_task = current;
+	ipd.cpu_grp = cpu_grp;
+
+	/* Dispatch asynchronous IPIs to each CPU to read the perf events */
+	cpus_read_lock();
+	preempt_disable();
+	this_cpu = raw_smp_processor_id();
+	cpus_read_mask = *cpumask_bits(&cpu_grp->cpus);
+	tmp_mask = cpus_read_mask & ~BIT(this_cpu);
+	ipd.cpus_left = (atomic_t)ATOMIC_INIT(tmp_mask);
+	for_each_cpu(cpu, to_cpumask(&tmp_mask)) {
+		/*
+		 * Some SCM calls take very long (20+ ms), so the IPI could lag
+		 * on the CPU running the SCM call. Skip offline CPUs too.
+		 */
+		csd[cpu].flags = 0;
+		if (under_scm_call(cpu) ||
+		    generic_exec_single(cpu, &csd[cpu], read_evs_ipi, &ipd))
+			cpus_read_mask &= ~BIT(cpu);
+	}
+	cpus_read_unlock();
+	/* Read this CPU's events while the IPIs run */
+	if (cpus_read_mask & BIT(this_cpu))
+		read_perf_counters(&ipd, this_cpu);
+	preempt_enable();
+
+	/* Bail out if there weren't any CPUs available */
+	if (!cpus_read_mask)
+		return 0;
+
+	/* Read any any-CPU events while the IPIs run */
+	read_any_cpu_events(&ipd, cpus_read_mask);
+
+	/* Clear out CPUs which were skipped */
+	atomic_andnot(cpus_read_mask ^ tmp_mask, &ipd.cpus_left);
+
+	/*
+	 * Wait until all the IPIs are done reading their events, and compute
+	 * each finished CPU's results while waiting since some CPUs may finish
+	 * reading their events faster than others.
+	 */
+	for (tmp_mask = cpus_read_mask;;) {
+		unsigned long cpus_done, cpus_left;
+
+		set_current_state(TASK_UNINTERRUPTIBLE);
+		cpus_left = (unsigned int)atomic_read(&ipd.cpus_left);
+		if ((cpus_done = cpus_left ^ tmp_mask)) {
+			for_each_cpu(cpu, to_cpumask(&cpus_done))
+				compute_perf_counters(&ipd, cpu);
+			if (!cpus_left)
+				break;
+			tmp_mask = cpus_left;
+		} else {
+			schedule();
+		}
+	}
+	__set_current_state(TASK_RUNNING);
 
 	return 0;
 }
