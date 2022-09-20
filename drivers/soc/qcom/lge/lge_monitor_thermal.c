@@ -516,7 +516,7 @@ static void _poll_monitor(struct lge_monitor_thermal_data *monitor_dd)
 				cluster->min_freq,
 				cluster->max_freq,
 				cluster->max_mitigated_freq,
-				cluster->capacity);
+				cluster->max_possible_capacity);
 	}
 }
 
