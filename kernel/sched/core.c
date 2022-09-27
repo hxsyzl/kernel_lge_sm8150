@@ -8644,7 +8644,7 @@ static struct cftype cpu_legacy_files[] = {
 	},
 	{
 		.name = "stat",
-		.seq_show = cpu_cfs_stat_show,
+		.seq_show = cpu_stats_show,
 	},
 #endif
 #ifdef CONFIG_RT_GROUP_SCHED
