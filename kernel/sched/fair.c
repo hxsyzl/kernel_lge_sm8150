@@ -7548,6 +7548,7 @@ struct find_best_target_env {
 	int fastpath;
 	int skip_cpu;
 	int start_cpu;
+	bool strict_max;
 };
 
 static inline bool prefer_spread_on_idle(int cpu, bool new_ilb)
@@ -7781,6 +7782,10 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 				most_spare_wake_cap = spare_wake_cap;
 				most_spare_cap_cpu = i;
 			}
+
+			if (per_task_boost(cpu_rq(i)->curr) ==
+					TASK_BOOST_STRICT_MAX)
+				continue;
 
 			/*
 			 * Cumulative demand may already be accounting for the
@@ -8359,6 +8364,7 @@ static int find_energy_efficient_cpu(struct sched_domain *sd,
 	bool need_idle = wake_to_idle(p);
 	int placement_boost = task_boost_policy(p);
 	u64 start_t = 0;
+	int task_boost = per_task_boost(p);
 	int next_cpu = -1, backup_cpu = -1;
 #ifdef CONFIG_UCLAMP_TASK
 	int max_spare_cap_cpu_ls = prev_cpu, best_idle_cpu = -1;
@@ -8502,10 +8508,12 @@ static int find_energy_efficient_cpu(struct sched_domain *sd,
 		fbt_env.placement_boost = placement_boost;
 		fbt_env.start_cpu = start_cpu;
 		fbt_env.boosted = boosted;
+		fbt_env.strict_max = is_rtg &&
+		(task_boost == TASK_BOOST_STRICT_MAX);
 		fbt_env.skip_cpu = is_many_wakeup(sibling_count_hint) ?
 				   cpu : -1;
 
-#ifdef CONFIG_SCHED_wALT
+#ifdef CONFIG_SCHED_WALT
 		/* Find a cpu with sufficient capacity */
 		target_cpu = find_best_target(p, &eenv->cpu[EAS_CPU_BKP].cpu_id,
 					      prefer_idle, &fbt_env);
