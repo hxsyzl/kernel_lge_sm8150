@@ -99,7 +99,7 @@ static void add_pm_qos_request(struct veneer* veneer_me)
 		veneer_me->pm_qos.irq = -1;
 		veneer_me->pm_qos.type = PM_QOS_REQ_AFFINE_CORES;
 
-		atomic_set(&veneer_me->pm_qos.cpus_affine, *cpumask_bits(cpu_present_mask));
+		veneer_me->pm_qos.cpus_affine = *cpumask_bits(cpu_present_mask);
 		if (!pm_qos_request_active(&veneer_me->pm_qos))
 			pm_qos_add_request(&veneer_me->pm_qos, PM_QOS_CPU_DMA_LATENCY, 0);
 
