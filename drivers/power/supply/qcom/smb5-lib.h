@@ -656,17 +656,6 @@ struct smb_charger {
 	int			dcin_uv_count;
 	ktime_t			dcin_uv_last_time;
 	int			last_wls_vout;
-	/* GPIO DCIN Supply */
-	int			micro_usb_gpio;
-	int			micro_usb_irq;
-	int			dc_9v_gpio;
-	int			dc_9v_irq;
-	int			usb_switch_gpio;
-	int			usb_hub_33v_en_gpio;
-	int			micro_usb_pre_state;
-	bool			dcin_uusb_over_gpio_en;
-	bool			aicl_disable;
-
 #ifdef CONFIG_LGE_PM
 	struct gpio_desc	*vconn_boost_en_gpio;
 	struct gpio_desc	*load_sw_on_gpio;
