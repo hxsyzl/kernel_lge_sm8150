@@ -728,7 +728,17 @@ static void xfrm_policy_requeue(struct xfrm_policy *old,
 static inline bool xfrm_policy_mark_match(const struct xfrm_mark *mark,
 					  struct xfrm_policy *pol)
 {
-	return mark->v == pol->mark.v && mark->m == pol->mark.m;
+	u32 mark = policy->mark.v & policy->mark.m;
+
+	if (policy->mark.v == pol->mark.v && policy->mark.m == pol->mark.m)
+		return true;
+
+
+	if ((mark & pol->mark.m) == pol->mark.v &&
+	    policy->priority == pol->priority)
+		return true;
+
+	return false;
 }
 
 int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)

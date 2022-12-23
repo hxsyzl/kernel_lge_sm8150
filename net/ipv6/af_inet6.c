@@ -107,15 +107,12 @@ static __inline__ struct ipv6_pinfo *inet6_sk_generic(struct sock *sk)
 	return (struct ipv6_pinfo *)(((u8 *)sk) + offset);
 }
 
-void inet6_sock_destruct(struct sock *sk)
-{
-	inet6_cleanup_sock(sk);
-	inet_sock_destruct(sk);
-}
-EXPORT_SYMBOL_GPL(inet6_sock_destruct);
-
+#ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
+int inet6_create(struct net *net, struct socket *sock, int protocol, int kern)
+#else
 static int inet6_create(struct net *net, struct socket *sock, int protocol,
 			int kern)
+#endif
 {
 	struct inet_sock *inet;
 	struct ipv6_pinfo *np;
