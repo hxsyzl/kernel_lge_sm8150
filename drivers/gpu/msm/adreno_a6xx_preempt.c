@@ -1,5 +1,4 @@
 /* Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -549,12 +548,14 @@ unsigned int a6xx_preemption_pre_ibsubmit(
 	if (context) {
 		struct adreno_context *drawctxt = ADRENO_CONTEXT(context);
 		struct adreno_ringbuffer *rb = drawctxt->rb;
-		uint64_t dest = PREEMPT_SCRATCH_ADDR(adreno_dev, rb->id);
+		uint64_t dest = adreno_dev->preempt.scratch.gpuaddr +
+			sizeof(u64) * rb->id;
 
 		*cmds++ = cp_mem_packet(adreno_dev, CP_MEM_WRITE, 2, 2);
 		cmds += cp_gpuaddr(adreno_dev, cmds, dest);
 		*cmds++ = lower_32_bits(gpuaddr);
 		*cmds++ = upper_32_bits(gpuaddr);
+<<<<<<< HEAD
 
 		/*
 		 * Add a KMD post amble to clear the perf counters during
@@ -570,6 +571,8 @@ unsigned int a6xx_preemption_pre_ibsubmit(
 			*cmds++ = ((CP_KMD_AMBLE_TYPE << 20) | GENMASK(22, 20))
 			| (adreno_dev->preempt.postamble_len | GENMASK(19, 0));
 		}
+=======
+>>>>>>> 050df052ada9 (Add drivers/gpu/ modifications)
 	}
 
 	return (unsigned int) (cmds - cmds_orig);
@@ -582,7 +585,8 @@ unsigned int a6xx_preemption_post_ibsubmit(struct adreno_device *adreno_dev,
 	struct adreno_ringbuffer *rb = adreno_dev->cur_rb;
 
 	if (rb) {
-		uint64_t dest = PREEMPT_SCRATCH_ADDR(adreno_dev, rb->id);
+		uint64_t dest = adreno_dev->preempt.scratch.gpuaddr +
+			sizeof(u64) * rb->id;
 
 		*cmds++ = cp_mem_packet(adreno_dev, CP_MEM_WRITE, 2, 2);
 		cmds += cp_gpuaddr(adreno_dev, cmds, dest);
@@ -805,6 +809,7 @@ int a6xx_preemption_init(struct adreno_device *adreno_dev)
 		addr += A6XX_CP_CTXRECORD_PREEMPTION_COUNTER_SIZE;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * First 28 dwords of the device scratch buffer are used to store
 	 * shadow rb data. Reserve 11 dwords in the device scratch buffer
@@ -833,6 +838,8 @@ int a6xx_preemption_init(struct adreno_device *adreno_dev)
 		preempt->postamble_len = count;
 	}
 
+=======
+>>>>>>> 050df052ada9 (Add drivers/gpu/ modifications)
 	ret = a6xx_preemption_iommu_init(adreno_dev);
 
 err:
