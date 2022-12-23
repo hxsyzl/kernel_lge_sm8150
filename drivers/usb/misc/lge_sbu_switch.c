@@ -255,8 +255,8 @@ static unsigned long update_state(struct lge_sbu_switch *lge_sbu_switch)
 	lge_sbu_switch->uart_sel = uart_sel;
 	lge_sbu_switch->cur_flag = BIT(i);
 
-	dev_info(lge_sbu_switch->dev, "/OE(%d), SEL(%d), current flag is \"%s\"\n",
-		 oe, sel, flag_to_string(lge_sbu_switch->cur_flag));
+	dev_info(lge_sbu_switch->dev, "SBU: /OE(%d), SEL(%d), UART: SEL(%d), current flag is \"%s\"\n",
+		 oe, sel, uart_sel, flag_to_string(lge_sbu_switch->cur_flag));
 
 	return BIT(i);
 }
@@ -467,6 +467,7 @@ static int lge_sbu_switch_probe(struct platform_device *pdev)
 		lge_sbu_switch->oe = 0;
 	}
 
+	lge_sbu_switch->uart_sel = 1;
 	lge_sbu_switch->uart_sel_desc = devm_gpiod_get(dev, "lge,uart-sbu-sel",
 				  GPIOD_OUT_HIGH);
 	if (IS_ERR(lge_sbu_switch->uart_sel_desc)) {

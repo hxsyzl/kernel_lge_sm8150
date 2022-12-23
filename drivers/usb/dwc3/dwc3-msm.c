@@ -3956,34 +3956,6 @@ static ssize_t bus_vote_store(struct device *dev,
 }
 static DEVICE_ATTR_RW(bus_vote);
 
-static ssize_t usb_data_enabled_show(struct device *dev,
-				     struct device_attribute *attr, char *buf)
-{
-	struct dwc3_msm *mdwc = dev_get_drvdata(dev);
-
-	return sysfs_emit(buf, "%s\n",
-			  mdwc->usb_data_enabled ? "enabled" : "disabled");
-}
-
-static ssize_t usb_data_enabled_store(struct device *dev,
-				      struct device_attribute *attr,
-				      const char *buf, size_t count)
-{
-	struct dwc3_msm *mdwc = dev_get_drvdata(dev);
-
-	if (kstrtobool(buf, &mdwc->usb_data_enabled))
-		return -EINVAL;
-
-	if (!mdwc->usb_data_enabled) {
-		mdwc->vbus_active = false;
-		mdwc->id_state = DWC3_ID_FLOAT;
-		dwc3_ext_event_notify(mdwc);
-	}
-
-	return count;
-}
-static DEVICE_ATTR_RW(usb_data_enabled);
-
 #ifdef CONFIG_LGE_USB
 static char * dwc3_revision(struct dwc3 *dwc)
 {
@@ -4524,7 +4496,6 @@ static int dwc3_msm_probe(struct platform_device *pdev)
 	device_create_file(&pdev->dev, &dev_attr_speed);
 	device_create_file(&pdev->dev, &dev_attr_usb_compliance_mode);
 	device_create_file(&pdev->dev, &dev_attr_bus_vote);
-	device_create_file(&pdev->dev, &dev_attr_usb_data_enabled);
 #ifdef CONFIG_LGE_USB
 	device_create_file(&pdev->dev, &dev_attr_usb_controller);
 	dwc->usb_compliance_mode = &mdwc->usb_compliance_mode;
@@ -4565,7 +4536,6 @@ static int dwc3_msm_remove(struct platform_device *pdev)
 	int ret_pm;
 
 	device_remove_file(&pdev->dev, &dev_attr_mode);
-	device_remove_file(&pdev->dev, &dev_attr_usb_data_enabled);
 #ifdef CONFIG_LGE_USB
 	device_remove_file(&pdev->dev, &dev_attr_usb_controller);
 #endif
@@ -5295,8 +5265,7 @@ static void dwc3_otg_sm_work(struct work_struct *w)
 				dwc3_msm_gadget_vbus_draw(mdwc, 500);
 #endif
 		} else {
-			if (mdwc->usb_data_enabled)
-				dwc3_msm_gadget_vbus_draw(mdwc, 0);
+			dwc3_msm_gadget_vbus_draw(mdwc, 0);
 #if IS_ENABLED(CONFIG_LGE_COVER_DISPLAY)
 			usb_super_speed = false;
 #endif
