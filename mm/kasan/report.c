@@ -95,6 +95,8 @@ static void end_report(unsigned long *flags)
 	BUG_ON(1);
 #else
 	check_panic_on_warn("KASAN");
+	if (panic_on_warn)
+		panic("panic_on_warn set ...\n");
 #endif
 	kasan_enable_current();
 }
