@@ -4189,10 +4189,6 @@ static int smb5_probe(struct platform_device *pdev)
 	}
 
 	device_init_wakeup(chg->dev, true);
-
-	if (chg->dcin_uusb_over_gpio_en && gpio_is_valid(chg->micro_usb_gpio))
-		smb_micro_usb_irq_handler(chg->micro_usb_irq, chg);
-
 #ifdef CONFIG_LGE_PM
 	extension_smb5_probe(chg);
 #endif
