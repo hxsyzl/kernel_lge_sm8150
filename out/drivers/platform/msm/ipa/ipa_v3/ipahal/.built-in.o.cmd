@@ -1,0 +1,1 @@
+cmd_drivers/platform/msm/ipa/ipa_v3/ipahal/built-in.o :=   rm -f drivers/platform/msm/ipa/ipa_v3/ipahal/built-in.o; llvm-ar rcSTPD drivers/platform/msm/ipa/ipa_v3/ipahal/built-in.o drivers/platform/msm/ipa/ipa_v3/ipahal/ipa_hal.o 

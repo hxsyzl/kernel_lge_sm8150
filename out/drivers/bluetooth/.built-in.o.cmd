@@ -1,0 +1,1 @@
+cmd_drivers/bluetooth/built-in.o :=   rm -f drivers/bluetooth/built-in.o; llvm-ar rcSTPD drivers/bluetooth/built-in.o drivers/bluetooth/bluetooth-power.o drivers/bluetooth/btfm_slim.o drivers/bluetooth/btfm_slim_codec.o drivers/bluetooth/btfm_slim_wcn3990.o 

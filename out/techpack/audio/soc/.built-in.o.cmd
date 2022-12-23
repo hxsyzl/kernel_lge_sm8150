@@ -1,0 +1,1 @@
+cmd_techpack/audio/soc/built-in.o :=   rm -f techpack/audio/soc/built-in.o; llvm-ar rcSTPD techpack/audio/soc/built-in.o techpack/audio/soc/pinctrl_wcd_dlkm.o techpack/audio/soc/swr_dlkm.o techpack/audio/soc/swr_ctrl_dlkm.o 

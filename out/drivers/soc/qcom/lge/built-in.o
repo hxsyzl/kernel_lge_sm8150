@@ -1,0 +1,42 @@
+!<thin>
+//                                              428       `
+devices_lge.o/
+lge_gpio_debug.o/
+lge_bootloader_log.o/
+lge_bootloader_time_checker.o/
+lge_handle_panic.o/
+lge_smpl_count.o/
+lge_pon_backup.o/
+lge_qsdl.o/
+lge_monitor_thermal.o/
+lge_qfprom_access.o/
+power/main/lge_prm.o/
+power/vfps/lge_vfps.o/
+power/sben/lge_sben.o/
+power/fbcn/lge_fbcn.o/
+power/fbcn/lge_intm.o/
+power/triton/lge_triton.o/
+power/lrmc/lge_regulator_mode_change.o/
+power/dd/lge_dd.o/
+lge_mme_bus.o/
+lge_mme_drv.o/
+/0              0           0     0     644     186552    `
+/15             0           0     0     644     166616    `
+/33             0           0     0     644     133752    `
+/55             0           0     0     644     131360    `
+/86             0           0     0     644     173104    `
+/106            0           0     0     644     132464    `
+/124            0           0     0     644     184128    `
+/142            0           0     0     644     142056    `
+/154            0           0     0     644     214608    `
+/177            0           0     0     644     245888    `
+/198            0           0     0     644     173928    `
+/220            0           0     0     644     239912    `
+/243            0           0     0     644     113944    `
+/266            0           0     0     644     122032    `
+/289            0           0     0     644     112568    `
+/312            0           0     0     644     186256    `
+/339            0           0     0     644     139256    `
+/379            0           0     0     644     137760    `
+/398            0           0     0     644     145560    `
+/413            0           0     0     644     146344    `

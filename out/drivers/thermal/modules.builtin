@@ -1,0 +1,11 @@
+kernel/drivers/thermal/thermal_sys.ko
+kernel/drivers/thermal/qcom-spmi-temp-alarm.ko
+kernel/drivers/thermal/msm-tsens.ko
+kernel/drivers/thermal/tsens2xxx.ko
+kernel/drivers/thermal/tsens-dbg.ko
+kernel/drivers/thermal/tsens-mtc.ko
+kernel/drivers/thermal/tsens1xxx.ko
+kernel/drivers/thermal/tsens_calib.ko
+kernel/drivers/thermal/qcom/adc-tm.ko
+kernel/drivers/thermal/qcom/adc-tm-common.ko
+kernel/drivers/thermal/qcom/adc-tm5.ko

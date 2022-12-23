@@ -1,0 +1,24 @@
+!<thin>
+//                                              418       `
+drivers/rmnet/perf/rmnet_perf_config.o/
+drivers/rmnet/perf/rmnet_perf_core.o/
+drivers/rmnet/perf/rmnet_perf_opt.o/
+drivers/rmnet/perf/rmnet_perf_tcp_opt.o/
+drivers/rmnet/perf/rmnet_perf_udp_opt.o/
+drivers/rmnet/shs/rmnet_shs_config.o/
+drivers/rmnet/shs/rmnet_shs_main.o/
+drivers/rmnet/shs/rmnet_shs_wq.o/
+drivers/rmnet/shs/rmnet_shs_freq.o/
+drivers/rmnet/shs/rmnet_shs_wq_mem.o/
+drivers/rmnet/shs/rmnet_shs_wq_genl.o/
+/0              0           0     0     644     244448    `
+/40             0           0     0     644     356576    `
+/78             0           0     0     644     324976    `
+/115            0           0     0     644     293120    `
+/156            0           0     0     644     277112    `
+/197            0           0     0     644     245400    `
+/235            0           0     0     644     480784    `
+/271            0           0     0     644     453312    `
+/305            0           0     0     644     232792    `
+/341            0           0     0     644     260128    `
+/379            0           0     0     644     286120    `

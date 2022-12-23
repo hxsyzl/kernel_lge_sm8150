@@ -1,0 +1,67 @@
+!<thin>
+//                                              974       `
+cam_res_mgr/cam_res_mgr.o/
+cam_sensor_utils/cam_sensor_util.o/
+cam_cci/cam_cci_dev.o/
+cam_cci/cam_cci_core.o/
+cam_cci/cam_cci_soc.o/
+cam_sensor_io/cam_sensor_io.o/
+cam_sensor_io/cam_sensor_cci_i2c.o/
+cam_sensor_io/cam_sensor_qup_i2c.o/
+cam_sensor_io/cam_sensor_spi.o/
+cam_csiphy/cam_csiphy_soc.o/
+cam_csiphy/cam_csiphy_dev.o/
+cam_csiphy/cam_csiphy_core.o/
+cam_actuator/cam_actuator_dev.o/
+cam_actuator/cam_actuator_core.o/
+cam_actuator/cam_actuator_soc.o/
+cam_actuator/lgit_onsemi/lgit_onsemi_actuator_utils.o/
+cam_sensor/cam_sensor_dev.o/
+cam_sensor/cam_sensor_core.o/
+cam_sensor/cam_sensor_soc.o/
+cam_flash/cam_flash_dev.o/
+cam_flash/cam_flash_core.o/
+cam_flash/cam_flash_soc.o/
+cam_eeprom/cam_eeprom_dev.o/
+cam_eeprom/cam_eeprom_core.o/
+cam_eeprom/cam_eeprom_soc.o/
+cam_ois/cam_ois_dev.o/
+cam_ois/cam_ois_core.o/
+cam_ois/cam_ois_soc.o/
+cam_ois/lgit_onsemi/lgit_imx363_onsemi_ois.o/
+cam_ir_led/cam_ir_led_dev.o/
+cam_ir_led/cam_ir_led_soc.o/
+cam_ir_led/cam_ir_led_core.o/
+
+/0              0           0     0     644     193072    `
+/27             0           0     0     644     328992    `
+/63             0           0     0     644     238664    `
+/86             0           0     0     644     277328    `
+/110            0           0     0     644     235328    `
+/133            0           0     0     644     215592    `
+/164            0           0     0     644     216792    `
+/200            0           0     0     644     232576    `
+/236            0           0     0     644     240024    `
+/268            0           0     0     644     291864    `
+/297            0           0     0     644     223336    `
+/326            0           0     0     644     256688    `
+/356            0           0     0     644     256296    `
+/389            0           0     0     644     292200    `
+/423            0           0     0     644     222784    `
+/456            0           0     0     644     243848    `
+/511            0           0     0     644     254104    `
+/540            0           0     0     644     304952    `
+/570            0           0     0     644     240776    `
+/599            0           0     0     644     277120    `
+/626            0           0     0     644     319992    `
+/654            0           0     0     644     235536    `
+/681            0           0     0     644     261456    `
+/710            0           0     0     644     277696    `
+/740            0           0     0     644     241816    `
+/769            0           0     0     644     251368    `
+/792            0           0     0     644     287088    `
+/816            0           0     0     644     222704    `
+/839            0           0     0     644     375640    `
+/885            0           0     0     644     251328    `
+/914            0           0     0     644     201928    `
+/943            0           0     0     644     198752    `

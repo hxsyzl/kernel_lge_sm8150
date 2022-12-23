@@ -1,0 +1,1 @@
+cmd_drivers/soc/qcom/rmnet_ctl/rmnet_ctl.o :=  rm -f drivers/soc/qcom/rmnet_ctl/rmnet_ctl.o; llvm-ar rcSTPD drivers/soc/qcom/rmnet_ctl/rmnet_ctl.o drivers/soc/qcom/rmnet_ctl/rmnet_ctl_client.o drivers/soc/qcom/rmnet_ctl/rmnet_ctl_mhi.o 

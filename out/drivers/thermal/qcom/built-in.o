@@ -1,0 +1,27 @@
+!<thin>
+//                                              208       `
+msm_lmh_dcvs.o/
+lmh_dbg.o/
+qti_virtual_sensor.o/
+regulator_aop_cdev.o/
+regulator_cdev.o/
+thermal_mitigation_device_service_v01.o/
+qmi_cooling.o/
+bcl_pmic5.o/
+bcl_soc.o/
+adc-tm.o/
+adc-tm-common.o/
+adc-tm5.o/
+
+/0              0           0     0     644     276600    `
+/16             0           0     0     644     151176    `
+/27             0           0     0     644     127600    `
+/49             0           0     0     644     137896    `
+/71             0           0     0     644     137000    `
+/89             0           0     0     644     8496      `
+/130            0           0     0     644     172904    `
+/145            0           0     0     644     161016    `
+/158            0           0     0     644     162256    `
+/169            0           0     0     644     167528    `
+/179            0           0     0     644     139200    `
+/196            0           0     0     644     194032    `

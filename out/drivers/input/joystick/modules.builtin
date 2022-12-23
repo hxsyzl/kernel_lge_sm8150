@@ -1,0 +1,2 @@
+kernel/drivers/input/joystick/xpad.ko
+kernel/drivers/input/joystick/iforce/iforce.ko

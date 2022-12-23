@@ -1,0 +1,3 @@
+kernel/drivers/input/misc/qpnp-power-on.ko
+kernel/drivers/input/misc/qti-haptics.ko
+kernel/drivers/input/misc/uinput.ko

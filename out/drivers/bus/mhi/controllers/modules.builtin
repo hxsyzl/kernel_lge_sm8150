@@ -1,0 +1,2 @@
+kernel/drivers/bus/mhi/controllers/mhi_qcom.ko
+kernel/drivers/bus/mhi/controllers/mhi_arch_qcom.ko

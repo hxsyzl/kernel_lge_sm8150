@@ -1,0 +1,6 @@
+kernel/techpack/audio/dsp/q6_dlkm.ko
+kernel/techpack/audio/dsp/usf_dlkm.ko
+kernel/techpack/audio/dsp/adsp_loader_dlkm.ko
+kernel/techpack/audio/dsp/q6_pdr_dlkm.ko
+kernel/techpack/audio/dsp/q6_notifier_dlkm.ko
+kernel/techpack/audio/dsp/codecs/native_dlkm.ko

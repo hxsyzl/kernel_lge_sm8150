@@ -1,0 +1,1 @@
+cmd_techpack/audio/asoc/codecs/mbhc_dlkm.o :=  rm -f techpack/audio/asoc/codecs/mbhc_dlkm.o; llvm-ar rcSTPD techpack/audio/asoc/codecs/mbhc_dlkm.o techpack/audio/asoc/codecs/wcd-mbhc-v2.o techpack/audio/asoc/codecs/wcd-mbhc-adc.o 

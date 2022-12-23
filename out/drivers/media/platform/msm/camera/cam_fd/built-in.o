@@ -1,0 +1,15 @@
+!<thin>
+//                                              160       `
+fd_hw_mgr/fd_hw/cam_fd_hw_dev.o/
+fd_hw_mgr/fd_hw/cam_fd_hw_core.o/
+fd_hw_mgr/fd_hw/cam_fd_hw_soc.o/
+fd_hw_mgr/cam_fd_hw_mgr.o/
+cam_fd_dev.o/
+cam_fd_context.o/
+
+/0              0           0     0     644     160608    `
+/33             0           0     0     644     217232    `
+/67             0           0     0     644     160232    `
+/100            0           0     0     644     305032    `
+/127            0           0     0     644     208800    `
+/141            0           0     0     644     73800     `

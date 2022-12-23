@@ -1,0 +1,112 @@
+!<thin>
+//                                              1280      `
+input.o/
+input-compat.o/
+input-mt.o/
+ff-core.o/
+ff-memless.o/
+input-leds.o/
+mousedev.o/
+evdev.o/
+keyboard/atkbd.o/
+keyboard/gpio_keys.o/
+keyboard/hall_ic.o/
+mouse/appletouch.o/
+mouse/bcm5974.o/
+mouse/psmouse-base.o/
+mouse/synaptics.o/
+mouse/focaltech.o/
+mouse/alps.o/
+mouse/byd.o/
+mouse/logips2pp.o/
+mouse/trackpoint.o/
+mouse/cypress_ps2.o/
+mouse/psmouse-smbus.o/
+mouse/synaptics_usb.o/
+joystick/iforce/iforce-ff.o/
+joystick/iforce/iforce-main.o/
+joystick/iforce/iforce-packets.o/
+joystick/iforce/iforce-usb.o/
+joystick/xpad.o/
+tablet/acecad.o/
+tablet/aiptek.o/
+tablet/gtco.o/
+tablet/hanwang.o/
+tablet/kbtab.o/
+tablet/wacom_serial4.o/
+touchscreen/of_touchscreen.o/
+touchscreen/lge/touch_core.o/
+touchscreen/lge/touch_core_sysfs.o/
+touchscreen/lge/touch_common.o/
+touchscreen/lge/touch_i2c.o/
+touchscreen/lge/touch_spi.o/
+touchscreen/lge/touch_model.o/
+touchscreen/lge/touch_notify.o/
+touchscreen/lge/module/touch_module_builtIn.o/
+touchscreen/lge/touch_hwif.o/
+touchscreen/lge/lgsic/sw42000/touch_sw42000.o/
+touchscreen/lge/lgsic/sw42000/touch_sw42000_prd.o/
+touchscreen/lge/lgsic/sw42000/touch_sw42000_abt.o/
+misc/qpnp-power-on.o/
+misc/qti-haptics.o/
+misc/uinput.o/
+misc/atmf04_f37.o/
+fingerprint/gf_spi.o/
+fingerprint/platform.o/
+fingerprint/netlink.o/
+fingerprint/gf_common.o/
+/0              0           0     0     644     297496    `
+/9              0           0     0     644     104712    `
+/25             0           0     0     644     146024    `
+/37             0           0     0     644     138736    `
+/48             0           0     0     644     146608    `
+/62             0           0     0     644     137976    `
+/76             0           0     0     644     189704    `
+/88             0           0     0     644     252072    `
+/97             0           0     0     644     206832    `
+/115            0           0     0     644     198000    `
+/137            0           0     0     644     126536    `
+/157            0           0     0     644     195120    `
+/177            0           0     0     644     183480    `
+/194            0           0     0     644     253416    `
+/216            0           0     0     644     229064    `
+/235            0           0     0     644     140888    `
+/254            0           0     0     644     255720    `
+/268            0           0     0     644     136816    `
+/281            0           0     0     644     139224    `
+/300            0           0     0     644     169384    `
+/320            0           0     0     644     157408    `
+/341            0           0     0     644     150400    `
+/364            0           0     0     644     170248    `
+/387            0           0     0     644     158704    `
+/416            0           0     0     644     170512    `
+/447            0           0     0     644     155112    `
+/481            0           0     0     644     154008    `
+/511            0           0     0     644     243368    `
+/528            0           0     0     644     158016    `
+/545            0           0     0     644     227944    `
+/562            0           0     0     644     173040    `
+/577            0           0     0     644     165664    `
+/595            0           0     0     644     156336    `
+/611            0           0     0     644     152040    `
+/635            0           0     0     644     128512    `
+/665            0           0     0     644     278672    `
+/695            0           0     0     644     284080    `
+/731            0           0     0     644     159096    `
+/763            0           0     0     644     173648    `
+/792            0           0     0     644     175064    `
+/821            0           0     0     644     165280    `
+/852            0           0     0     644     21016     `
+/884            0           0     0     644     214776    `
+/931            0           0     0     644     191880    `
+/961            0           0     0     644     462976    `
+/1008           0           0     0     644     442920    `
+/1059           0           0     0     644     261104    `
+/1110           0           0     0     644     345256    `
+/1132           0           0     0     644     255008    `
+/1152           0           0     0     644     202008    `
+/1167           0           0     0     644     327768    `
+/1186           0           0     0     644     225496    `
+/1208           0           0     0     644     135560    `
+/1232           0           0     0     644     258912    `
+/1255           0           0     0     644     138088    `

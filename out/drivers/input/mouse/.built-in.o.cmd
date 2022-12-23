@@ -1,0 +1,1 @@
+cmd_drivers/input/mouse/built-in.o :=   rm -f drivers/input/mouse/built-in.o; llvm-ar rcSTPD drivers/input/mouse/built-in.o drivers/input/mouse/appletouch.o drivers/input/mouse/bcm5974.o drivers/input/mouse/psmouse.o drivers/input/mouse/synaptics_usb.o 

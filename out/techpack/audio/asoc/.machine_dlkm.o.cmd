@@ -1,0 +1,1 @@
+cmd_techpack/audio/asoc/machine_dlkm.o :=  rm -f techpack/audio/asoc/machine_dlkm.o; llvm-ar rcSTPD techpack/audio/asoc/machine_dlkm.o techpack/audio/asoc/sa8155.o techpack/audio/asoc/sm8150.o techpack/audio/asoc/machine_815x_init.o 

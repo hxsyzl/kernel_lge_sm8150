@@ -1,0 +1,1 @@
+cmd_techpack/data/drivers/rmnet/shs/built-in.o :=   rm -f techpack/data/drivers/rmnet/shs/built-in.o; llvm-ar rcSTPD techpack/data/drivers/rmnet/shs/built-in.o techpack/data/drivers/rmnet/shs/rmnet_shs.o 

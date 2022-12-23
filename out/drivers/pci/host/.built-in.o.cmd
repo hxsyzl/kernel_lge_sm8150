@@ -1,0 +1,1 @@
+cmd_drivers/pci/host/built-in.o :=   rm -f drivers/pci/host/built-in.o; llvm-ar rcSTPD drivers/pci/host/built-in.o drivers/pci/host/pci-msm.o drivers/pci/host/pci-msm-msi.o drivers/pci/host/pci-thunder-ecam.o drivers/pci/host/pci-thunder-pem.o drivers/pci/host/pci-xgene.o 

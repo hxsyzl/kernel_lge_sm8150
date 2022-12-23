@@ -1,0 +1,1 @@
+cmd_drivers/media/usb/gspca/gspca_main.o := ld.lld -EL -maarch64linux -O2 -z noexecstack  -r -o drivers/media/usb/gspca/gspca_main.o drivers/media/usb/gspca/gspca.o drivers/media/usb/gspca/autogain_functions.o 

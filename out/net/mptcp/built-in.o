@@ -1,0 +1,31 @@
+!<thin>
+//                                              214       `
+mptcp_ctrl.o/
+mptcp_ipv4.o/
+mptcp_pm.o/
+mptcp_output.o/
+mptcp_input.o/
+mptcp_sched.o/
+mptcp_ipv6.o/
+mptcp_coupled.o/
+mptcp_olia.o/
+mptcp_wvegas.o/
+mptcp_fullmesh.o/
+mptcp_ndiffports.o/
+mptcp_binder.o/
+mptcp_rr.o/
+
+/0              0           0     0     644     558720    `
+/14             0           0     0     644     349664    `
+/28             0           0     0     644     327560    `
+/40             0           0     0     644     421728    `
+/56             0           0     0     644     458048    `
+/71             0           0     0     644     350880    `
+/86             0           0     0     644     354824    `
+/100            0           0     0     644     327016    `
+/117            0           0     0     644     328096    `
+/131            0           0     0     644     329256    `
+/147            0           0     0     644     433072    `
+/165            0           0     0     644     329808    `
+/185            0           0     0     644     366064    `
+/201            0           0     0     644     328504    `

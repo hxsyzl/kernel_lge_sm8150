@@ -1,0 +1,1 @@
+cmd_drivers/soc/qcom/memshare/built-in.o :=   rm -f drivers/soc/qcom/memshare/built-in.o; llvm-ar rcSTPD drivers/soc/qcom/memshare/built-in.o drivers/soc/qcom/memshare/heap_mem_ext_v01.o drivers/soc/qcom/memshare/msm_memshare.o 

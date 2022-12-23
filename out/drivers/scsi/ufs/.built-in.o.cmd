@@ -1,0 +1,1 @@
+cmd_drivers/scsi/ufs/built-in.o :=   rm -f drivers/scsi/ufs/built-in.o; llvm-ar rcSTPD drivers/scsi/ufs/built-in.o drivers/scsi/ufs/ufs-qcom.o drivers/scsi/ufs/ufshcd-core.o drivers/scsi/ufs/ufshcd-pltfrm.o drivers/scsi/ufs/ufs-debugfs.o drivers/scsi/ufs/ufs-qcom-debugfs.o 

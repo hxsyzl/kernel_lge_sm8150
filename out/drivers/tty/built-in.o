@@ -1,0 +1,36 @@
+!<thin>
+//                                              234       `
+tty_io.o/
+n_tty.o/
+tty_ioctl.o/
+tty_ldisc.o/
+tty_buffer.o/
+tty_port.o/
+tty_mutex.o/
+tty_ldsem.o/
+tty_baudrate.o/
+tty_jobctrl.o/
+n_null.o/
+pty.o/
+tty_audit.o/
+sysrq.o/
+serial/serial_core.o/
+serial/earlycon.o/
+serial/msm_geni_serial.o/
+/0              0           0     0     644     356432    `
+/10             0           0     0     644     256320    `
+/19             0           0     0     644     223992    `
+/32             0           0     0     644     178736    `
+/45             0           0     0     644     160472    `
+/59             0           0     0     644     190560    `
+/71             0           0     0     644     129192    `
+/84             0           0     0     644     114208    `
+/97             0           0     0     644     122048    `
+/113            0           0     0     644     165488    `
+/128            0           0     0     644     127944    `
+/138            0           0     0     644     192024    `
+/145            0           0     0     644     141600    `
+/158            0           0     0     644     266952    `
+/167            0           0     0     644     310136    `
+/189            0           0     0     644     142568    `
+/208            0           0     0     644     325544    `

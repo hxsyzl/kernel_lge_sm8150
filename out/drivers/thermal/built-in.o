@@ -1,0 +1,61 @@
+!<thin>
+//                                              534       `
+thermal_core.o/
+thermal_sysfs.o/
+thermal_helpers.o/
+thermal_hwmon.o/
+of-thermal.o/
+step_wise.o/
+user_space.o/
+gov_low_limits.o/
+cpu_cooling.o/
+devfreq_cooling.o/
+qcom-spmi-temp-alarm.o/
+qcom/msm_lmh_dcvs.o/
+qcom/lmh_dbg.o/
+qcom/qti_virtual_sensor.o/
+qcom/regulator_aop_cdev.o/
+qcom/regulator_cdev.o/
+qcom/thermal_mitigation_device_service_v01.o/
+qcom/qmi_cooling.o/
+qcom/bcl_pmic5.o/
+qcom/bcl_soc.o/
+qcom/adc-tm.o/
+qcom/adc-tm-common.o/
+qcom/adc-tm5.o/
+msm-tsens.o/
+tsens2xxx.o/
+tsens-dbg.o/
+tsens-mtc.o/
+tsens1xxx.o/
+tsens_calib.o/
+
+/0              0           0     0     644     446360    `
+/16             0           0     0     644     179384    `
+/33             0           0     0     644     139296    `
+/52             0           0     0     644     133544    `
+/69             0           0     0     644     253880    `
+/83             0           0     0     644     130912    `
+/96             0           0     0     644     121192    `
+/110            0           0     0     644     129264    `
+/128            0           0     0     644     238512    `
+/143            0           0     0     644     153952    `
+/162            0           0     0     644     146936    `
+/186            0           0     0     644     276600    `
+/207            0           0     0     644     151176    `
+/223            0           0     0     644     127600    `
+/250            0           0     0     644     137896    `
+/277            0           0     0     644     137000    `
+/300            0           0     0     644     8496      `
+/346            0           0     0     644     172904    `
+/366            0           0     0     644     161016    `
+/384            0           0     0     644     162256    `
+/400            0           0     0     644     167528    `
+/415            0           0     0     644     139200    `
+/437            0           0     0     644     194032    `
+/453            0           0     0     644     155096    `
+/466            0           0     0     644     178648    `
+/479            0           0     0     644     152448    `
+/492            0           0     0     644     136568    `
+/505            0           0     0     644     157752    `
+/518            0           0     0     644     138608    `

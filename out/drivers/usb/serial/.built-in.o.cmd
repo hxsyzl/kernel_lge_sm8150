@@ -1,0 +1,1 @@
+cmd_drivers/usb/serial/built-in.o :=   rm -f drivers/usb/serial/built-in.o; llvm-ar rcSTPD drivers/usb/serial/built-in.o drivers/usb/serial/usbserial.o drivers/usb/serial/ftdi_sio.o drivers/usb/serial/pl2303.o 

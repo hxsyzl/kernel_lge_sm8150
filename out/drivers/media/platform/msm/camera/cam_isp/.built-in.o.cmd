@@ -1,0 +1,1 @@
+cmd_drivers/media/platform/msm/camera/cam_isp/built-in.o :=   rm -f drivers/media/platform/msm/camera/cam_isp/built-in.o; llvm-ar rcSTPD drivers/media/platform/msm/camera/cam_isp/built-in.o drivers/media/platform/msm/camera/cam_isp/isp_hw_mgr/built-in.o drivers/media/platform/msm/camera/cam_isp/cam_isp_dev.o drivers/media/platform/msm/camera/cam_isp/cam_isp_context.o 

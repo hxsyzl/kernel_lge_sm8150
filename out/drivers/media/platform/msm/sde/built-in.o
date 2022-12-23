@@ -1,0 +1,34 @@
+!<thin>
+//                                              464       `
+rotator/sde_rotator_dev.o/
+rotator/sde_rotator_core.o/
+rotator/sde_rotator_base.o/
+rotator/sde_rotator_formats.o/
+rotator/sde_rotator_util.o/
+rotator/sde_rotator_io_util.o/
+rotator/sde_rotator_smmu.o/
+rotator/sde_rotator_r1_wb.o/
+rotator/sde_rotator_r1_pipe.o/
+rotator/sde_rotator_r1_ctl.o/
+rotator/sde_rotator_r1.o/
+rotator/sde_rotator_r3.o/
+rotator/sde_rotator_sync.o/
+rotator/sde_rotator_debug.o/
+rotator/sde_rotator_r1_debug.o/
+rotator/sde_rotator_r3_debug.o/
+/0              0           0     0     644     425328    `
+/27             0           0     0     644     426792    `
+/55             0           0     0     644     346528    `
+/83             0           0     0     644     26544     `
+/114            0           0     0     644     192128    `
+/142            0           0     0     644     148704    `
+/173            0           0     0     644     202320    `
+/201            0           0     0     644     181832    `
+/230            0           0     0     644     171552    `
+/261            0           0     0     644     154552    `
+/291            0           0     0     644     193528    `
+/317            0           0     0     644     359112    `
+/343            0           0     0     644     156912    `
+/371            0           0     0     644     290688    `
+/400            0           0     0     644     142480    `
+/432            0           0     0     644     152000    `

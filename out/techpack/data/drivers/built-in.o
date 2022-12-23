@@ -1,0 +1,24 @@
+!<thin>
+//                                              330       `
+rmnet/perf/rmnet_perf_config.o/
+rmnet/perf/rmnet_perf_core.o/
+rmnet/perf/rmnet_perf_opt.o/
+rmnet/perf/rmnet_perf_tcp_opt.o/
+rmnet/perf/rmnet_perf_udp_opt.o/
+rmnet/shs/rmnet_shs_config.o/
+rmnet/shs/rmnet_shs_main.o/
+rmnet/shs/rmnet_shs_wq.o/
+rmnet/shs/rmnet_shs_freq.o/
+rmnet/shs/rmnet_shs_wq_mem.o/
+rmnet/shs/rmnet_shs_wq_genl.o/
+/0              0           0     0     644     244448    `
+/32             0           0     0     644     356576    `
+/62             0           0     0     644     324976    `
+/91             0           0     0     644     293120    `
+/124            0           0     0     644     277112    `
+/157            0           0     0     644     245400    `
+/187            0           0     0     644     480784    `
+/215            0           0     0     644     453312    `
+/241            0           0     0     644     232792    `
+/269            0           0     0     644     260128    `
+/299            0           0     0     644     286120    `

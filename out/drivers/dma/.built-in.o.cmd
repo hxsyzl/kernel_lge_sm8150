@@ -1,0 +1,1 @@
+cmd_drivers/dma/built-in.o :=   rm -f drivers/dma/built-in.o; llvm-ar rcSTPD drivers/dma/built-in.o drivers/dma/dmaengine.o drivers/dma/virt-dma.o drivers/dma/of-dma.o drivers/dma/qcom/built-in.o drivers/dma/xilinx/built-in.o 

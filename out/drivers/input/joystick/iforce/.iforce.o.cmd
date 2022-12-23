@@ -1,0 +1,1 @@
+cmd_drivers/input/joystick/iforce/iforce.o :=  rm -f drivers/input/joystick/iforce/iforce.o; llvm-ar rcSTPD drivers/input/joystick/iforce/iforce.o drivers/input/joystick/iforce/iforce-ff.o drivers/input/joystick/iforce/iforce-main.o drivers/input/joystick/iforce/iforce-packets.o drivers/input/joystick/iforce/iforce-usb.o 

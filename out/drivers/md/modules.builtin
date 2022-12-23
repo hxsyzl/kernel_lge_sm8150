@@ -1,0 +1,7 @@
+kernel/drivers/md/dm-mod.ko
+kernel/drivers/md/dm-bufio.ko
+kernel/drivers/md/dm-crypt.ko
+kernel/drivers/md/dm-default-key.ko
+kernel/drivers/md/dm-snapshot.ko
+kernel/drivers/md/dm-verity.ko
+kernel/drivers/md/dm-bow.ko

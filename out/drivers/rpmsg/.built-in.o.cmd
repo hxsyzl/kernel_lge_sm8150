@@ -1,0 +1,1 @@
+cmd_drivers/rpmsg/built-in.o :=   rm -f drivers/rpmsg/built-in.o; llvm-ar rcSTPD drivers/rpmsg/built-in.o drivers/rpmsg/rpmsg_core.o drivers/rpmsg/rpmsg_char.o drivers/rpmsg/qcom_glink_native.o drivers/rpmsg/qcom_glink_smem.o drivers/rpmsg/qcom_glink_spss.o drivers/rpmsg/qcom_glink_spi.o 

@@ -1,0 +1,1 @@
+cmd_drivers/bus/mhi/core/built-in.o :=   rm -f drivers/bus/mhi/core/built-in.o; llvm-ar rcSTPD drivers/bus/mhi/core/built-in.o drivers/bus/mhi/core/mhi_init.o drivers/bus/mhi/core/mhi_main.o drivers/bus/mhi/core/mhi_pm.o drivers/bus/mhi/core/mhi_boot.o drivers/bus/mhi/core/mhi_dtr.o 

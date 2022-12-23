@@ -1,0 +1,1 @@
+cmd_drivers/iio/common/built-in.o :=   rm -f drivers/iio/common/built-in.o; llvm-ar rcSTPD drivers/iio/common/built-in.o drivers/iio/common/cros_ec_sensors/built-in.o drivers/iio/common/hid-sensors/built-in.o drivers/iio/common/ms_sensors/built-in.o drivers/iio/common/ssp_sensors/built-in.o drivers/iio/common/st_sensors/built-in.o 

@@ -1,0 +1,12 @@
+kernel/drivers/clk/qcom/clk-qcom.ko
+kernel/drivers/clk/qcom/clk-cpu-osm.ko
+kernel/drivers/clk/qcom/camcc-sm8150.ko
+kernel/drivers/clk/qcom/clk-aop-qmp.ko
+kernel/drivers/clk/qcom/clk-rpmh.ko
+kernel/drivers/clk/qcom/debugcc-sm8150.ko
+kernel/drivers/clk/qcom/dispcc-sm8150.ko
+kernel/drivers/clk/qcom/gcc-sm8150.ko
+kernel/drivers/clk/qcom/gpucc-sm8150.ko
+kernel/drivers/clk/qcom/npucc-sm8150.ko
+kernel/drivers/clk/qcom/videocc-sm8150.ko
+kernel/drivers/clk/qcom/clk-spmi-pmic-div.ko

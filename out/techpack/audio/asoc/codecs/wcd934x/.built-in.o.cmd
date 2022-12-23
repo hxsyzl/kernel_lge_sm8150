@@ -1,0 +1,1 @@
+cmd_techpack/audio/asoc/codecs/wcd934x/built-in.o :=   rm -f techpack/audio/asoc/codecs/wcd934x/built-in.o; llvm-ar rcSTPD techpack/audio/asoc/codecs/wcd934x/built-in.o techpack/audio/asoc/codecs/wcd934x/wcd934x_dlkm.o 

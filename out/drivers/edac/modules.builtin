@@ -1,0 +1,2 @@
+kernel/drivers/edac/edac_core.ko
+kernel/drivers/edac/kryo_arm64_edac.ko

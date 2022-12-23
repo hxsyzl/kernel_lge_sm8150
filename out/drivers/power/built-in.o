@@ -1,0 +1,68 @@
+!<thin>
+//                                              912       `
+reset/msm-poweroff.o/
+reset/xgene-reboot.o/
+reset/syscon-reboot.o/
+supply/power_supply_core.o/
+supply/power_supply_sysfs.o/
+supply/power_supply_leds.o/
+supply/idtp9222-charger.o/
+supply/lge/charging-ceiling.o/
+supply/lge/charging-time-v2.o/
+supply/lge/protection-battemp.o/
+supply/lge/protection-batvolt.o/
+supply/lge/protection-showcase.o/
+supply/lge/protection-usbio.o/
+supply/lge/unified-bootmode.o/
+supply/lge/unified-nodes.o/
+supply/lge/unified-sysfs.o/
+supply/lge/veneer-psy.o/
+supply/lge/veneer-uevent.o/
+supply/lge/veneer-voter.o/
+supply/qcom/qpnp-fg-gen4.o/
+supply/qcom/fg-memif.o/
+supply/qcom/fg-util.o/
+supply/qcom/fg-alg.o/
+supply/qcom/pmic-voter.o/
+supply/qcom/smb1355-charger.o/
+supply/qcom/qpnp-qnovo5.o/
+supply/qcom/battery.o/
+supply/qcom/step-chg-jeita.o/
+supply/qcom/qpnp-smb5.o/
+supply/qcom/smb5-lib.o/
+supply/qcom/storm-watch.o/
+supply/qcom/schgm-flash.o/
+supply/lge/extension-workarounds.o/
+/0              0           0     0     644     194896    `
+/22             0           0     0     644     119808    `
+/44             0           0     0     644     118992    `
+/67             0           0     0     644     227688    `
+/95             0           0     0     644     183600    `
+/124            0           0     0     644     134480    `
+/152            0           0     0     644     391864    `
+/179            0           0     0     644     111472    `
+/210            0           0     0     644     134872    `
+/241            0           0     0     644     172104    `
+/274            0           0     0     644     116280    `
+/307            0           0     0     644     110816    `
+/341            0           0     0     644     102032    `
+/372            0           0     0     644     27224     `
+/403            0           0     0     644     254072    `
+/431            0           0     0     644     119376    `
+/459            0           0     0     644     251992    `
+/484            0           0     0     644     20072     `
+/512            0           0     0     644     28952     `
+/539            0           0     0     644     591648    `
+/567            0           0     0     644     210488    `
+/591            0           0     0     644     258888    `
+/614            0           0     0     644     200952    `
+/636            0           0     0     644     126640    `
+/662            0           0     0     644     272232    `
+/693            0           0     0     644     374920    `
+/720            0           0     0     644     251360    `
+/743            0           0     0     644     179168    `
+/773            0           0     0     644     548240    `
+/798            0           0     0     644     642072    `
+/822            0           0     0     644     9392      `
+/849            0           0     0     644     185536    `
+/876            0           0     0     644     297104    `

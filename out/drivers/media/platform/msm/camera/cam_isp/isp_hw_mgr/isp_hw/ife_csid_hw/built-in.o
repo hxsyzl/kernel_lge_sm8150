@@ -1,0 +1,18 @@
+!<thin>
+//                                              164       `
+cam_csid_ppi_dev.o/
+cam_csid_ppi_core.o/
+cam_csid_ppi170.o/
+cam_ife_csid_dev.o/
+cam_ife_csid_soc.o/
+cam_ife_csid_core.o/
+cam_ife_csid17x.o/
+cam_ife_csid_lite17x.o/
+/0              0           0     0     644     130272    `
+/20             0           0     0     644     147392    `
+/41             0           0     0     644     129112    `
+/60             0           0     0     644     149144    `
+/80             0           0     0     644     140568    `
+/100            0           0     0     644     350488    `
+/121            0           0     0     644     151024    `
+/140            0           0     0     644     144496    `

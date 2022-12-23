@@ -1,0 +1,1 @@
+cmd_techpack/audio/dsp/q6_notifier_dlkm.o :=  rm -f techpack/audio/dsp/q6_notifier_dlkm.o; llvm-ar rcSTPD techpack/audio/dsp/q6_notifier_dlkm.o techpack/audio/dsp/audio_notifier.o techpack/audio/dsp/audio_ssr.o 

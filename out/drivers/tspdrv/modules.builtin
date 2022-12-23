@@ -1,0 +1,2 @@
+kernel/drivers/tspdrv/a2v/a2v_if.ko
+kernel/drivers/tspdrv/dw7800/tspdrv.ko

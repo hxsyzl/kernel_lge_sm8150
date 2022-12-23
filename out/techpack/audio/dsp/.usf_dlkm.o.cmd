@@ -1,0 +1,1 @@
+cmd_techpack/audio/dsp/usf_dlkm.o :=  rm -f techpack/audio/dsp/usf_dlkm.o; llvm-ar rcSTPD techpack/audio/dsp/usf_dlkm.o techpack/audio/dsp/usf.o techpack/audio/dsp/usfcdev.o techpack/audio/dsp/q6usm.o 

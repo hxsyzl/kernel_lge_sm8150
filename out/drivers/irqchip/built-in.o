@@ -1,0 +1,28 @@
+!<thin>
+//                                              236       `
+irqchip.o/
+irq-gic.o/
+irq-gic-common.o/
+irq-gic-v2m.o/
+irq-gic-v3.o/
+irq-gic-v3-its.o/
+irq-gic-v3-its-pci-msi.o/
+irq-gic-v3-its-platform-msi.o/
+irq-gic-v4.o/
+irq-partition-percpu.o/
+msm_show_resume_irq.o/
+qcom/pdc.o/
+qcom/pdc-sm8150.o/
+/0              0           0     0     644     4672      `
+/11             0           0     0     644     243624    `
+/22             0           0     0     644     20344     `
+/40             0           0     0     644     168168    `
+/55             0           0     0     644     265808    `
+/69             0           0     0     644     319840    `
+/87             0           0     0     644     148800    `
+/113            0           0     0     644     131816    `
+/144            0           0     0     644     79648     `
+/158            0           0     0     644     142688    `
+/182            0           0     0     644     23960     `
+/205            0           0     0     644     217016    `
+/217            0           0     0     644     101080    `

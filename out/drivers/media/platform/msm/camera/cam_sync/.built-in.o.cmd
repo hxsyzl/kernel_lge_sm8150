@@ -1,0 +1,1 @@
+cmd_drivers/media/platform/msm/camera/cam_sync/built-in.o :=   rm -f drivers/media/platform/msm/camera/cam_sync/built-in.o; llvm-ar rcSTPD drivers/media/platform/msm/camera/cam_sync/built-in.o drivers/media/platform/msm/camera/cam_sync/cam_sync.o drivers/media/platform/msm/camera/cam_sync/cam_sync_util.o 

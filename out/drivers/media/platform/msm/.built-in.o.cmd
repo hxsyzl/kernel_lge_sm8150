@@ -1,0 +1,1 @@
+cmd_drivers/media/platform/msm/built-in.o :=   rm -f drivers/media/platform/msm/built-in.o; llvm-ar rcSTPD drivers/media/platform/msm/built-in.o drivers/media/platform/msm/sde/built-in.o drivers/media/platform/msm/npu/built-in.o drivers/media/platform/msm/vidc/built-in.o drivers/media/platform/msm/camera/built-in.o drivers/media/platform/msm/broadcast/built-in.o 

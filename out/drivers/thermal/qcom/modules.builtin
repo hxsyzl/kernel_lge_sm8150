@@ -1,0 +1,3 @@
+kernel/drivers/thermal/qcom/adc-tm.ko
+kernel/drivers/thermal/qcom/adc-tm-common.ko
+kernel/drivers/thermal/qcom/adc-tm5.ko

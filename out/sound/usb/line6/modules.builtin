@@ -1,0 +1,5 @@
+kernel/sound/usb/line6/snd-usb-line6.ko
+kernel/sound/usb/line6/snd-usb-pod.ko
+kernel/sound/usb/line6/snd-usb-podhd.ko
+kernel/sound/usb/line6/snd-usb-toneport.ko
+kernel/sound/usb/line6/snd-usb-variax.ko

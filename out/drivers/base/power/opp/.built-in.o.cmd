@@ -1,0 +1,1 @@
+cmd_drivers/base/power/opp/built-in.o :=   rm -f drivers/base/power/opp/built-in.o; llvm-ar rcSTPD drivers/base/power/opp/built-in.o drivers/base/power/opp/core.o drivers/base/power/opp/cpu.o drivers/base/power/opp/of.o drivers/base/power/opp/debugfs.o 

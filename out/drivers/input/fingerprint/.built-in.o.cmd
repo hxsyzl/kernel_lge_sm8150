@@ -1,0 +1,1 @@
+cmd_drivers/input/fingerprint/built-in.o :=   rm -f drivers/input/fingerprint/built-in.o; llvm-ar rcSTPD drivers/input/fingerprint/built-in.o drivers/input/fingerprint/gf_spi.o drivers/input/fingerprint/platform.o drivers/input/fingerprint/netlink.o drivers/input/fingerprint/gf_common.o 

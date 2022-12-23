@@ -1,0 +1,2 @@
+kernel/drivers/bus/mhi/devices/mhi_netdev.ko
+kernel/drivers/bus/mhi/devices/mhi_uci.ko

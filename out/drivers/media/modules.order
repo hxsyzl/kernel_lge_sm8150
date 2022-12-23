@@ -1,0 +1,2 @@
+kernel/drivers/media/rc/msm-geni-ir.ko
+kernel/drivers/media/usb/gspca/gspca_main.ko

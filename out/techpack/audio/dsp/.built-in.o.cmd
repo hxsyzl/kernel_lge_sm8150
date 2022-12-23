@@ -1,0 +1,1 @@
+cmd_techpack/audio/dsp/built-in.o :=   rm -f techpack/audio/dsp/built-in.o; llvm-ar rcSTPD techpack/audio/dsp/built-in.o techpack/audio/dsp/codecs/built-in.o techpack/audio/dsp/q6_dlkm.o techpack/audio/dsp/usf_dlkm.o techpack/audio/dsp/adsp_loader_dlkm.o techpack/audio/dsp/q6_pdr_dlkm.o techpack/audio/dsp/q6_notifier_dlkm.o 

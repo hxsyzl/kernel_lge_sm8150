@@ -1,0 +1,1 @@
+cmd_drivers/platform/msm/seemp_core/seemp_core.o :=  rm -f drivers/platform/msm/seemp_core/seemp_core.o; llvm-ar rcSTPD drivers/platform/msm/seemp_core/seemp_core.o drivers/platform/msm/seemp_core/seemp_logk.o drivers/platform/msm/seemp_core/seemp_ringbuf.o drivers/platform/msm/seemp_core/seemp_event_encoder.o 

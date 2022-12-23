@@ -1,0 +1,4 @@
+kernel/drivers/spmi/simulator/spmi-sim.ko
+kernel/drivers/spmi/simulator/pm8150-sim.ko
+kernel/drivers/spmi/simulator/pm8150b-sim.ko
+kernel/drivers/spmi/simulator/pm8150l-sim.ko

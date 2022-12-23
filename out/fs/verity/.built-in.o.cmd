@@ -1,0 +1,1 @@
+cmd_fs/verity/built-in.o :=   rm -f fs/verity/built-in.o; llvm-ar rcSTPD fs/verity/built-in.o fs/verity/enable.o fs/verity/hash_algs.o fs/verity/init.o fs/verity/measure.o fs/verity/open.o fs/verity/read_metadata.o fs/verity/verify.o fs/verity/signature.o 

@@ -1,0 +1,33 @@
+!<thin>
+//                                              284       `
+src/broadcast_fc8080_drv_if.o/
+src/broadcast_fc8080.o/
+src/tdmb_tunerbbdrv_fc8080.o/
+src/bbm.o/
+src/fc8080_bb.o/
+src/fc8080_demux.o/
+src/fc8080_i2c.o/
+src/fc8080_isr.o/
+src/fc8080_ppi.o/
+src/fc8080_spi.o/
+src/fc8080_tun.o/
+src/fci_hal.o/
+src/fci_oal.o/
+src/fci_tun.o/
+src/fci_hpi.o/
+
+/0              0           0     0     644     21744     `
+/31             0           0     0     644     208096    `
+/55             0           0     0     644     47760     `
+/85             0           0     0     644     27240     `
+/96             0           0     0     644     27960     `
+/113            0           0     0     644     16112     `
+/133            0           0     0     644     12120     `
+/151            0           0     0     644     9016      `
+/169            0           0     0     644     18720     `
+/187            0           0     0     644     147056    `
+/205            0           0     0     644     32696     `
+/223            0           0     0     644     13936     `
+/238            0           0     0     644     6840      `
+/253            0           0     0     644     9864      `
+/268            0           0     0     644     5680      `

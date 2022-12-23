@@ -1,0 +1,40 @@
+!<thin>
+//                                              272       `
+kgsl.o/
+kgsl_trace.o/
+kgsl_drawobj.o/
+kgsl_ioctl.o/
+kgsl_sharedmem.o/
+kgsl_pwrctrl.o/
+kgsl_pwrscale.o/
+kgsl_mmu.o/
+kgsl_snapshot.o/
+kgsl_events.o/
+kgsl_pool.o/
+kgsl_gmu_core.o/
+kgsl_gmu.o/
+kgsl_rgmu.o/
+kgsl_hfi.o/
+kgsl_iommu.o/
+kgsl_debugfs.o/
+kgsl_sync.o/
+kgsl_compat.o/
+/0              0           0     0     644     545624    `
+/8              0           0     0     644     589488    `
+/22             0           0     0     644     227584    `
+/38             0           0     0     644     165528    `
+/52             0           0     0     644     258360    `
+/70             0           0     0     644     389664    `
+/86             0           0     0     644     228408    `
+/103            0           0     0     644     215584    `
+/115            0           0     0     644     248512    `
+/132            0           0     0     644     193560    `
+/147            0           0     0     644     161040    `
+/160            0           0     0     644     207280    `
+/177            0           0     0     644     301872    `
+/189            0           0     0     644     207768    `
+/202            0           0     0     644     232192    `
+/214            0           0     0     644     351064    `
+/228            0           0     0     644     201272    `
+/244            0           0     0     644     216424    `
+/257            0           0     0     644     177008    `

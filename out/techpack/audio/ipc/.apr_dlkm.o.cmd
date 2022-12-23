@@ -1,0 +1,1 @@
+cmd_techpack/audio/ipc/apr_dlkm.o :=  rm -f techpack/audio/ipc/apr_dlkm.o; llvm-ar rcSTPD techpack/audio/ipc/apr_dlkm.o techpack/audio/ipc/apr.o techpack/audio/ipc/apr_v2.o techpack/audio/ipc/apr_tal_rpmsg.o 

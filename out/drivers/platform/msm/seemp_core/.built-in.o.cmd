@@ -1,0 +1,1 @@
+cmd_drivers/platform/msm/seemp_core/built-in.o :=   rm -f drivers/platform/msm/seemp_core/built-in.o; llvm-ar rcSTPD drivers/platform/msm/seemp_core/built-in.o drivers/platform/msm/seemp_core/seemp_core.o 

@@ -1,0 +1,1 @@
+cmd_drivers/input/touchscreen/lge/lgsic/built-in.o :=   rm -f drivers/input/touchscreen/lge/lgsic/built-in.o; llvm-ar rcSTPD drivers/input/touchscreen/lge/lgsic/built-in.o drivers/input/touchscreen/lge/lgsic/sw42000/built-in.o 

@@ -1,0 +1,1 @@
+cmd_drivers/media/platform/msm/broadcast/built-in.o :=   rm -f drivers/media/platform/msm/broadcast/built-in.o; llvm-ar rcSTPD drivers/media/platform/msm/broadcast/built-in.o drivers/media/platform/msm/broadcast/tspp.o 

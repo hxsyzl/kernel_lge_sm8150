@@ -1,0 +1,1 @@
+cmd_drivers/platform/msm/gsi/built-in.o :=   rm -f drivers/platform/msm/gsi/built-in.o; llvm-ar rcSTPD drivers/platform/msm/gsi/built-in.o drivers/platform/msm/gsi/gsi.o drivers/platform/msm/gsi/gsidbg.o 

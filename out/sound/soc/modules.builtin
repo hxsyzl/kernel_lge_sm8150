@@ -1,0 +1,2 @@
+kernel/sound/soc/snd-soc-core.ko
+kernel/sound/soc/codecs/snd-soc-hdmi-codec.ko

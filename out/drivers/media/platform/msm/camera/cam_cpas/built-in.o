@@ -1,0 +1,12 @@
+!<thin>
+//                                              104       `
+cpas_top/cam_cpastop_hw.o/
+camss_top/cam_camsstop_hw.o/
+cam_cpas_soc.o/
+cam_cpas_intf.o/
+cam_cpas_hw.o/
+/0              0           0     0     644     197504    `
+/27             0           0     0     644     133656    `
+/56             0           0     0     644     152936    `
+/72             0           0     0     644     238152    `
+/89             0           0     0     644     240384    `

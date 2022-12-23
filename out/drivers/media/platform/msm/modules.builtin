@@ -1,0 +1,5 @@
+kernel/drivers/media/platform/msm/broadcast/tspp.ko
+kernel/drivers/media/platform/msm/npu/msm_npu.ko
+kernel/drivers/media/platform/msm/vidc/msm-vidc.ko
+kernel/drivers/media/platform/msm/vidc/governors/msm-vidc-dyn-gov.ko
+kernel/drivers/media/platform/msm/vidc/governors/msm-vidc-ar50-dyn-gov.ko
