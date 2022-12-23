@@ -23,7 +23,6 @@
 #include <linux/extcon.h>
 #include <linux/soc/qcom/fsa4480-i2c.h>
 
-#include <drm/drm_client.h>
 #include "sde_connector.h"
 
 #include "msm_drv.h"
@@ -166,8 +165,6 @@ static const struct of_device_id dp_dt_match[] = {
 	{.compatible = "qcom,dp-display"},
 	{}
 };
-
-static void dp_display_update_hdcp_info(struct dp_display_private *dp);
 
 static inline bool dp_display_is_hdcp_enabled(struct dp_display_private *dp)
 {
@@ -782,14 +779,6 @@ static int dp_display_send_hpd_notification(struct dp_display_private *dp)
 		dp->dp_display.is_sst_connected = hpd;
 	else
 		dp->dp_display.is_sst_connected = false;
-
-	if (!dp->dp_display.is_bootsplash_en
-		&& is_drm_bootsplash_enabled(dp->dp_display.drm_dev->dev)
-		&& !bootsplash_count) {
-		dp->dp_display.is_bootsplash_en = true;
-		bootsplash_count++;
-		drm_client_dev_register(dp->dp_display.drm_dev);
-	}
 
 	reinit_completion(&dp->notification_comp);
 #if IS_ENABLED(CONFIG_LGE_COVER_DISPLAY) || IS_ENABLED(CONFIG_LGE_DUAL_SCREEN)
@@ -1909,7 +1898,6 @@ error_ctrl:
 error_panel:
 	dp_link_put(dp->link);
 error_link:
-	dp->aux->drm_aux_deregister(dp->aux);
 	dp_aux_put(dp->aux);
 error_aux:
 	dp_power_put(dp->power);
