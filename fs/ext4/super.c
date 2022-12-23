@@ -5067,10 +5067,17 @@ static int ext4_commit_super(struct super_block *sb, int sync)
 	struct buffer_head *sbh = EXT4_SB(sb)->s_sbh;
 	int error = 0;
 
-	if (!sbh)
-		return -EINVAL;
-	if (block_device_ejected(sb))
-		return -ENODEV;
+#ifdef CONFIG_MACH_LGE
+	if (es && (sb->s_flags & MS_RDONLY)) {
+		if (VERITY_BLOCK(es->s_volume_name))
+		 printk("EXT4-fs : skipping %s for read only verity block(%s)\n",
+				__func__, es->s_volume_name);
+		 return error;
+	}
+#endif
+
+	if (!sbh || block_device_ejected(sb))
+		return error;
 
 #ifdef CONFIG_MACH_LGE
 	if (es && (sb->s_flags & MS_RDONLY)) {
