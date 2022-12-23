@@ -407,8 +407,6 @@ static inline bool ufshcd_is_valid_pm_lvl(int lvl)
 
 static struct ufs_dev_fix ufs_fixups[] = {
 	/* UFS cards deviations table */
-	UFS_FIX(UFS_VENDOR_MICRON, UFS_ANY_MODEL,
-		UFS_DEVICE_QUIRK_DELAY_BEFORE_LPM),
 #ifdef CONFIG_MACH_LGE
 	/* Toshiba recommend that we should not use FASTAUTO in Toshiba-UFS-Gen3.
 	 */
@@ -434,6 +432,10 @@ static struct ufs_dev_fix ufs_fixups[] = {
 		UFS_DEVICE_QUIRK_PA_TACTIVATE),
 	UFS_FIX(UFS_VENDOR_TOSHIBA, "THGLF2G9D8KBADG",
 		UFS_DEVICE_QUIRK_PA_TACTIVATE),
+#ifdef CONFIG_LGE_IOSCHED_EXTENSION
+	UFS_FIX(UFS_VENDOR_TOSHIBA, UFS_ANY_MODEL,
+		UFS_DEVICE_QUIRK_CMD_ORDERED),
+#endif
 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL, UFS_DEVICE_NO_VCCQ),
 #ifdef CONFIG_MACH_LGE
 	UFS_FIX(UFS_ANY_VENDOR, UFS_ANY_MODEL,
@@ -3604,6 +3606,16 @@ static int ufshcd_comp_scsi_upiu(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
 	if (likely(lrbp->cmd)) {
 		ret = ufshcd_prepare_req_desc_hdr(hba, lrbp,
 				&upiu_flags, lrbp->cmd->sc_data_direction);
+
+#ifdef CONFIG_LGE_IOSCHED_EXTENSION
+		if (hba->dev_info.quirks & UFS_DEVICE_QUIRK_CMD_ORDERED) {
+			if ( (req_op(lrbp->cmd->request) == REQ_OP_WRITE) &&
+				 (lrbp->cmd->request->bio) &&
+				 (lrbp->cmd->request->bio->bi_excontrol & REQ_EX_ORDERED)) {
+				upiu_flags |= UPIU_TASK_ATTR_ORDERED;
+			}
+		}
+#endif
 
 		ufshcd_prepare_utp_scsi_cmd_upiu(lrbp, upiu_flags);
 	} else {

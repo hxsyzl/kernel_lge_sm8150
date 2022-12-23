@@ -153,6 +153,12 @@ config UFSDBG_TUNABLES
 	---help---
 	This Feature adds debug fs nodes for ufs tunables
 
+config LGE_IOSCHED_EXTENSION
+	bool "extension I/O schedule"
+	default y
+	help
+	  for extension scheduling for I/O
+
 config UFSDBG_SYSFS_COMMON
 	bool "UFS SYSFS COMMON"
 	depends on SCSI_UFSHCD && DEBUG_FS
