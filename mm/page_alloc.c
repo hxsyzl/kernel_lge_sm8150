@@ -1844,10 +1844,9 @@ static inline bool check_pcp_refill(struct page *page)
 {
 	return false;
 }
-
 static inline bool check_new_pcp(struct page *page)
 {
-	return IS_ENABLED(CONFIG_DEBUG_VM) ? check_new_page(page) : false;
+	return false;
 }
 
 static bool check_new_pages(struct page *page, unsigned int order)
