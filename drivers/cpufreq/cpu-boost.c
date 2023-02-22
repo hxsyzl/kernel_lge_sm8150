@@ -132,7 +132,7 @@ static bool sub_boost_enabled = false;
 static unsigned int prec_boost_ms = 0;
 static unsigned int boost_step = 0;
 
-static struct work_struct input_boost_multi_step_work;
+static struct kthread_work input_boost_multi_step_work;
 
 static int set_sub_boost_freq(const char *buf, const struct kernel_param *kp)
 {
@@ -308,7 +308,7 @@ static void do_input_boost(struct kthread_work *work)
 	schedule_delayed_work(&input_boost_rem, msecs_to_jiffies(input_boost_ms));
 }
 
-static void do_input_boost_multi_step(struct work_struct *work)
+static void do_input_boost_multi_step(struct kthread_work *work)
 {
 	unsigned int i, ret;
 	struct cpu_sync *i_sync_info;
@@ -364,7 +364,7 @@ static void do_input_boost_multi_step(struct work_struct *work)
 		}
 	}
 
-	queue_delayed_work(cpu_boost_wq, &input_boost_rem,
+	schedule_delayed_work(&input_boost_rem,
 					msecs_to_jiffies(input_boost_ms));
 }
 
@@ -381,10 +381,10 @@ static void cpuboost_input_event(struct input_handle *handle,
 		if (now - last_input_time < MIN_INPUT_INTERVAL_US)
 			return;
 
-		if (work_pending(&input_boost_multi_step_work))
+		if (queuing_blocked(&cpu_boost_worker, &input_boost_multi_step_work))
 			return;
 
-		queue_work(cpu_boost_wq, &input_boost_multi_step_work);
+		kthread_queue_work(&cpu_boost_worker, &input_boost_multi_step_work);
 		last_input_time = ktime_to_us(ktime_get());
 		return;
 	}
@@ -504,7 +504,7 @@ static int cpu_boost_init(void)
 
 	kthread_init_work(&input_boost_work, do_input_boost);
 	INIT_DELAYED_WORK(&input_boost_rem, do_input_boost_rem);
-	INIT_WORK(&input_boost_multi_step_work, do_input_boost_multi_step);
+	kthread_init_work(&input_boost_multi_step_work, do_input_boost_multi_step);
 
 	for_each_possible_cpu(cpu) {
 		s = &per_cpu(sync_info, cpu);
