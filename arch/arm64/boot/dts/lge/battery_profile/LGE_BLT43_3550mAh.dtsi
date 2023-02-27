@@ -14,6 +14,15 @@ qcom,LGE_BLT43_3550mAh {
 	qcom,rslow-low-coeffs = <0x6f 0x14 0x35 0x03>;
 	qcom,checksum = <0x2F3C>;
 	qcom,gui-version = "PM855GUI - 1.0.0.13";
+	/* Tweak SOC curve to be more linear and monotonic */
+	/* necessary for linearize-soc, like TCSS */
+	qcom,hold-soc-while-full;
+	/* scale MSOC with delta SOC after 100% */
+	qcom,linearize-soc;
+	/* scale SSOC with chg term current >= 90% to avoid jumps */
+	qcom,tcss-enable;
+	/* scale SSOC with BSOC to mitigate jumps */
+	qcom,bass-enable;
 	qcom,fg-profile-data = [
 		 09 00 AA EA
 		 DC D4 12 00

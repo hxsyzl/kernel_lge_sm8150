@@ -13,6 +13,15 @@ qcom,LGE_BLT42_Tocad_4000mAh {
 	qcom,rslow-low-coeffs = <0xd8 0x14 0xfb 0x05>;
 	qcom,checksum = <0x31EB>;
 	qcom,gui-version = "PM855GUI - 1.0.0.13";
+	/* Tweak SOC curve to be more linear and monotonic */
+	/* necessary for linearize-soc, like TCSS */
+	qcom,hold-soc-while-full;
+	/* scale MSOC with delta SOC after 100% */
+	qcom,linearize-soc;
+	/* scale SSOC with chg term current >= 90% to avoid jumps */
+	qcom,tcss-enable;
+	/* scale SSOC with BSOC to mitigate jumps */
+	qcom,bass-enable;
 	qcom,fg-profile-data = [
 		 09 00 FF E3
 		 F1 07 96 DA
