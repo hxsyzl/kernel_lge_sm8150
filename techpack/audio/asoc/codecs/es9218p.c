@@ -3445,7 +3445,7 @@ static void es9218_shutdown(struct snd_pcm_substream *substream,
 #if defined(CONFIG_ARCH_SM8150)
     req.type = PM_QOS_REQ_AFFINE_CORES;
     req.irq = -1;
-    atomic_set(&req.cpus_affine, *cpumask_bits(cpu_present_mask));
+    req.cpus_affine = *cpumask_bits(cpu_present_mask);
 #endif
 
 #ifdef ES9218P_DEBUG
