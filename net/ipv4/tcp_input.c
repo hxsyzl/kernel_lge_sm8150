@@ -5442,7 +5442,7 @@ static void __tcp_ack_snd_check(struct sock *sk, int ofo_possible)
 	      * (tcp_recvmsg() will send ACK otherwise). Or...
 	      */
 #ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
-	     tp->ops->__select_window(sk) >= tp->rcv_wnd) ||
+	     tp->ops->__select_window(sk) >= tp->rcv_wnd)) ||
 #else
 	       __tcp_select_window(sk) >= tp->rcv_wnd)) ||
 #endif
