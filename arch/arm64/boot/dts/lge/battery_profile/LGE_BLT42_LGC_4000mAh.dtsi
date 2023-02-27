@@ -12,6 +12,15 @@ qcom,LGE_BLT42_LGC_4000mAh {
 	qcom,rslow-normal-coeffs = <0xdb 0xfd 0x7b 0x12>;
 	qcom,rslow-low-coeffs = <0xfc 0x0d 0xe2 0x0b>;
 	qcom,checksum = <0xF714>;
+	/* Tweak SOC curve to be more linear and monotonic */
+	/* necessary for linearize-soc, like TCSS */
+	qcom,hold-soc-while-full;
+	/* scale MSOC with delta SOC after 100% */
+	qcom,linearize-soc;
+	/* scale SSOC with chg term current >= 90% to avoid jumps */
+	qcom,tcss-enable;
+	/* scale SSOC with BSOC to mitigate jumps */
+	qcom,bass-enable;
 	qcom,fg-profile-data = [
 		 09 00 DF E3
 		 8C DC 11 E3
