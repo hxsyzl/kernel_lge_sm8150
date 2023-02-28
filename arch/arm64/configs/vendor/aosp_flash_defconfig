@@ -6076,6 +6076,7 @@ CONFIG_DEFAULT_SECURITY="selinux"
 # Memory initialization
 #
 <<<<<<< HEAD
+<<<<<<< HEAD
 CONFIG_INIT_STACK_NONE=y
 # CONFIG_INIT_STACK_ALL is not set
 =======
@@ -6083,6 +6084,11 @@ CONFIG_INIT_STACK_NONE=y
 # CONFIG_INIT_STACK_ALL_PATTERN is not set
 CONFIG_INIT_STACK_ALL_ZERO=y
 >>>>>>> bdd880e1359b (Makefile: reset inlining optimizations slightly)
+=======
+CONFIG_INIT_STACK_NONE=y
+# CONFIG_INIT_STACK_ALL_PATTERN is not set
+# CONFIG_INIT_STACK_ALL_ZERO is not set
+>>>>>>> 1c962ff4e5f6 (Revert "Makefile: reset inlining optimizations slightly")
 # CONFIG_INIT_ON_ALLOC_DEFAULT_ON is not set
 # CONFIG_INIT_ON_FREE_DEFAULT_ON is not set
 CONFIG_CRYPTO=y
