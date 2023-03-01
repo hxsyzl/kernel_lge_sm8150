@@ -507,16 +507,6 @@ static void _poll_monitor(struct lge_monitor_thermal_data *monitor_dd)
 		if (cdev->id == 0)
 			break;
 	}
-
-	list_for_each_entry_rcu(cluster, &cluster_head, list) {
-		pr_info("[TM][C] Cluster->id[%d], cur_freq:%u, min_freq:%u, max_freq:%u,"
-				" max_mitigated_freq:%u\n",
-				cluster->id,
-				cluster->cur_freq,
-				cluster->min_freq,
-				cluster->max_freq,
-				cluster->max_mitigated_freq);
-	}
 }
 
 static void poll_monitor_work(struct work_struct *work)
