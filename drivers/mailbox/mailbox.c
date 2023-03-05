@@ -92,7 +92,6 @@ static void msg_submit(struct mbox_chan *chan)
 {
 	unsigned long flags;
 	int err = 0;
-	unsigned long flags;
 
 	/*
 	 * If the controller returns -EAGAIN, then it means, our spinlock
