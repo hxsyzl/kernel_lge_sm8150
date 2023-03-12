@@ -454,7 +454,7 @@ static int msm_pcm_mmap_fd(struct snd_pcm_substream *substream,
 	int rc = 0;
 
 	if (!substream->runtime) {
-		pr_err("%s substream runtime not found\n", __func__);
+		pr_debug("%s substream runtime not found\n", __func__);
 		return -EFAULT;
 	}
 

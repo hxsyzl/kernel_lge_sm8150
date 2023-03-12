@@ -1242,7 +1242,7 @@ static int msm_pcm_adsp_stream_cmd_put(struct snd_kcontrol *kcontrol,
 	}
 
 	if (!substream->runtime) {
-		pr_err("%s substream runtime not found\n", __func__);
+		pr_debug("%s substream runtime not found\n", __func__);
 		ret = -EINVAL;
 		goto done;
 	}
@@ -1486,7 +1486,7 @@ static int msm_pcm_volume_ctl_put(struct snd_kcontrol *kcontrol,
 		return -ENODEV;
 	}
 	if (!substream->runtime) {
-		pr_err("%s substream runtime not found\n", __func__);
+		pr_debug("%s substream runtime not found\n", __func__);
 		return 0;
 	}
 
@@ -1599,7 +1599,7 @@ static int msm_pcm_compress_ctl_put(struct snd_kcontrol *kcontrol,
 		return -EINVAL;
 	}
 	if (!substream->runtime) {
-		pr_err("%s substream runtime not found\n", __func__);
+		pr_debug("%s substream runtime not found\n", __func__);
 		return 0;
 	}
 	mutex_lock(&pdata->lock);
@@ -1985,7 +1985,7 @@ static int msm_pcm_path_latency_ctl_get(struct snd_kcontrol *kcontrol,
 		return -EINVAL;
 	}
 	if (!substream->runtime) {
-		pr_err("%s substream runtime not found\n", __func__);
+		pr_debug("%s substream runtime not found\n", __func__);
 		return -EINVAL;
 	}
 
@@ -2078,7 +2078,7 @@ static int msm_pcm_qtimer_ctl_put(struct snd_kcontrol *kcontrol,
 	}
 
 	if (!substream->runtime) {
-		pr_err("%s substream runtime not found\n", __func__);
+		pr_debug("%s substream runtime not found\n", __func__);
 		return 0;
 	}
 
