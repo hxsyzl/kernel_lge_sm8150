@@ -574,9 +574,9 @@
 				compatible = "android,fstab";
 				vendor {
 					compatible = "android,vendor";
-					dev = "/dev/block/platform/soc/8804000.sdhci/by-name/vendor";
-					type = "ext4";
-					mnt_flags = "ro,barrier=1,discard";
+					dev = "/dev/block/platform/soc/8804000.ufshc/by-name/vendor";
+					type = "erofs";
+					mnt_flags = "ro";
 					fsmgr_flags = "wait,slotselect,avb";
 					status = "ok";
 				};

@@ -19,16 +19,16 @@
 			vendor {
 				compatible = "android,vendor";
 				dev = "/dev/block/platform/soc/1d84000.ufshc/by-name/vendor";
-				type = "ext4";
-				mnt_flags = "ro,barrier=1,discard";
+				type = "erofs";
+				mnt_flags = "ro";
 				fsmgr_flags = "wait,slotselect,avb";
 				status = "ok";
 			};
 			product {
 				compatible = "android,product";
 				dev = "/dev/block/platform/soc/1d84000.ufshc/by-name/product";
-				type = "ext4";
-				mnt_flags = "ro,nodev,barrier=1,errors=continue";
+				type = "erofs";
+				mnt_flags = "ro";
 				fsmgr_flags = "wait,slotselect,avb";
 				status = "ok";
 			};
