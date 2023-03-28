@@ -387,7 +387,6 @@ static DEVICE_ATTR(disable, S_IWUSR | S_IRUSR, lge_monitor_disable_get,
 static void _poll_monitor(struct lge_monitor_thermal_data *monitor_dd)
 {
 	struct thermal_cooling_device *cdev = NULL;
-	struct sched_cluster *cluster;
 	unsigned long state;
 	int ret;
 	union power_supply_propval prop = {0, };
