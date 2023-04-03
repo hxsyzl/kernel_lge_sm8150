@@ -852,47 +852,33 @@ config FORCE_ALLOC_FROM_DMA_ZONE
 
 	  If unsure, say "n".
 
-config CMA_PINPAGE_MIGRATION
-	bool "CMA pinned page migration (EXPERIMENTAL)"
-	default n
-	help
-	  Turns on cma page migration for pinned page.
-
 config LGE_BDI_STRICTLIMIT_DIRTY
 	bool "limit dirty ratio strictly"
 	default y
 	help
 	  limit dirty page ratio strictly
 
-config MIGRATE_HIGHORDER
-	bool "Enable migrate highorder"
-	default n
-	select ALLOC_BUFFERS_IN_4K_CHUNKS
+# multi-gen LRU {
+config LRU_GEN
+	bool "Multi-Gen LRU"
+	depends on MMU
+	# the following options can use up the spare bits in page flags
+	depends on !MAXSMP && (64BIT || !SPARSEMEM || SPARSEMEM_VMEMMAP)
 	help
-	  This option enables migratetype highorder.
-	  It creates the specific reserved pool for 4 and more order allocation    .
-	  This is helpful fragmentation and allocation success rate
-	  that system has too much high order allocation.
+	  A high performance LRU implementation to overcommit memory.
 
-config HIGHORDER_PAGES
-	int "Set migrate highorder pool size (pages)"
-	depends on MIGRATE_HIGHORDER
-	default 0
+config LRU_GEN_ENABLED
+	bool "Enable by default"
+	depends on LRU_GEN
 	help
-	  Set the reserved size for migrate highorder.
-	  Normally, android system needs about 10% of total memory.
-	  (Thus, reserve 10% of memory if set to 0)
-	  Please check ION memory usage in your system.
-	  And, set this size about minimum (ION + extra) some memory.
+	  This option enables the multi-gen LRU by default.
 
-config HSWAP
-	bool "Enable Hybrid SWAP"
-	depends on SWAP && ZRAM && PROCESS_RECLAIM
-	default n
+config LRU_GEN_STATS
+	bool "Full stats for debugging"
+	depends on LRU_GEN
 	help
-		This config supports multiple swap files which are based on different
-		block devices such as eMMC, UFS, or ZRAM.
-		kswapd use high priority swap file.
-		lowmemorykiller and direct reclaim module use low priority swap file.
-		lowmemorykiller reclaims pages of victim process instead kill the process.
+	  Do not enable this option unless you plan to look at historical stats
+	  from evicted generations for debugging purpose.
+	  This option has a per-memcg and per-node memory overhead.
+# }
 

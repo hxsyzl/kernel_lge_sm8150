@@ -113,13 +113,8 @@ static void process_one_prefetch(struct ion_heap *sys_heap,
 	memset(&buffer, 0, sizeof(struct ion_buffer));
 	buffer.heap = sys_heap;
 
-#ifndef CONFIG_MIGRATE_HIGHORDER
 	ret = sys_heap->ops->allocate(sys_heap, &buffer, info->size,
 					buffer.flags);
-#else
-	ret = sys_heap->ops->allocate(sys_heap, &buffer, info->size,
-					info->vmid);
-#endif
 	if (ret) {
 		pr_debug("%s: Failed to prefetch %#llx, ret = %d\n",
 			 __func__, info->size, ret);

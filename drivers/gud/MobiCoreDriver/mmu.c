@@ -476,18 +476,9 @@ struct tee_mmu *tee_mmu_create(struct mm_struct *mm,
 
 			/* Buffer was allocated in user space */
 			down_read(&mm->mmap_sem);
-			/*
-			 * Always try to map read/write from a Linux PoV, so
-			 * Linux creates (page faults) the underlying pages if
-			 * missing.
-			 */
-			gup_ret = get_user_pages_foll_cma(NULL, mm, (uintptr_t)reader,
-					nr_pages, 1, 0, pages,
-					NULL);
+			gup_ret = gup_local_repeat(mm, (uintptr_t)reader, nr_pages, 1, pages);
 			if ((gup_ret == -EFAULT) && !writeable) {
-				gup_ret = get_user_pages_foll_cma(NULL, mm, (uintptr_t)reader,
-						nr_pages, 0, 0, pages,
-						NULL);
+				gup_ret = gup_local_repeat(mm, (uintptr_t)reader, nr_pages, 0, pages);
 			}
 			up_read(&mm->mmap_sem);
 			if (gup_ret < 0) {
