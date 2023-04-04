@@ -1846,18 +1846,9 @@ static bool check_pcp_refill(struct page *page)
 	return false;
 }
 
-static bool check_new_pcp(struct page *page)
+static inline bool check_new_pcp(struct page *page)
 {
-	return check_new_page(page);
-}
-#else
-static bool check_pcp_refill(struct page *page)
-{
-	return check_new_page(page);
-}
-static bool check_new_pcp(struct page *page)
-{
-	return false;
+	return IS_ENABLED(CONFIG_DEBUG_VM) ? check_new_page(page) : false;
 }
 #endif /* CONFIG_DEBUG_VM */
 
