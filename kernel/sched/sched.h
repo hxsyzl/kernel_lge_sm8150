@@ -2403,6 +2403,15 @@ cpu_util_freq(int cpu, struct sched_walt_cpu_load *walt_load)
 {
 #ifdef CONFIG_SCHED_WALT
 	return cpu_util_freq_walt(cpu, walt_load);
+}
+
+static inline unsigned long cpu_util_rt(int cpu)
+{
+	struct rt_rq *rt_rq = &(cpu_rq(cpu)->rt);
+
+	return rt_rq->avg.util_avg;
+}
+
 #else
 	struct rq *rq;
 
