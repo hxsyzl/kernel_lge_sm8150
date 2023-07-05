@@ -28,6 +28,7 @@
 #include <linux/posix-timers.h>
 #include <linux/context_tracking.h>
 #include <linux/rq_stats.h>
+#include <linux/mm.h>
 
 #include <asm/irq_regs.h>
 
@@ -234,6 +235,7 @@ static void nohz_full_kick_func(struct irq_work *work)
 
 static DEFINE_PER_CPU(struct irq_work, nohz_full_kick_work) = {
 	.func = nohz_full_kick_func,
+	.flags = ATOMIC_INIT(IRQ_WORK_HARD_IRQ),
 };
 
 /*
@@ -821,7 +823,7 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
 	 */
 	if (!ts->tick_stopped) {
 		calc_load_nohz_start();
-		cpu_load_update_nohz_start();
+		quiet_vmstat();
 
 		ts->last_tick = hrtimer_get_expires(&ts->sched_timer);
 		ts->tick_stopped = 1;
@@ -867,7 +869,6 @@ static void tick_nohz_restart_sched_tick(struct tick_sched *ts, ktime_t now)
 {
 	/* Update jiffies first */
 	tick_do_update_jiffies64(now);
-	cpu_load_update_nohz_stop();
 
 	/*
 	 * Clear the timer idle flag, so we avoid IPIs on remote queueing and
@@ -1025,14 +1026,6 @@ void tick_nohz_idle_enter(void)
 	struct tick_sched *ts;
 
 	WARN_ON_ONCE(irqs_disabled());
-
-	/*
-	 * Update the idle state in the scheduler domain hierarchy
-	 * when tick_nohz_stop_tick() is called from the idle loop.
-	 * State will be updated to busy during the first busy tick after
-	 * exiting idle.
-	 */
-	set_cpu_sd_state_idle();
 
 	local_irq_disable();
 

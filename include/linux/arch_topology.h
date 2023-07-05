@@ -32,7 +32,7 @@ void topology_set_cpu_scale(unsigned int cpu, unsigned long capacity);
 DECLARE_PER_CPU(unsigned long, freq_scale);
 
 static inline
-unsigned long topology_get_freq_scale(struct sched_domain *sd, int cpu)
+unsigned long topology_get_freq_scale(int cpu)
 {
 	return per_cpu(freq_scale, cpu);
 }
@@ -44,5 +44,15 @@ unsigned long topology_get_max_freq_scale(struct sched_domain *sd, int cpu)
 {
 	return per_cpu(max_freq_scale, cpu);
 }
+
+DECLARE_PER_CPU(unsigned long, thermal_pressure);
+
+static inline unsigned long topology_get_thermal_pressure(int cpu)
+{
+	return per_cpu(thermal_pressure, cpu);
+}
+
+void arch_set_thermal_pressure(struct cpumask *cpus,
+			       unsigned long th_pressure);
 
 #endif /* _LINUX_ARCH_TOPOLOGY_H_ */
