@@ -126,11 +126,6 @@ static u32 tcp_v6_init_ts_off(const struct net *net, const struct sk_buff *skb)
 	return secure_tcpv6_ts_off(net, ipv6_hdr(skb)->daddr.s6_addr32,
 				   ipv6_hdr(skb)->saddr.s6_addr32);
 }
-
-#ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
-int tcp_v6_connect(struct sock *sk, struct sockaddr *uaddr,
-			  int addr_len)
-#else
 static int tcp_v6_pre_connect(struct sock *sk, struct sockaddr *uaddr,
 			      int addr_len)
 {
@@ -145,6 +140,10 @@ static int tcp_v6_pre_connect(struct sock *sk, struct sockaddr *uaddr,
 
 	return BPF_CGROUP_RUN_PROG_INET6_CONNECT(sk, uaddr);
 }
+#ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
+int tcp_v6_connect(struct sock *sk, struct sockaddr *uaddr,
+			  int addr_len)
+#else
 
 static int tcp_v6_connect(struct sock *sk, struct sockaddr *uaddr,
 			  int addr_len)
