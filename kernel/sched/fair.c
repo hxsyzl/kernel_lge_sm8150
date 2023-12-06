@@ -9162,7 +9162,6 @@ static
 int can_migrate_task(struct task_struct *p, struct lb_env *env)
 {
 	int tsk_cache_hot;
-
 	lockdep_assert_held(&env->src_rq->lock);
 
 	/*
