@@ -48,6 +48,10 @@
 #include <net/addrconf.h>
 #include <net/inet_common.h>
 #include <net/tcp.h>
+#ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
+#include <net/mptcp.h>
+#include <net/mptcp_v4.h>
+#endif
 #include <net/udp.h>
 #include <net/udplite.h>
 #include <net/xfrm.h>
