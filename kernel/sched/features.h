@@ -50,7 +50,7 @@ SCHED_FEAT(NONTASK_CAPACITY, true)
  * Queue remote wakeups on the target CPU and process them
  * using the scheduler IPI. Reduces rq->lock contention/bounces.
  */
-SCHED_FEAT(TTWU_QUEUE, true)
+SCHED_FEAT(TTWU_QUEUE, false)
 
 /*
  * When doing wakeups, attempt to limit superfluous scans of the LLC domain.
@@ -78,7 +78,7 @@ SCHED_FEAT(WARN_DOUBLE_CLOCK, false)
 SCHED_FEAT(RT_PUSH_IPI, true)
 #endif
 
-SCHED_FEAT(RT_RUNTIME_SHARE, true)
+SCHED_FEAT(RT_RUNTIME_SHARE, false)
 SCHED_FEAT(LB_MIN, false)
 SCHED_FEAT(ATTACH_AGE_LOAD, true)
 
@@ -116,8 +116,8 @@ SCHED_FEAT(ENERGY_AWARE, false)
  *   OFF: Use whichever of target or backup saves most.
  */
 SCHED_FEAT(EAS_PREFER_IDLE, true)
-SCHED_FEAT(FIND_BEST_TARGET, true)
-SCHED_FEAT(FBT_STRICT_ORDER, true)
+SCHED_FEAT(FIND_BEST_TARGET, false)
+SCHED_FEAT(FBT_STRICT_ORDER, false)
 
 /*
  * Apply schedtune boost hold to tasks of all sched classes.
