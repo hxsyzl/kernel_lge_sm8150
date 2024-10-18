@@ -495,9 +495,6 @@ struct cfs_rq {
 	u64 throttled_clock_task_time;
 	int throttled, throttle_count;
 	struct list_head throttled_list;
-#ifdef CONFIG_SCHED_WALT
-	u64 cumulative_runnable_avg;
-#endif /* CONFIG_SCHED_WALT */
 #endif /* CONFIG_CFS_BANDWIDTH */
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 };
@@ -789,20 +786,6 @@ struct rq {
 	/* This is used to determine avg_idle's max value */
 	u64 max_idle_balance_cost;
 #endif
-
-#ifdef CONFIG_SCHED_WALT
-	u64 cumulative_runnable_avg;
-	u64 window_start;
-	u64 curr_runnable_sum;
-	u64 prev_runnable_sum;
-	u64 nt_curr_runnable_sum;
-	u64 nt_prev_runnable_sum;
-	u64 cur_irqload;
-	u64 avg_irqload;
-	u64 irqload_ts;
-	u64 cum_window_demand;
-#endif /* CONFIG_SCHED_WALT */
-
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
 	u64 prev_irq_time;
@@ -1611,11 +1594,6 @@ struct sched_class {
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	void (*task_change_group) (struct task_struct *p, int type);
 #endif
-#ifdef CONFIG_SCHED_WALT
-	void (*fixup_cumulative_runnable_avg)(struct rq *rq,
-					      struct task_struct *task,
-					      u64 new_task_load);
-#endif
 };
 
 static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
@@ -1857,23 +1835,6 @@ unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
 	return SCHED_CAPACITY_SCALE;
 }
 #endif
-
-#ifdef CONFIG_SMP
-static inline unsigned long capacity_of(int cpu)
-{
-	return cpu_rq(cpu)->cpu_capacity;
-}
-
-static inline unsigned long capacity_orig_of(int cpu)
-{
-	return cpu_rq(cpu)->cpu_capacity_orig;
-}
-
-extern unsigned int sysctl_sched_use_walt_cpu_util;
-extern unsigned int walt_ravg_window;
-extern bool walt_disabled;
-
-#endif /* CONFIG_SMP */
 
 static inline void sched_rt_avg_update(struct rq *rq, u64 rt_delta)
 {
@@ -2208,17 +2169,6 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags)
 #else
 static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
 #endif /* CONFIG_CPU_FREQ */
-
-#ifdef CONFIG_SCHED_WALT
-
-static inline bool
-walt_task_in_cum_window_demand(struct rq *rq, struct task_struct *p)
-{
-	return cpu_of(rq) == task_cpu(p) &&
-	       (p->on_rq || p->last_sleep_ts >= rq->window_start);
-}
-
-#endif /* CONFIG_SCHED_WALT */
 
 #ifdef arch_scale_freq_capacity
 #ifndef arch_scale_freq_invariant
