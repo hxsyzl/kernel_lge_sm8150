@@ -609,14 +609,14 @@ static inline bool is_cpu_biased(int cpu, uint64_t *bias_time)
 	u64 last = sched_get_cpu_last_busy_time(cpu);
 	u64 diff = 0;
 
-	if (!last)
-		return false;
-
-	diff = now - last;
-	if (diff < BIAS_HYST) {
-		*bias_time = BIAS_HYST - diff;
+	bias_time = sched_lpm_disallowed_time(cpu);
+	if (bias_time) {
+		pm_cpu->bias = bias_time;
 		return true;
 	}
+
+	if (sleep_us < 0)
+		return true;
 
 	return false;
 }
@@ -677,7 +677,7 @@ static int cpu_power_select(struct cpuidle_device *dev,
 				next_wakeup_us = next_event_us - lvl_latency_us;
 		}
 
-		if (!i && !cpu_isolated(dev->cpu)) {
+		if (!i) {
 			/*
 			 * If the next_wake_us itself is not sufficient for
 			 * deeper low power modes than clock gating do not

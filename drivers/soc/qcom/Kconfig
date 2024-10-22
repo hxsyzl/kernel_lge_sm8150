@@ -1090,15 +1090,6 @@ config QTI_CRYPTO_TZ
 	 will configure keys.
 endmenu
 
-config QCOM_HYP_CORE_CTL
-	bool "CPU reservation scheme for Hypervisor"
-	depends on OKL4_GUEST
-	help
-	  This driver reserve the specified CPUS by isolating them. The reserved
-	  CPUs can be assigned to the other guest OS by the hypervisor.
-	  An offline CPU is considered as a reserved CPU since this OS can't use
-	  it.
-
 config RENAME_BLOCK_DEVICE
 	bool "Rename block device node in /dev"
 	help
