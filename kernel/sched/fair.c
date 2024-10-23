@@ -6803,13 +6803,11 @@ boosted_task_util(struct task_struct *task)
 	long margin = schedtune_task_margin(task);
 
 	trace_sched_boost_task(task, util, margin);
-
-	return util + margin;
-#endif
 	if (sched_feat(SCHEDTUNE_BOOST_UTIL))
 		return util + margin;
 	else
 		return util;
+#endif
 }
 
 static unsigned long cpu_util_without(int cpu, struct task_struct *p);
