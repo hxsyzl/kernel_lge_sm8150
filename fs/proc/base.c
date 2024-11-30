@@ -1854,6 +1854,12 @@ static int do_proc_readlink(struct path *path, char __user *buffer, int buflen)
 
 	if (len > buflen)
 		len = buflen;
+	if (copy_to_user(buffer, pathname, len))
+		len = -EFAULT;
+ out:
+	free_page((unsigned long)tmp);
+	return len;
+}
 
 static int proc_pid_readlink(struct dentry * dentry, char __user * buffer, int buflen)
 {
@@ -2438,6 +2444,21 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
 			info.len = snprintf(info.name,
 					sizeof(info.name), "%lx-%lx",
 					vma->vm_start, vma->vm_end);
+					
+		if (flex_array_put(fa, i++, &info, GFP_KERNEL))
+				BUG();
+		}
+	}
+	up_read(&mm->mmap_sem);
+
+	for (i = 0; i < nr_files; i++) {
+		p = flex_array_get(fa, i);
+		if (!proc_fill_cache(file, ctx,
+				      p->name, p->len,
+				      proc_map_files_instantiate,
+				      task,
+				      (void *)(unsigned long)p->mode))
+			break;
 		ctx->pos++;
 	}
 	if (fa)
