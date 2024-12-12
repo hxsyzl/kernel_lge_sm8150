@@ -1369,10 +1369,7 @@ struct task_struct {
 	/* Used by LSM modules for access restriction: */
 	void				*security;
 #endif
-#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-	u64 android_kabi_reserved1;
-	u64 android_kabi_reserved2;
-#endif
+
 	/*
 	 * New fields for task_struct should be added above here, so that
 	 * they are included in the randomized portion of task_struct.

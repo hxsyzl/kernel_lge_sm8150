@@ -18,6 +18,10 @@
 #include "pnode.h"
 #include "internal.h"
 
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/susfs.h>
+#endif
+
 static unsigned mounts_poll(struct file *file, poll_table *wait)
 {
 	struct seq_file *m = file->private_data;
@@ -103,8 +107,8 @@ static int show_vfsmnt(struct seq_file *m, struct vfsmount *mnt)
 	int err;
 
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-	if (unlikely(r->mnt.mnt_root->d_inode->i_state & 33554432))
-		return 0;
+	if (susfs_sus_mount(mnt, &p->root))
+		return SEQ_SKIP;
 #endif
 
 	if (sb->s_op->show_devname) {
@@ -143,21 +147,30 @@ static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
 	struct path mnt_path = { .dentry = mnt->mnt_root, .mnt = mnt };
 	int err;
 
-	#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-	if (unlikely(r->mnt.mnt_root->d_inode->i_state & 33554432))
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT_MNT_ID_REORDER
+	int out_mnt_id = 0, out_parent_mnt_id = 0;
+	int status = 1;
+#endif
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+	if (susfs_sus_mount(mnt, &p->root))
 		return 0;
-	if (likely(r->mnt.android_kabi_reserved1)) { // if it has fake_mnt_id, then its mnt_id and parent_mnt_id must be spoofed
-		seq_printf(m, "%i %i %u:%u ", r->mnt.android_kabi_reserved1, r->mnt_parent->mnt.android_kabi_reserved1,
-					MAJOR(sb->s_dev), MINOR(sb->s_dev));
-		goto bypass_orig_flow;
-	}
-	#endif
- 	seq_printf(m, "%i %i %u:%u ", r->mnt_id, r->mnt_parent->mnt_id,
- 		   MAJOR(sb->s_dev), MINOR(sb->s_dev));
-	#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-	bypass_orig_flow:
-	#endif
-	
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT_MNT_ID_REORDER
+	if (!uid_matches_proc_need_to_reorder_mnt_id())
+		goto orig_flow;
+	status = susfs_get_fake_mnt_id(r->mnt_id, &out_mnt_id, &out_parent_mnt_id);
+	if (status)
+		goto orig_flow;
+	seq_printf(m, "%i %i %u:%u ", out_mnt_id, out_parent_mnt_id,
+				MAJOR(sb->s_dev), MINOR(sb->s_dev));
+	goto bypass_orig_flow;
+orig_flow:
+#endif //#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT_MNT_ID_REORDER
+#endif //#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+	seq_printf(m, "%i %i %u:%u ", r->mnt_id, r->mnt_parent->mnt_id,
+		   MAJOR(sb->s_dev), MINOR(sb->s_dev));
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT_MNT_ID_REORDER
+bypass_orig_flow:
+#endif
 	if (sb->s_op->show_path) {
 		err = sb->s_op->show_path(m, mnt->mnt_root);
 		if (err)
@@ -179,23 +192,11 @@ static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
 	if (IS_MNT_SHARED(r))
 		seq_printf(m, " shared:%i", r->mnt_group_id);
 	if (IS_MNT_SLAVE(r)) {
-#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-		int master = r->mnt_master->mnt_group_id;
-		int dom = get_dominating_id(r, &p->root);
-		if (likely(r->mnt.android_kabi_reserved2)) {
-			seq_printf(m, " master:%i", r->mnt.android_kabi_reserved2);
-		} else {
-			seq_printf(m, " master:%i", master);
-			if (dom && dom != master)
-				seq_printf(m, " propagate_from:%i", dom);
-		}
-#else
 		int master = r->mnt_master->mnt_group_id;
 		int dom = get_dominating_id(r, &p->root);
 		seq_printf(m, " master:%i", master);
 		if (dom && dom != master)
 			seq_printf(m, " propagate_from:%i", dom);
-#endif
 	}
 	if (IS_MNT_UNBINDABLE(r))
 		seq_puts(m, " unbindable");
@@ -233,7 +234,7 @@ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
 	int err;
 
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-	if (unlikely(r->mnt.mnt_root->d_inode->i_state & 33554432))
+	if (susfs_sus_mount(mnt, &p->root))
 		return 0;
 #endif
 
@@ -320,6 +321,12 @@ static int mounts_open_common(struct inode *inode, struct file *file,
 	p->show = show;
 	p->cached_event = ~0ULL;
 
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT_MNT_ID_REORDER
+	if (uid_matches_proc_need_to_reorder_mnt_id()) {
+		susfs_add_mnt_id_recorder(p->ns);
+	}
+#endif
+
 	return 0;
 
  err_put_path:
@@ -334,6 +341,12 @@ static int mounts_release(struct inode *inode, struct file *file)
 {
 	struct seq_file *m = file->private_data;
 	struct proc_mounts *p = m->private;
+
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT_MNT_ID_REORDER
+	if (uid_matches_proc_need_to_reorder_mnt_id()) {
+		susfs_remove_mnt_id_recorder();
+	}
+#endif
 
 	path_put(&p->root);
 	put_mnt_ns(p->ns);
