@@ -23,7 +23,6 @@ obj-y :=	open.o read_write.o file_table.o super.o \
 obj-y += sreadahead_prof.o
 # LGE_CHANGE_E
 
-obj-$(CONFIG_KSU_SUSFS) += susfs.o
 
 ifeq ($(CONFIG_BLOCK),y)
 obj-y +=	buffer.o block_dev.o direct-io.o mpage.o

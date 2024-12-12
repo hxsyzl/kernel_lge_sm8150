@@ -1855,44 +1855,6 @@ static int do_proc_readlink(struct path *path, char __user *buffer, int buflen)
 	if (len > buflen)
 		len = buflen;
 
-#ifdef CONFIG_KSU_SUSFS_SUS_PROC_FD_LINK
-	if (!susfs_is_sus_proc_fd_link_list_empty()) {
-		if (susfs_sus_proc_fd_link(pathname, len))
-			goto orig_flow;
-	}
-#endif
-
-
-#ifdef CONFIG_KSU_SUSFS_SUS_MAPS
-	if (!susfs_is_sus_maps_list_empty()) {
-		mm = current->mm;
-		down_read(&mm->mmap_sem);
-		for (vma = mm->mmap; vma; vma = vma->vm_next) {
-			if (vma->vm_file) {
-				vma_file = vma->vm_file;
-				vma_dentry = vma_file->f_path.dentry;
-				if (vma_dentry == path->dentry) {
-					vma_inode = file_inode(vma_file);
-					ino = vma_inode->i_ino;
-					susfs_sus_map_files_readlink(ino, pathname);
-					break;
-				}
-			}
-		}
-		up_read(&mm->mmap_sem);
-	}
-#endif
-
-#ifdef CONFIG_KSU_SUSFS_SUS_PROC_FD_LINK
-orig_flow:
-#endif
-	if (copy_to_user(buffer, pathname, len))
-		len = -EFAULT;
- out:
-	free_page((unsigned long)tmp);
-	return len;
-}
-
 static int proc_pid_readlink(struct dentry * dentry, char __user * buffer, int buflen)
 {
 	int error = -EACCES;
@@ -2476,42 +2438,6 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
 			info.len = snprintf(info.name,
 					sizeof(info.name), "%lx-%lx",
 					vma->vm_start, vma->vm_end);
-
-#ifdef CONFIG_KSU_SUSFS_SUS_MAPS
-			susfs_ret = susfs_sus_map_files_instantiate(vma);
-			info.susfs_action = susfs_ret;
-#endif
-
-			if (flex_array_put(fa, i++, &info, GFP_KERNEL))
-				BUG();
-		}
-	}
-	up_read(&mm->mmap_sem);
-
-	for (i = 0; i < nr_files; i++) {
-		p = flex_array_get(fa, i);
-
-#ifdef CONFIG_KSU_SUSFS_SUS_MAPS
-		if (p->susfs_action == SUSFS_MAP_FILES_ACTION_REMOVE_WRITE_PERM) {
-			if (p->mode & FMODE_WRITE) {
-				p->mode &= ~FMODE_WRITE;
-			}
-		} else if (p->susfs_action == SUSFS_MAP_FILES_ACTION_HIDE_DENTRY) {
-			goto skip_proc_fill_cache;
-		}
-#endif
-
-		if (!proc_fill_cache(file, ctx,
-				      p->name, p->len,
-				      proc_map_files_instantiate,
-				      task,
-				      (void *)(unsigned long)p->mode))
-			break;
-
-#ifdef CONFIG_KSU_SUSFS_SUS_MAPS
-skip_proc_fill_cache:
-#endif
-
 		ctx->pos++;
 	}
 	if (fa)
