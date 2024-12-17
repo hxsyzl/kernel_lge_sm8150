@@ -22,7 +22,7 @@ export CLANG_TRIPLE=aarch64-linux-gnu-
 echo
 echo "Set DEFCONFIG"
 echo 
-make CC=clang AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip O=out vendor/dragon_mh2lm_defconfig
+make CC=clang AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip O=out vendor/dragon_ksu_mh2lm_defconfig
 
 echo
 echo "Build The Good Stuff"

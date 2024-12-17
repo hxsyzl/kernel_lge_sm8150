@@ -1,12 +1,6 @@
 #!/bin/bash
 
 echo
-echo "Clean Build Directory"
-echo 
-
-make clean && make mrproper
-
-echo
 echo "Issue Build Commands"
 echo
 
