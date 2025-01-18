@@ -5,6 +5,6 @@
 	ignore = dirty
 [submodule "KernelSU"]
 	path = KernelSU
-	branch = non-gki-n3x7g3n
-	url = https://github.com/sidex15/KernelSU
+	branch = n3x7g3n-kernel
+	url = https://github.com/sidex15/KernelSU-Next
 	ignore = all
