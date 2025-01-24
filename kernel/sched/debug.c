@@ -552,9 +552,6 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 		SPLIT_NS(p->se.sum_exec_runtime),
 		SPLIT_NS(schedstat_val_or_zero(p->se.statistics.sum_sleep_runtime)));
 
-#ifdef CONFIG_SCHED_BORE
-	SEQ_printf(m, " %2d", p->se.burst_score);
-#endif // CONFIG_SCHED_BORE
 #ifdef CONFIG_NUMA_BALANCING
 	SEQ_printf(m, " %d %d", task_node(p), task_numa_group_id(p));
 #endif
@@ -757,8 +754,6 @@ do {									\
 	P(cpu_capacity);
 #endif
 #ifdef CONFIG_SCHED_WALT
-	P(cluster->load_scale_factor);
-	P(cluster->capacity);
 	P(cluster->max_possible_capacity);
 	P(cluster->efficiency);
 	P(cluster->cur_freq);
@@ -848,8 +843,6 @@ static void sched_debug_header(struct seq_file *m)
 	P(sysctl_sched_features);
 #ifdef CONFIG_SCHED_WALT
 	P(sched_init_task_load_windows);
-	P(min_capacity);
-	P(max_capacity);
 	P(sched_ravg_window);
 	P(sched_load_granule);
 #endif
