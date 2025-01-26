@@ -2338,9 +2338,49 @@ static inline unsigned long capacity_orig_of(int cpu)
 {
 	return cpu_rq(cpu)->cpu_capacity_orig;
 }
+
+unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
+				 unsigned long *min,
+				 unsigned long *max);
+
+unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
+				 unsigned long min,
+				 unsigned long max);
+
+static inline unsigned long cpu_bw_dl(struct rq *rq)
+{
+	return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+}
+
+static inline unsigned long cpu_util_dl(struct rq *rq)
+{
+	return READ_ONCE(rq->avg_dl.util_avg);
+}
+
+static inline unsigned long cpu_util_cfs(struct rq *rq)
+{
+	unsigned long util = READ_ONCE(rq->cfs.avg.util_avg);
+
+	if (sched_feat(UTIL_EST)) {
+		util = max_t(unsigned long, util,
+			     READ_ONCE(rq->cfs.avg.util_est.enqueued));
+	}
+
+	return util;
+}
+
+static inline unsigned long cpu_util_rt(struct rq *rq)
+{
+	return READ_ONCE(rq->avg_rt.util_avg);
+}
 #endif
 
 #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
+static inline unsigned long cpu_util_irq(struct rq *rq)
+{
+	return rq->avg_irq.util_avg;
+}
+
 static inline
 unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
 {
@@ -2351,6 +2391,11 @@ unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned
 
 }
 #else
+static inline unsigned long cpu_util_irq(struct rq *rq)
+{
+	return 0;
+}
+
 static inline
 unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
 {
