@@ -1250,12 +1250,12 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
 	}
 
 	if (update_root_tg) {
-		static_branch_enable(&sched_uclamp_used);
+		sched_uclamp_enable();
 		uclamp_update_root_tg();
 	}
 
 	if (old_min_rt != sysctl_sched_uclamp_util_min_rt_default) {
-		static_branch_enable(&sched_uclamp_used);
+		sched_uclamp_enable();
 		uclamp_sync_util_min_rt_default();
 	}
 
@@ -1315,7 +1315,7 @@ static int uclamp_validate(struct task_struct *p,
 	 * unconditionally holds the cpus_read_lock() which might_sleep().
 	 */
 	if (user)
-		static_branch_enable(&sched_uclamp_used);
+		sched_uclamp_enable();
 
 	return 0;
 }
@@ -7771,7 +7771,7 @@ static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
 	if (req.ret)
 		return req.ret;
 
-	static_branch_enable(&sched_uclamp_used);
+	sched_uclamp_enable();
 
 	mutex_lock(&uclamp_mutex);
 	rcu_read_lock();
