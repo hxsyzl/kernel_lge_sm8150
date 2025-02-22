@@ -1231,32 +1231,39 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group,
 
 static void psi_trigger_destroy(struct kref *ref)
 {
-	struct psi_group *group;
-	struct task_struct *task_to_destroy = NULL;
+    struct psi_group *group;
+    struct psi_trigger *t = container_of(ref, struct psi_trigger, refcount);
+    struct task_struct *task_to_destroy = NULL;
 
-	if (static_branch_likely(&psi_disabled))
-		return;
+    if (static_branch_likely(&psi_disabled))
+        return;
+/*
+     * We do not check psi_disabled since it might have been disabled after
+     * the trigger got created.
+     */
+    if (!t)
+        return;
+    group = t->group;
+    /*
+     * Wakeup waiters to stop polling. Can happen if cgroup is deleted
+     * from under a polling process.
+     */
+    wake_up_interruptible(&t->event_wait);
 
-	/*
-	 * Wakeup waiters to stop polling. Can happen if cgroup is deleted
-	 * from under a polling process.
-	 */
-	wake_up_interruptible(&t->event_wait);
+    mutex_lock(&group->trigger_lock);
 
-	mutex_lock(&group->trigger_lock);
+    if (!list_empty(&t->node)) {
+        struct psi_trigger *tmp;
+        u64 period = ULLONG_MAX;
 
-	if (!list_empty(&t->node)) {
-		struct psi_trigger *tmp;
-		u64 period = ULLONG_MAX;
-
-		list_del(&t->node);
-		group->nr_triggers[t->state]--;
-		if (!group->nr_triggers[t->state])
-			group->poll_states &= ~(1 << t->state);
-		/* reset min update period for the remaining triggers */
-		list_for_each_entry(tmp, &group->triggers, node)
-			period = min(period, div_u64(tmp->win.size,
-					UPDATES_PER_WINDOW));
+        list_del(&t->node);
+        group->nr_triggers[t->state]--;
+        if (!group->nr_triggers[t->state])
+            group->poll_states &= ~(1 << t->state);
+        /* reset min update period for the remaining triggers */
+        list_for_each_entry(tmp, &group->triggers, node)
+            period = min(period, div_u64(tmp->win.size,
+                    UPDATES_PER_WINDOW));
 		group->poll_min_period = period;
 		/* Destroy poll_task when the last trigger is destroyed */
 		if (group->poll_states == 0) {
