@@ -1745,6 +1745,7 @@ int isolate_evictable_lru_page(struct page *page)
 		spin_lock_irq(zone_lru_lock(zone));
 		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
 		if (PageLRU(page) && !PageUnevictable(page)) {
+			int lru = page_lru(page);
 			get_page(page);
 			ClearPageLRU(page);
 			del_page_from_lru_list(page, lruvec);

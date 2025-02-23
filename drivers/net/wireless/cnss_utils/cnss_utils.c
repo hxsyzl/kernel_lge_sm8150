@@ -107,13 +107,13 @@ static void cnss_utils_stop_avtimer(void)
 		pr_err("AV Timer is not supported\n");
 }
 #else
-static __maybe_unused void cnss_utils_start_avtimer(void)
+static void cnss_utils_start_avtimer(void)
 {
 	pr_err("AV Timer is not supported\n");
 }
 EXPORT_SYMBOL(cnss_utils_start_avtimer);
 
-static __maybe_unused void cnss_utils_stop_avtimer(void)
+static void cnss_utils_stop_avtimer(void)
 {
 	pr_err("AV Timer is not supported\n");
 }
