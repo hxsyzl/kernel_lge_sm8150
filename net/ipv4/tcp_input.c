@@ -101,7 +101,7 @@ int sysctl_tcp_moderate_rcvbuf __read_mostly = 1;
 int sysctl_tcp_invalid_ratelimit __read_mostly = HZ/2;
 
 #ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
-// don't need below preprocessors
+#define FLAG_ACK_MAYBE_DELAYED	0x10000 /* Likely a delayed ACK */
 #else
 #define FLAG_DATA		0x01 /* Incoming frame contained data.		*/
 #define FLAG_WIN_UPDATE		0x02 /* Incoming ACK was a window update.	*/
@@ -6490,6 +6490,11 @@ int tcp_rcv_state_process(struct sock *sk, struct sk_buff *skb)
 
 		tcp_initialize_rcv_mss(sk);
 		tcp_fast_path_on(tp);
+<<<<<<< HEAD
+=======
+		if (sk->sk_shutdown & SEND_SHUTDOWN)
+			tcp_shutdown(sk, SEND_SHUTDOWN);
+>>>>>>> e52f422cc74a (net: Import LGE changes)
 
 #ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
 		/* Send an ACK when establishing a new  MPTCP subflow, i.e.

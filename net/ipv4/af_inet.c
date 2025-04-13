@@ -1912,6 +1912,11 @@ static int __init inet_init(void)
 	 */
 
 	ip_init();
+
+	/* Initialise per-cpu ipv4 mibs */
+	if (init_ipv4_mibs())
+		panic("%s: Cannot init ipv4 mibs\n", __func__);
+
 #ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
 	/* We must initialize MPTCP before TCP. */
 	mptcp_init();

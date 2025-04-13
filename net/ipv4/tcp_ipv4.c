@@ -482,7 +482,7 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
 			if (sk->sk_state == TCP_LISTEN)
 				goto out;
 
-			tp->mtu_info = info;
+			WRITE_ONCE(tp->mtu_info, info);
 #ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
 			if (!sock_owned_by_user(meta_sk)) {
 #else

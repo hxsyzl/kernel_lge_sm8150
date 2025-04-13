@@ -10,7 +10,6 @@ obj-$(CONFIG_LGE_PM) += lge_pon_backup.o
 obj-$(CONFIG_LGE_QSDL_SUPPORT) += lge_qsdl.o
 obj-$(CONFIG_LGE_PM) += lge_monitor_thermal.o
 obj-$(CONFIG_LGE_QFPROM_INTERFACE) += lge_qfprom_access.o
-obj-$(CONFIG_LGE_PM_SMPL_COUNTER) += lge_smpl_count.o
 obj-$(CONFIG_LGE_PM_PRM) += power/main/lge_prm.o
 obj-$(CONFIG_LGE_PM_PRM) += power/vfps/lge_vfps.o
 obj-$(CONFIG_LGE_PM_PRM) += power/sben/lge_sben.o

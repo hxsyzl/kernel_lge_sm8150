@@ -2668,12 +2668,9 @@ repair:
 		/* Send one loss probe per tail loss episode. */
 		if (push_one != 2)
 			tcp_schedule_loss_probe(sk, false);
-		is_cwnd_limited |= (tcp_packets_in_flight(tp) >= tp->snd_cwnd);
 #ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
 		if (tp->ops->cwnd_validate)
 			tp->ops->cwnd_validate(sk, is_cwnd_limited);
-#else
-		tcp_cwnd_validate(sk, is_cwnd_limited);
 #endif
 		return false;
 	}

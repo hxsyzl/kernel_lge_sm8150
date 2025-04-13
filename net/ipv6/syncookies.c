@@ -220,9 +220,6 @@ struct sock *cookie_v6_check(struct sock *sk, struct sk_buff *skb)
 		mptcp_cookies_reqsk_init(req, &mopt, skb);
 #endif
 
-	if (security_inet_conn_request(sk, skb, req))
-		goto out_free;
-
 	req->mss = mss;
 	ireq->ir_rmt_port = th->source;
 	ireq->ir_num = ntohs(th->dest);
@@ -293,7 +290,7 @@ struct sock *cookie_v6_check(struct sock *sk, struct sk_buff *skb)
 				       dst_metric(dst, RTAX_INITRWND), sk);
 
 #else
-	tcp_select_initial_window(sock_net(sk), tcp_full_space(sk), req->mss,
+    tcp_select_initial_window(sock_net(sk), full_space, req->mss,
 				  &req->rsk_rcv_wnd, &req->rsk_window_clamp,
 				  ireq->wscale_ok, &rcv_wscale,
 				  dst_metric(dst, RTAX_INITRWND));
