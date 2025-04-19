@@ -104,6 +104,7 @@ GTAGS
 # id-utils files
 ID
 
+*.orig
 *~
 \#*#
 
@@ -119,8 +120,6 @@ x509.genkey
 # Kconfig presets
 all.config
 
-# Kdevelop4
-*.kdev4
 
 # fetched Android config fragments
 kernel/configs/android-*.cfg
@@ -129,3 +128,6 @@ kernel/configs/android-*.cfg
 #Ignoring Android.bp link file
 #
 Android.bp
+
+out
+release
