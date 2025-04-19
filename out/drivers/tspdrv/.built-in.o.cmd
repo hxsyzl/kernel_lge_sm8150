@@ -1,1 +1,0 @@
-cmd_drivers/tspdrv/built-in.o :=   rm -f drivers/tspdrv/built-in.o; llvm-ar rcSTPD drivers/tspdrv/built-in.o drivers/tspdrv/dw7800/built-in.o drivers/tspdrv/dw7912/built-in.o drivers/tspdrv/a2v/built-in.o drivers/tspdrv/pm8150b/built-in.o 

@@ -1,1 +1,0 @@
-cmd_net/ipv6/netfilter/nf_conntrack_ipv6.o :=  rm -f net/ipv6/netfilter/nf_conntrack_ipv6.o; llvm-ar rcSTPD net/ipv6/netfilter/nf_conntrack_ipv6.o net/ipv6/netfilter/nf_conntrack_l3proto_ipv6.o net/ipv6/netfilter/nf_conntrack_proto_icmpv6.o 

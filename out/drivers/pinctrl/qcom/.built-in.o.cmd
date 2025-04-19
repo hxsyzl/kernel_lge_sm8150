@@ -1,1 +1,0 @@
-cmd_drivers/pinctrl/qcom/built-in.o :=   rm -f drivers/pinctrl/qcom/built-in.o; llvm-ar rcSTPD drivers/pinctrl/qcom/built-in.o drivers/pinctrl/qcom/pinctrl-msm.o drivers/pinctrl/qcom/pinctrl-spmi-gpio.o drivers/pinctrl/qcom/pinctrl-spmi-mpp.o drivers/pinctrl/qcom/pinctrl-sm8150.o 

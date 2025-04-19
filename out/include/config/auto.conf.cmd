@@ -3,7 +3,7 @@ deps_config := \
 	techpack/data/drivers/rmnet/perf/Kconfig \
 	techpack/data/drivers/rmnet/Kconfig \
 	techpack/data/drivers/Kconfig \
-	techpack/audio/Kconfig \
+	techpack/data/Kconfig \
 	techpack/Kconfig \
 	lib/fonts/Kconfig \
 	lib/xz/Kconfig \
@@ -836,6 +836,7 @@ deps_config := \
 	drivers/input/sensors/smi130/Kconfig \
 	drivers/input/misc/tcs3407/Kconfig \
 	drivers/input/misc/Kconfig \
+	drivers/input/touchscreen/focaltech_touch/Kconfig \
 	drivers/input/touchscreen/synaptics_tcm/Kconfig \
 	drivers/input/touchscreen/synaptics_dsx/Kconfig \
 	drivers/input/touchscreen/hxchipset/Kconfig \
@@ -1138,6 +1139,7 @@ deps_config := \
 	drivers/Kconfig \
 	net/ife/Kconfig \
 	net/psample/Kconfig \
+	drivers/nfc/max32560/Kconfig \
 	drivers/nfc/cxd22xx/Kconfig \
 	drivers/nfc/pn553/Kconfig \
 	drivers/nfc/Kconfig \
@@ -1223,7 +1225,6 @@ deps_config := \
 	net/netlabel/Kconfig \
 	net/ipv6/Kconfig \
 	net/ipv4/Kconfig \
-	net/wireguard/Kconfig \
 	net/smc/Kconfig \
 	net/iucv/Kconfig \
 	net/xfrm/Kconfig \
@@ -1273,7 +1274,7 @@ deps_config := \
 include/config/auto.conf: \
 	$(deps_config)
 
-ifneq "$(KERNELVERSION)" "4.14.336"
+ifneq "$(KERNELVERSION)" "4.14.355-openela"
 include/config/auto.conf: FORCE
 endif
 ifneq "$(ARCH)" "arm64"

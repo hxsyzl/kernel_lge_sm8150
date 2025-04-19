@@ -1,1 +1,0 @@
-cmd_techpack/audio/asoc/codecs/wsa881x_dlkm.o :=  rm -f techpack/audio/asoc/codecs/wsa881x_dlkm.o; llvm-ar rcSTPD techpack/audio/asoc/codecs/wsa881x_dlkm.o techpack/audio/asoc/codecs/wsa881x.o techpack/audio/asoc/codecs/wsa881x-tables.o techpack/audio/asoc/codecs/wsa881x-regmap.o techpack/audio/asoc/codecs/wsa881x-temp-sensor.o 

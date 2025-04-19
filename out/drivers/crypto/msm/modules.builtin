@@ -1,4 +1,0 @@
-kernel/drivers/crypto/msm/qce50.ko
-kernel/drivers/crypto/msm/qcedevice.ko
-kernel/drivers/crypto/msm/qcrypto.ko
-kernel/drivers/crypto/msm/ice.ko

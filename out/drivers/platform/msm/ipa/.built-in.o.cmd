@@ -1,1 +1,0 @@
-cmd_drivers/platform/msm/ipa/built-in.o :=   rm -f drivers/platform/msm/ipa/built-in.o; llvm-ar rcSTPD drivers/platform/msm/ipa/built-in.o drivers/platform/msm/ipa/ipa_v3/built-in.o drivers/platform/msm/ipa/ipa_clients/built-in.o drivers/platform/msm/ipa/ipa_common drivers/platform/msm/ipa/test/built-in.o 

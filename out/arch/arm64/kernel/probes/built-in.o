@@ -1,9 +1,0 @@
-!<thin>
-//                                              44        `
-uprobes.o/
-decode-insn.o/
-simulate-insn.o/
-
-/0              0           0     0     644     113600    `
-/11             0           0     0     644     12096     `
-/26             0           0     0     644     13664     `

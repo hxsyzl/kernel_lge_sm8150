@@ -1,1 +1,0 @@
-cmd_techpack/audio/asoc/codecs/wcd_cpe_dlkm.o :=  rm -f techpack/audio/asoc/codecs/wcd_cpe_dlkm.o; llvm-ar rcSTPD techpack/audio/asoc/codecs/wcd_cpe_dlkm.o techpack/audio/asoc/codecs/wcd_cpe_core.o techpack/audio/asoc/codecs/wcd_cpe_services.o 

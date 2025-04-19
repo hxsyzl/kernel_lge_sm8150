@@ -1,1 +1,0 @@
-cmd_drivers/broadcast/tdmb/built-in.o :=   rm -f drivers/broadcast/tdmb/built-in.o; llvm-ar rcSTPD drivers/broadcast/tdmb/built-in.o drivers/broadcast/tdmb/broadcast_tdmb_drv_if.o drivers/broadcast/tdmb/fc8080/built-in.o 

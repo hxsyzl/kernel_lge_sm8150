@@ -1,5 +1,0 @@
-kernel/drivers/regulator/fixed.ko
-kernel/drivers/regulator/qpnp-lcdb-regulator.ko
-kernel/drivers/regulator/refgen.ko
-kernel/drivers/regulator/rpmh-regulator.ko
-kernel/drivers/regulator/stub-regulator.ko

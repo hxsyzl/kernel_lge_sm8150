@@ -18,7 +18,7 @@
 #include <linux/kmod.h>
 #include <linux/list.h>
 #include <linux/spinlock.h>
-#include <linux/workqueue.h>
+#include <linux/workqueue.h>struct xfrm_policy *policy;
 #include <linux/notifier.h>
 #include <linux/netdevice.h>
 #include <linux/netfilter.h>
@@ -30,6 +30,7 @@
 #include <net/flow.h>
 #include <net/xfrm.h>
 #include <net/ip.h>
+
 #ifdef CONFIG_XFRM_STATISTICS
 #include <net/snmp.h>
 #endif
@@ -726,19 +727,19 @@ static void xfrm_policy_requeue(struct xfrm_policy *old,
 }
 
 static inline bool xfrm_policy_mark_match(const struct xfrm_mark *mark,
-					  struct xfrm_policy *pol)
+                                          struct xfrm_policy *pol,
+                                          struct xfrm_policy *policy) 
 {
-	u32 mark = policy->mark.v & policy->mark.m;
+    u32 computed_mark = policy->mark.v & policy->mark.m; 
 
-	if (policy->mark.v == pol->mark.v && policy->mark.m == pol->mark.m)
-		return true;
+    if (policy->mark.v == pol->mark.v && policy->mark.m == pol->mark.m)
+        return true;
 
+    if ((computed_mark & pol->mark.m) == pol->mark.v &&
+        policy->priority == pol->priority)
+        return true;
 
-	if ((mark & pol->mark.m) == pol->mark.v &&
-	    policy->priority == pol->priority)
-		return true;
-
-	return false;
+    return false;
 }
 
 int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
@@ -757,7 +758,7 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
 		if (pol->type == policy->type &&
 		    pol->if_id == policy->if_id &&
 		    !selector_cmp(&pol->selector, &policy->selector) &&
-		    xfrm_policy_mark_match(&policy->mark, pol) &&
+		    xfrm_policy_mark_match(&policy->mark, pol, policy) &&
 		    xfrm_sec_ctx_match(pol->security, policy->security) &&
 		    !WARN_ON(delpol)) {
 			if (excl) {
@@ -813,32 +814,29 @@ struct xfrm_policy *xfrm_policy_bysel_ctx(struct net *net, const struct xfrm_mar
 					  int *err)
 {
 	struct xfrm_policy *pol, *ret;
-	struct hlist_head *chain;
+struct hlist_head *chain;
 
-	*err = 0;
-	spin_lock_bh(&net->xfrm.xfrm_policy_lock);
-	chain = policy_hash_bysel(net, sel, sel->family, dir);
-	ret = NULL;
-	hlist_for_each_entry(pol, chain, bydst) {
-		if (pol->type == type &&
-		    pol->if_id == if_id &&
-		    xfrm_policy_mark_match(mark, pol) &&
-		    !selector_cmp(sel, &pol->selector) &&
-		    xfrm_sec_ctx_match(ctx, pol->security)) {
-			xfrm_pol_hold(pol);
-			if (delete) {
-				*err = security_xfrm_policy_delete(
-								pol->security);
-				if (*err) {
-					spin_unlock_bh(&net->xfrm.xfrm_policy_lock);
-					return pol;
-				}
-				__xfrm_policy_unlink(pol, dir);
-			}
-			ret = pol;
-			break;
-		}
-	}
+*err = 0;
+spin_lock_bh(&net->xfrm.xfrm_policy_lock);
+chain = policy_hash_bysel(net, sel, sel->family, dir);
+ret = NULL;
+
+hlist_for_each_entry(pol, chain, bydst) {
+    if (pol->type == type &&
+        pol->if_id == if_id &&
+        xfrm_policy_mark_match(&pol->mark, pol, pol) &&
+        !selector_cmp(sel, &pol->selector) &&
+        xfrm_sec_ctx_match(ctx, pol->security)) {
+        xfrm_pol_hold(pol);
+        if (delete) {
+            *err = security_xfrm_policy_delete(pol->security);
+            if (*err) {
+                spin_unlock_bh(&net->xfrm.xfrm_policy_lock);
+                return pol;
+            }
+        }
+    }
+}
 	spin_unlock_bh(&net->xfrm.xfrm_policy_lock);
 
 	if (ret && delete)
@@ -848,42 +846,38 @@ struct xfrm_policy *xfrm_policy_bysel_ctx(struct net *net, const struct xfrm_mar
 EXPORT_SYMBOL(xfrm_policy_bysel_ctx);
 
 struct xfrm_policy *xfrm_policy_byid(struct net *net, const struct xfrm_mark *mark, u32 if_id,
-					 u8 type, int dir, u32 id, int delete, int *err)
+                     u8 type, int dir, u32 id, int delete, int *err)
 {
-	struct xfrm_policy *pol, *ret;
-	struct hlist_head *chain;
+    struct xfrm_policy *pol, *ret;
+    struct hlist_head *chain;
 
-	*err = -ENOENT;
-	if (xfrm_policy_id2dir(id) != dir)
-		return NULL;
+    *err = -ENOENT;
+    if (xfrm_policy_id2dir(id) != dir)
+        return NULL;
 
-	*err = 0;
-	spin_lock_bh(&net->xfrm.xfrm_policy_lock);
-	chain = net->xfrm.policy_byidx + idx_hash(net, id);
-	ret = NULL;
-	hlist_for_each_entry(pol, chain, byidx) {
-		if (pol->type == type && pol->index == id &&
-		    pol->if_id == if_id &&
-		    xfrm_policy_mark_match(mark, pol)) {
-			xfrm_pol_hold(pol);
-			if (delete) {
-				*err = security_xfrm_policy_delete(
-								pol->security);
-				if (*err) {
-					spin_unlock_bh(&net->xfrm.xfrm_policy_lock);
-					return pol;
-				}
-				__xfrm_policy_unlink(pol, dir);
-			}
-			ret = pol;
-			break;
-		}
-	}
-	spin_unlock_bh(&net->xfrm.xfrm_policy_lock);
-
-	if (ret && delete)
-		xfrm_policy_kill(ret);
-	return ret;
+    *err = 0;
+    spin_lock_bh(&net->xfrm.xfrm_policy_lock);
+    chain = net->xfrm.policy_byidx + idx_hash(net, id);
+    ret = NULL;
+    hlist_for_each_entry(pol, chain, byidx) {
+        if (pol->type == type && pol->index == id &&
+            pol->if_id == if_id &&
+            xfrm_policy_mark_match(&pol->mark, pol, pol)) // 修复此处，将 policy 替换为 pol
+            xfrm_pol_hold(pol);
+            if (delete) {
+                *err = security_xfrm_policy_delete(
+                                pol->security);
+                if (*err) {
+                    spin_unlock_bh(&net->xfrm.xfrm_policy_lock);
+                    return pol;
+                }
+                __xfrm_policy_unlink(pol, dir);
+            }
+            ret = pol;
+            break;
+        }
+    spin_unlock_bh(&net->xfrm.xfrm_policy_lock);
+    return ret;
 }
 EXPORT_SYMBOL(xfrm_policy_byid);
 

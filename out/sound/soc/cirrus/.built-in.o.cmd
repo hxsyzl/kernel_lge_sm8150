@@ -1,1 +1,0 @@
-cmd_sound/soc/cirrus/built-in.o :=  rm -f sound/soc/cirrus/built-in.o; llvm-ar rcSTPD sound/soc/cirrus/built-in.o

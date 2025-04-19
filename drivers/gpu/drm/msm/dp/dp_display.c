@@ -2155,10 +2155,6 @@ static int dp_display_post_enable(struct dp_display *dp_display, void *panel)
 
 	mutex_lock(&dp->session_lock);
 
-	if (dp->dp_display.is_bootsplash_en) {
-		dp->dp_display.is_bootsplash_en = false;
-		goto end;
-	}
 
 	if (!dp->power_on) {
 		pr_debug("stream not setup, return\n");
@@ -3312,7 +3308,7 @@ bail:
 	return rc;
 }
 #if IS_ENABLED(CONFIG_LGE_COVER_DISPLAY) || IS_ENABLED(CONFIG_LGE_DUAL_SCREEN)
-bool is_dp_connected()
+bool is_dp_connected(void)
 {
 	struct dp_display* dp_display;
 	struct dp_display_private *dp;
@@ -3326,7 +3322,7 @@ EXPORT_SYMBOL(is_dp_connected);
 #endif
 
 #if IS_ENABLED(CONFIG_LGE_COVER_DISPLAY)
-bool is_dd_connected()
+bool is_dd_connected(void)
 {
 	struct dp_display* dp_display;
 	struct dp_display_private *dp;
@@ -3346,7 +3342,7 @@ bool is_dd_connected()
 }
 EXPORT_SYMBOL(is_dd_connected);
 
-bool is_dd_display_recovery_working()
+bool is_dd_display_recovery_working(void)
 {
 	struct dp_display* dp_display;
 	struct dp_display_private *dp;
@@ -3366,7 +3362,7 @@ bool is_dd_display_recovery_working()
 }
 EXPORT_SYMBOL(is_dd_display_recovery_working);
 
-bool is_dd_powermode()
+bool is_dd_powermode(void)
 {
 	struct dp_display* dp_display;
 	struct dp_display_private *dp;

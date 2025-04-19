@@ -1,1 +1,0 @@
-cmd_techpack/audio/asoc/built-in.o :=   rm -f techpack/audio/asoc/built-in.o; llvm-ar rcSTPD techpack/audio/asoc/built-in.o techpack/audio/asoc/codecs/built-in.o techpack/audio/asoc/platform_dlkm.o techpack/audio/asoc/machine_dlkm.o 

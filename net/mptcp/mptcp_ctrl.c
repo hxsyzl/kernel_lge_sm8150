@@ -1985,7 +1985,8 @@ int mptcp_create_master_sk(struct sock *meta_sk, __u64 remote_key,
 		goto err_add_sock;
 
 	meta_sk->sk_prot->unhash(meta_sk);
-	inet_ehash_nolisten(master_sk, NULL);
+	bool found_dup_sk = false; 
+    inet_ehash_nolisten(master_sk, NULL, &found_dup_sk);
 
 	master_tp->mptcp->init_rcv_wnd = master_tp->rcv_wnd;
 

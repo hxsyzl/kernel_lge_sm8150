@@ -1,1 +1,0 @@
-cmd_drivers/net/ethernet/cavium/built-in.o :=   rm -f drivers/net/ethernet/cavium/built-in.o; llvm-ar rcSTPD drivers/net/ethernet/cavium/built-in.o drivers/net/ethernet/cavium/thunder/built-in.o drivers/net/ethernet/cavium/liquidio/built-in.o drivers/net/ethernet/cavium/octeon/built-in.o 

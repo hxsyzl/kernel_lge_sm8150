@@ -1,1 +1,0 @@
-cmd_techpack/audio/asoc/codecs/tfa9872/built-in.o :=   rm -f techpack/audio/asoc/codecs/tfa9872/built-in.o; llvm-ar rcSTPD techpack/audio/asoc/codecs/tfa9872/built-in.o techpack/audio/asoc/codecs/tfa9872/tfa9872_dlkm.o 

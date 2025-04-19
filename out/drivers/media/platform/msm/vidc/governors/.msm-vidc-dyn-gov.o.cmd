@@ -1,1 +1,0 @@
-cmd_drivers/media/platform/msm/vidc/governors/msm-vidc-dyn-gov.o :=  rm -f drivers/media/platform/msm/vidc/governors/msm-vidc-dyn-gov.o; llvm-ar rcSTPD drivers/media/platform/msm/vidc/governors/msm-vidc-dyn-gov.o drivers/media/platform/msm/vidc/governors/msm_vidc_dyn_gov.o 

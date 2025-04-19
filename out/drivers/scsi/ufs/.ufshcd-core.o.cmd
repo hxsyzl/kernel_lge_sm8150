@@ -1,1 +1,0 @@
-cmd_drivers/scsi/ufs/ufshcd-core.o :=  rm -f drivers/scsi/ufs/ufshcd-core.o; llvm-ar rcSTPD drivers/scsi/ufs/ufshcd-core.o drivers/scsi/ufs/ufshcd.o drivers/scsi/ufs/ufshcd-crypto.o drivers/scsi/ufs/ufshcd-crypto-qti.o 

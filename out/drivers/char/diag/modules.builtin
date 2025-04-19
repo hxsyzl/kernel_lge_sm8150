@@ -1,3 +1,0 @@
-kernel/drivers/char/diag/diagchar.ko
-kernel/drivers/char/diag/diagfwd_mhi.ko
-kernel/drivers/char/diag/lg_diag_bypass.ko

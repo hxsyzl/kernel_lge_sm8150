@@ -1,1 +1,0 @@
-cmd_fs/crypto/fscrypto.o :=  rm -f fs/crypto/fscrypto.o; llvm-ar rcSTPD fs/crypto/fscrypto.o fs/crypto/crypto.o fs/crypto/fname.o fs/crypto/hkdf.o fs/crypto/hooks.o fs/crypto/keyring.o fs/crypto/keysetup.o fs/crypto/keysetup_v1.o fs/crypto/policy.o fs/crypto/bio.o fs/crypto/inline_crypt.o 

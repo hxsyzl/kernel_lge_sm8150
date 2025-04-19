@@ -1,1 +1,0 @@
-cmd_drivers/usb/gadget/function/usb_f_ncm_lge.o :=  rm -f drivers/usb/gadget/function/usb_f_ncm_lge.o; llvm-ar rcSTPD drivers/usb/gadget/function/usb_f_ncm_lge.o drivers/usb/gadget/function/f_ncm_lge.o 

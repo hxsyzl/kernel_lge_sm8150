@@ -1,1 +1,0 @@
-cmd_net/mptcp/mptcp.o :=  rm -f net/mptcp/mptcp.o; llvm-ar rcSTPD net/mptcp/mptcp.o net/mptcp/mptcp_ctrl.o net/mptcp/mptcp_ipv4.o net/mptcp/mptcp_pm.o net/mptcp/mptcp_output.o net/mptcp/mptcp_input.o net/mptcp/mptcp_sched.o net/mptcp/mptcp_ipv6.o 

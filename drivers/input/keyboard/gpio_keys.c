@@ -239,7 +239,7 @@ struct usbpd_svid_handler *find_hallic_svid_handler(int svid) {
    return NULL;
 }
 
-int get_global_luke_status()
+int get_global_luke_status(void)
 {
 	return global_luke_status;
 }
@@ -254,7 +254,7 @@ void set_mcu_fw_status(int status)
 		cancel_delayed_work_sync(&cover_fw_update_timeout_work);
 }
 
-int get_mcu_fw_status() {
+int get_mcu_fw_status(void) {
 	return mcu_fw_update_status;
 }
 

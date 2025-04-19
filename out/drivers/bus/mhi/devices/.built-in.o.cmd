@@ -1,1 +1,0 @@
-cmd_drivers/bus/mhi/devices/built-in.o :=   rm -f drivers/bus/mhi/devices/built-in.o; llvm-ar rcSTPD drivers/bus/mhi/devices/built-in.o drivers/bus/mhi/devices/mhi_netdev.o drivers/bus/mhi/devices/mhi_uci.o 

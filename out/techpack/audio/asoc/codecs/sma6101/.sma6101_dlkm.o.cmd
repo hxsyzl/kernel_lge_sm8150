@@ -1,1 +1,0 @@
-cmd_techpack/audio/asoc/codecs/sma6101/sma6101_dlkm.o :=  rm -f techpack/audio/asoc/codecs/sma6101/sma6101_dlkm.o; llvm-ar rcSTPD techpack/audio/asoc/codecs/sma6101/sma6101_dlkm.o techpack/audio/asoc/codecs/sma6101/sma6101.o 

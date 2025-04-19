@@ -1,1 +1,0 @@
-cmd_drivers/firmware/built-in.o :=   rm -f drivers/firmware/built-in.o; llvm-ar rcSTPD drivers/firmware/built-in.o drivers/firmware/psci.o drivers/firmware/qcom_scm.o drivers/firmware/qcom_scm-64.o drivers/firmware/broadcom/built-in.o drivers/firmware/meson/built-in.o drivers/firmware/qcom/built-in.o drivers/firmware/tegra/built-in.o 

@@ -1,1 +1,0 @@
-cmd_drivers/bus/mhi/controllers/built-in.o :=   rm -f drivers/bus/mhi/controllers/built-in.o; llvm-ar rcSTPD drivers/bus/mhi/controllers/built-in.o drivers/bus/mhi/controllers/mhi_qcom.o drivers/bus/mhi/controllers/mhi_arch_qcom.o 

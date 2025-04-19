@@ -2,7 +2,7 @@
 /*
  *
  * Automatically generated file; DO NOT EDIT.
- * Linux/arm64 4.14.336 Kernel Configuration
+ * Linux/arm64 4.14.355-openela Kernel Configuration
  *
  */
 /*
@@ -242,6 +242,7 @@ VERSION
   __kernel_gettimeofday;
   __kernel_clock_gettime;
   __kernel_clock_getres;
+  __kernel_time;
  local: *;
  };
 }

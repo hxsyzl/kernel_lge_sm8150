@@ -14,7 +14,7 @@
 #define TSK_TI_TTBR0 72 /* offsetof(struct task_struct, thread_info.ttbr0) */
 #define TSK_STACK 96 /* offsetof(struct task_struct, stack) */
 
-#define THREAD_CPU_CONTEXT 2784 /* offsetof(struct task_struct, thread.cpu_context) */
+#define THREAD_CPU_CONTEXT 2800 /* offsetof(struct task_struct, thread.cpu_context) */
 
 #define S_X0 0 /* offsetof(struct pt_regs, regs[0]) */
 #define S_X1 8 /* offsetof(struct pt_regs, regs[1]) */
@@ -46,6 +46,9 @@
 #define S_STACKFRAME 304 /* offsetof(struct pt_regs, stackframe) */
 #define S_FRAME_SIZE 320 /* sizeof(struct pt_regs) */
 
+#define COMPAT_SIGFRAME_REGS_OFFSET 32 /* offsetof(struct compat_sigframe, uc) + offsetof(struct compat_ucontext, uc_mcontext) + offsetof(struct compat_sigcontext, arm_r0) */
+#define COMPAT_RT_SIGFRAME_REGS_OFFSET 160 /* offsetof(struct compat_rt_sigframe, sig) + offsetof(struct compat_sigframe, uc) + offsetof(struct compat_ucontext, uc_mcontext) + offsetof(struct compat_sigcontext, arm_r0) */
+
 #define MM_CONTEXT_ID 752 /* offsetof(struct mm_struct, context.id.counter) */
 
 #define VMA_VM_MM 64 /* offsetof(struct vm_area_struct, vm_mm) */
@@ -58,40 +61,6 @@
 #define DMA_BIDIRECTIONAL 0 /* DMA_BIDIRECTIONAL */
 #define DMA_TO_DEVICE 1 /* DMA_TO_DEVICE */
 #define DMA_FROM_DEVICE 2 /* DMA_FROM_DEVICE */
-
-#define CLOCK_REALTIME 0 /* CLOCK_REALTIME */
-#define CLOCK_MONOTONIC 1 /* CLOCK_MONOTONIC */
-#define CLOCK_MONOTONIC_RAW 4 /* CLOCK_MONOTONIC_RAW */
-#define CLOCK_REALTIME_RES 100 /* offsetof(struct vdso_data, hrtimer_res) */
-#define CLOCK_REALTIME_COARSE 5 /* CLOCK_REALTIME_COARSE */
-#define CLOCK_MONOTONIC_COARSE 6 /* CLOCK_MONOTONIC_COARSE */
-#define CLOCK_COARSE_RES 3333333 /* LOW_RES_NSEC */
-#define NSEC_PER_SEC 1000000000 /* NSEC_PER_SEC */
-
-#define VDSO_CS_CYCLE_LAST 0 /* offsetof(struct vdso_data, cs_cycle_last) */
-#define VDSO_RAW_TIME_SEC 8 /* offsetof(struct vdso_data, raw_time_sec) */
-#define VDSO_RAW_TIME_NSEC 16 /* offsetof(struct vdso_data, raw_time_nsec) */
-#define VDSO_XTIME_CLK_SEC 24 /* offsetof(struct vdso_data, xtime_clock_sec) */
-#define VDSO_XTIME_CLK_NSEC 32 /* offsetof(struct vdso_data, xtime_clock_nsec) */
-#define VDSO_XTIME_CRS_SEC 40 /* offsetof(struct vdso_data, xtime_coarse_sec) */
-#define VDSO_XTIME_CRS_NSEC 48 /* offsetof(struct vdso_data, xtime_coarse_nsec) */
-#define VDSO_WTM_CLK_SEC 56 /* offsetof(struct vdso_data, wtm_clock_sec) */
-#define VDSO_WTM_CLK_NSEC 64 /* offsetof(struct vdso_data, wtm_clock_nsec) */
-#define VDSO_TB_SEQ_COUNT 72 /* offsetof(struct vdso_data, tb_seq_count) */
-#define VDSO_CS_MONO_MULT 76 /* offsetof(struct vdso_data, cs_mono_mult) */
-#define VDSO_CS_RAW_MULT 84 /* offsetof(struct vdso_data, cs_raw_mult) */
-#define VDSO_CS_SHIFT 80 /* offsetof(struct vdso_data, cs_shift) */
-#define VDSO_TZ_MINWEST 88 /* offsetof(struct vdso_data, tz_minuteswest) */
-#define VDSO_TZ_DSTTIME 92 /* offsetof(struct vdso_data, tz_dsttime) */
-#define VDSO_USE_SYSCALL 96 /* offsetof(struct vdso_data, use_syscall) */
-
-#define TVAL_TV_SEC 0 /* offsetof(struct timeval, tv_sec) */
-#define TVAL_TV_USEC 8 /* offsetof(struct timeval, tv_usec) */
-#define TSPEC_TV_SEC 0 /* offsetof(struct timespec, tv_sec) */
-#define TSPEC_TV_NSEC 8 /* offsetof(struct timespec, tv_nsec) */
-
-#define TZ_MINWEST 0 /* offsetof(struct timezone, tz_minuteswest) */
-#define TZ_DSTTIME 4 /* offsetof(struct timezone, tz_dsttime) */
 
 #define CPU_BOOT_STACK 0 /* offsetof(struct secondary_data, stack) */
 #define CPU_BOOT_TASK 8 /* offsetof(struct secondary_data, task) */

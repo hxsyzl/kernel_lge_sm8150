@@ -1,1 +1,0 @@
-cmd_drivers/usb/host/xhci-hcd.o :=  rm -f drivers/usb/host/xhci-hcd.o; llvm-ar rcSTPD drivers/usb/host/xhci-hcd.o drivers/usb/host/xhci.o drivers/usb/host/xhci-mem.o drivers/usb/host/xhci-ring.o drivers/usb/host/xhci-hub.o drivers/usb/host/xhci-dbg.o drivers/usb/host/xhci-trace.o 

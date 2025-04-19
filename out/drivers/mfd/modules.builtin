@@ -1,3 +1,0 @@
-kernel/drivers/mfd/mfd-core.ko
-kernel/drivers/mfd/qcom-i2c-pmic.ko
-kernel/drivers/mfd/qcom-spmi-pmic.ko

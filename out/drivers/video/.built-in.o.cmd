@@ -1,1 +1,0 @@
-cmd_drivers/video/built-in.o :=   rm -f drivers/video/built-in.o; llvm-ar rcSTPD drivers/video/built-in.o drivers/video/hdmi.o drivers/video/logo/built-in.o drivers/video/backlight/built-in.o drivers/video/fbdev/built-in.o 

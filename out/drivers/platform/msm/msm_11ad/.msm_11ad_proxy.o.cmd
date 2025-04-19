@@ -1,1 +1,0 @@
-cmd_drivers/platform/msm/msm_11ad/msm_11ad_proxy.o :=  rm -f drivers/platform/msm/msm_11ad/msm_11ad_proxy.o; llvm-ar rcSTPD drivers/platform/msm/msm_11ad/msm_11ad_proxy.o drivers/platform/msm/msm_11ad/msm_11ad.o 

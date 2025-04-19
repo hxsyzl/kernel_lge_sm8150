@@ -1,1 +1,0 @@
-cmd_drivers/power/supply/built-in.o :=   rm -f drivers/power/supply/built-in.o; llvm-ar rcSTPD drivers/power/supply/built-in.o drivers/power/supply/power_supply.o drivers/power/supply/idtp9222-charger.o drivers/power/supply/lge/built-in.o drivers/power/supply/qcom/built-in.o drivers/power/supply/lge/extension-workarounds.o 

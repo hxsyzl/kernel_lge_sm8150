@@ -1,1 +1,0 @@
-cmd_fs/overlayfs/overlay.o :=  rm -f fs/overlayfs/overlay.o; llvm-ar rcSTPD fs/overlayfs/overlay.o fs/overlayfs/super.o fs/overlayfs/namei.o fs/overlayfs/util.o fs/overlayfs/inode.o fs/overlayfs/dir.o fs/overlayfs/readdir.o fs/overlayfs/copy_up.o 
