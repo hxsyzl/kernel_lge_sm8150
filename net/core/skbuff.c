@@ -1343,6 +1343,12 @@ static void copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
 	skb_shinfo(new)->gso_segs = skb_shinfo(old)->gso_segs;
 	skb_shinfo(new)->gso_type = skb_shinfo(old)->gso_type;
 }
+
+void skb_copy_header(struct sk_buff *new, const struct sk_buff *old)
+{
+	copy_skb_header(new, old);
+}
+
 EXPORT_SYMBOL(skb_copy_header);
 
 static inline int skb_alloc_rx_flag(const struct sk_buff *skb)

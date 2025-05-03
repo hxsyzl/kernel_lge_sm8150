@@ -6490,11 +6490,8 @@ int tcp_rcv_state_process(struct sock *sk, struct sk_buff *skb)
 
 		tcp_initialize_rcv_mss(sk);
 		tcp_fast_path_on(tp);
-<<<<<<< HEAD
-=======
 		if (sk->sk_shutdown & SEND_SHUTDOWN)
 			tcp_shutdown(sk, SEND_SHUTDOWN);
->>>>>>> e52f422cc74a (net: Import LGE changes)
 
 #ifdef CONFIG_LGP_DATA_TCPIP_MPTCP
 		/* Send an ACK when establishing a new  MPTCP subflow, i.e.
