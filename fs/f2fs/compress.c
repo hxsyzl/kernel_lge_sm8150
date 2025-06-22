@@ -425,11 +425,7 @@ static int zstd_init_decompress_ctx(struct decompress_io_ctx *dic)
 	if (!workspace)
 		return -ENOMEM;
 
-<<<<<<< HEAD
 	stream = zstd_init_dstream(max_window_size, workspace, workspace_size);
-=======
-	stream = ZSTD_initDStream(max_window_size, workspace, workspace_size);
->>>>>>> 5fb3da2c8b31 (f2fs: Update from jaegeuk/f2fs-stable)
 	if (!stream) {
 		printk_ratelimited("%sF2FS-fs (%s): %s zstd_init_dstream failed\n",
 				KERN_ERR, F2FS_I_SB(dic->inode)->sb->s_id,
