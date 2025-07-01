@@ -873,30 +873,6 @@ void __noreturn do_exit(long code)
 }
 EXPORT_SYMBOL_GPL(do_exit);
 
-void __noreturn make_task_dead(int signr)
-{
-	/*
-	 * Take the task off the cpu after something catastrophic has
-	 * happened.
-	 */
-	unsigned int limit;
-
-	/*
-	 * Every time the system oopses, if the oops happens while a reference
-	 * to an object was held, the reference leaks.
-	 * If the oops doesn't also leak memory, repeated oopsing can cause
-	 * reference counters to wrap around (if they're not using refcount_t).
-	 * This means that repeated oopsing can make unexploitable-looking bugs
-	 * exploitable through repeated oopsing.
-	 * To make sure this can't happen, place an upper bound on how often the
-	 * kernel may oops without panic().
-	 */
-	limit = READ_ONCE(oops_limit);
-	if (atomic_inc_return(&oops_count) >= limit && limit)
-		panic("Oopsed too often (kernel.oops_limit is %d)", limit);
-
-	do_exit(signr);
-}
 
 void complete_and_exit(struct completion *comp, long code)
 {

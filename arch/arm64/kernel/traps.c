@@ -223,6 +223,13 @@ static int __die(const char *str, int err, struct pt_regs *regs)
 	return ret;
 }
 
+void make_task_dead(int signal)
+{
+    struct task_struct *task = current;
+    task->exit_code = signal;
+    do_exit(signal);
+}
+
 static DEFINE_RAW_SPINLOCK(die_lock);
 
 /*
