@@ -2,4 +2,4 @@
 [submodule "KernelSU"]
 	path = KernelSU
 	url = https://github.com/SukiSU-Ultra/SukiSU-Ultra
-	branch = susfs-main
+	branch = nongki
