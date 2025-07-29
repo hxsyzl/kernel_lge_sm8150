@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2019 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014-2018 The Linux Foundation. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -42,20 +42,6 @@ typedef struct {
 } __qdf_hrtimer_data_t;
 
 /**
- * __qdf_hrtimer_get_mode() - Get hrtimer_mode with qdf mode
- * @mode: mode of hrtimer
- *
- * Get hrtimer_mode with qdf hrtimer mode
- *
- * Return: void
- */
-static inline
-enum hrtimer_mode __qdf_hrtimer_get_mode(enum qdf_hrtimer_mode mode)
-{
-	return (enum hrtimer_mode)mode;
-}
-
-/**
  * __qdf_hrtimer_start() - Starts hrtimer in given context
  * @timer: pointer to the hrtimer object
  * @interval: interval to forward as qdf_ktime_t object
@@ -70,9 +56,11 @@ static inline
 void __qdf_hrtimer_start(__qdf_hrtimer_data_t *timer, ktime_t interval,
 			 enum qdf_hrtimer_mode mode)
 {
-	enum hrtimer_mode hrt_mode = __qdf_hrtimer_get_mode(mode);
-
-	hrtimer_start(&timer->u.hrtimer, interval, hrt_mode);
+	if (timer->ctx == QDF_CONTEXT_HARDWARE)
+		hrtimer_start(&timer->u.hrtimer, interval, mode);
+	else if (timer->ctx == QDF_CONTEXT_TASKLET)
+		tasklet_hrtimer_start(&timer->u.tasklet_hrtimer,
+				      interval, mode);
 }
 #else
 static inline
@@ -95,16 +83,16 @@ void __qdf_hrtimer_start(__qdf_hrtimer_data_t *timer, ktime_t interval,
  *
  * cancels hrtimer in given context
  *
- * Return: int
+ * Return: void
  */
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0))
 static inline
-int __qdf_hrtimer_cancel(__qdf_hrtimer_data_t *timer)
+void __qdf_hrtimer_cancel(__qdf_hrtimer_data_t *timer)
 {
 	if (timer->ctx == QDF_CONTEXT_HARDWARE)
-		return hrtimer_cancel(&timer->u.hrtimer);
-
-	return 0;
+		hrtimer_cancel(&timer->u.hrtimer);
+	else if (timer->ctx == QDF_CONTEXT_TASKLET)
+		hrtimer_cancel(&timer->u.tasklet_hrtimer.timer);
 }
 #else
 static inline
@@ -138,15 +126,15 @@ static inline void  __qdf_hrtimer_init(__qdf_hrtimer_data_t *timer,
 				       enum qdf_context_mode ctx)
 {
 	struct hrtimer *hrtimer = &timer->u.hrtimer;
-	enum hrtimer_mode hrt_mode = __qdf_hrtimer_get_mode(mode);
+	struct tasklet_hrtimer *tasklet_hrtimer = &timer->u.tasklet_hrtimer;
 
 	timer->ctx = ctx;
 
 	if (timer->ctx == QDF_CONTEXT_HARDWARE) {
-		hrtimer_init(hrtimer, clock, hrt_mode);
+		hrtimer_init(hrtimer, clock, mode);
 		hrtimer->function = cback;
 	} else if (timer->ctx == QDF_CONTEXT_TASKLET) {
-		QDF_BUG(0);
+		tasklet_hrtimer_init(tasklet_hrtimer, cback, clock, mode);
 	}
 }
 #else
@@ -183,7 +171,10 @@ static inline void  __qdf_hrtimer_init(__qdf_hrtimer_data_t *timer,
 static inline
 void __qdf_hrtimer_kill(__qdf_hrtimer_data_t *timer)
 {
-	hrtimer_cancel(&timer->u.hrtimer);
+	if (timer->ctx == QDF_CONTEXT_HARDWARE)
+		hrtimer_cancel(&timer->u.hrtimer);
+	else if (timer->ctx == QDF_CONTEXT_TASKLET)
+		tasklet_hrtimer_cancel(&timer->u.tasklet_hrtimer);
 }
 #else
 static inline
@@ -208,8 +199,12 @@ void __qdf_hrtimer_kill(__qdf_hrtimer_data_t *timer)
 static inline ktime_t __qdf_hrtimer_get_remaining(__qdf_hrtimer_data_t *timer)
 {
 	struct hrtimer *hrtimer = &timer->u.hrtimer;
+	struct tasklet_hrtimer *tasklet_hrtimer = &timer->u.tasklet_hrtimer;
 
-	return hrtimer_get_remaining(hrtimer);
+	if (timer->ctx == QDF_CONTEXT_HARDWARE)
+		return hrtimer_get_remaining(hrtimer);
+	else
+		return hrtimer_get_remaining(&tasklet_hrtimer->timer);
 }
 #else
 static inline ktime_t __qdf_hrtimer_get_remaining(__qdf_hrtimer_data_t *timer)
@@ -237,8 +232,12 @@ static inline ktime_t __qdf_hrtimer_get_remaining(__qdf_hrtimer_data_t *timer)
 static inline bool __qdf_hrtimer_is_queued(__qdf_hrtimer_data_t *timer)
 {
 	struct hrtimer *hrtimer = &timer->u.hrtimer;
+	struct tasklet_hrtimer *tasklet_hrtimer = &timer->u.tasklet_hrtimer;
 
-	return hrtimer_is_queued(hrtimer);
+	if (timer->ctx == QDF_CONTEXT_HARDWARE)
+		return hrtimer_is_queued(hrtimer);
+	else
+		return hrtimer_is_queued(&tasklet_hrtimer->timer);
 }
 #else
 static inline bool __qdf_hrtimer_is_queued(__qdf_hrtimer_data_t *timer)
@@ -266,8 +265,12 @@ static inline bool __qdf_hrtimer_is_queued(__qdf_hrtimer_data_t *timer)
 static inline bool __qdf_hrtimer_callback_running(__qdf_hrtimer_data_t *timer)
 {
 	struct hrtimer *hrtimer = &timer->u.hrtimer;
+	struct tasklet_hrtimer *tasklet_hrtimer = &timer->u.tasklet_hrtimer;
 
-	return hrtimer_callback_running(hrtimer);
+	if (timer->ctx == QDF_CONTEXT_HARDWARE)
+		return hrtimer_callback_running(hrtimer);
+	else
+		return hrtimer_callback_running(&tasklet_hrtimer->timer);
 }
 #else
 static inline bool __qdf_hrtimer_callback_running(__qdf_hrtimer_data_t *timer)
@@ -296,8 +299,12 @@ static inline bool __qdf_hrtimer_callback_running(__qdf_hrtimer_data_t *timer)
 static inline bool __qdf_hrtimer_active(__qdf_hrtimer_data_t *timer)
 {
 	struct hrtimer *hrtimer = &timer->u.hrtimer;
+	struct tasklet_hrtimer *tasklet_hrtimer = &timer->u.tasklet_hrtimer;
 
-	return hrtimer_active(hrtimer);
+	if (timer->ctx == QDF_CONTEXT_HARDWARE)
+		return hrtimer_active(hrtimer);
+	else
+		return hrtimer_active(&tasklet_hrtimer->timer);
 }
 #else
 static inline bool __qdf_hrtimer_active(__qdf_hrtimer_data_t *timer)
@@ -324,8 +331,12 @@ static inline bool __qdf_hrtimer_active(__qdf_hrtimer_data_t *timer)
 static inline ktime_t __qdf_hrtimer_cb_get_time(__qdf_hrtimer_data_t *timer)
 {
 	struct hrtimer *hrtimer = &timer->u.hrtimer;
+	struct tasklet_hrtimer *tasklet_hrtimer = &timer->u.tasklet_hrtimer;
 
-	return hrtimer_cb_get_time(hrtimer);
+	if (timer->ctx == QDF_CONTEXT_HARDWARE)
+		return hrtimer_cb_get_time(hrtimer);
+	else
+		return hrtimer_cb_get_time(&tasklet_hrtimer->timer);
 }
 #else
 static inline ktime_t __qdf_hrtimer_cb_get_time(__qdf_hrtimer_data_t *timer)
@@ -356,8 +367,12 @@ static inline uint64_t __qdf_hrtimer_forward(__qdf_hrtimer_data_t *timer,
 					     ktime_t interval)
 {
 	struct hrtimer *hrtimer = &timer->u.hrtimer;
+	struct tasklet_hrtimer *tasklet_hrtimer = &timer->u.tasklet_hrtimer;
 
-	return hrtimer_forward(hrtimer, now, interval);
+	if (timer->ctx == QDF_CONTEXT_HARDWARE)
+		return hrtimer_forward(hrtimer, now, interval);
+	else
+		return hrtimer_forward(&tasklet_hrtimer->timer, now, interval);
 }
 #else
 static inline uint64_t __qdf_hrtimer_forward(__qdf_hrtimer_data_t *timer,
