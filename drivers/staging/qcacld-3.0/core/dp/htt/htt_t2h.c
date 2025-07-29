@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2011-2018 The Linux Foundation. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -31,7 +31,6 @@
 #include <htt.h>                /* HTT_T2H_MSG_TYPE, etc. */
 #include <qdf_nbuf.h>           /* qdf_nbuf_t */
 
-#include <ol_rx.h>
 #include <ol_htt_rx_api.h>
 #include <ol_htt_tx_api.h>
 #include <ol_txrx_htt_api.h>    /* htt_tx_status */
@@ -169,40 +168,21 @@ static void htt_ipa_op_response(struct htt_pdev_t *pdev, uint32_t *msg_word)
 		qdf_mem_malloc(sizeof
 				(struct htt_wdi_ipa_op_response_t) +
 				len);
-	if (!op_msg_buffer)
+	if (!op_msg_buffer) {
+		qdf_print("OPCODE message buffer alloc fail");
 		return;
-
+	}
 	qdf_mem_copy(op_msg_buffer,
 			msg_start_ptr,
 			sizeof(struct htt_wdi_ipa_op_response_t) +
 			len);
 	cdp_ipa_op_response(cds_get_context(QDF_MODULE_ID_SOC),
-			    OL_TXRX_PDEV_ID, op_msg_buffer);
+			(struct cdp_pdev *)pdev->txrx_pdev,
+			op_msg_buffer);
 }
 #else
 static void htt_ipa_op_response(struct htt_pdev_t *pdev, uint32_t *msg_word)
 {
-}
-#endif
-
-#ifndef QCN7605_SUPPORT
-static int htt_t2h_adjust_bus_target_delta(struct htt_pdev_t *pdev,
-					   int32_t htt_credit_delta)
-{
-	if (pdev->cfg.is_high_latency && !pdev->cfg.default_tx_comp_req) {
-		HTT_TX_MUTEX_ACQUIRE(&pdev->credit_mutex);
-		qdf_atomic_add(htt_credit_delta,
-			       &pdev->htt_tx_credit.target_delta);
-		htt_credit_delta = htt_tx_credit_update(pdev);
-		HTT_TX_MUTEX_RELEASE(&pdev->credit_mutex);
-	}
-	return htt_credit_delta;
-}
-#else
-static int htt_t2h_adjust_bus_target_delta(struct htt_pdev_t *pdev,
-					   int32_t htt_credit_delta)
-{
-	return htt_credit_delta;
 }
 #endif
 
@@ -250,12 +230,6 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 		uint16_t seq_num_start, seq_num_end;
 		enum htt_rx_flush_action action;
 
-		if (qdf_nbuf_len(htt_t2h_msg) < HTT_RX_FLUSH_BYTES) {
-			qdf_print("invalid nbuff len");
-			WARN_ON(1);
-			break;
-		}
-
 		peer_id = HTT_RX_FLUSH_PEER_ID_GET(*msg_word);
 		tid = HTT_RX_FLUSH_TID_GET(*msg_word);
 		seq_num_start =
@@ -298,13 +272,7 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 	{
 		uint16_t peer_id;
 		uint8_t tid;
-		int msg_len = qdf_nbuf_len(htt_t2h_msg);
 
-		if (msg_len < HTT_RX_FRAG_IND_BYTES) {
-			qdf_print("invalid nbuff len");
-			WARN_ON(1);
-			break;
-		}
 		peer_id = HTT_RX_FRAG_IND_PEER_ID_GET(*msg_word);
 		tid = HTT_RX_FRAG_IND_EXT_TID_GET(*msg_word);
 		htt_rx_frag_set_last_msdu(pdev, htt_t2h_msg);
@@ -319,7 +287,9 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 				sizeof(struct hl_htt_rx_ind_base)+
 				sizeof(struct ieee80211_frame))) {
 
-				qdf_print("invalid packet len, %u", rx_pkt_len);
+				qdf_print("%s: invalid packet len, %u\n",
+						__func__,
+						rx_pkt_len);
 				/*
 				 * This buf will be freed before
 				 * exiting this function.
@@ -348,47 +318,20 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 	}
 	case HTT_T2H_MSG_TYPE_RX_ADDBA:
 	{
-		uint16_t peer_id;
-		uint8_t tid;
-		uint8_t win_sz;
-		uint16_t start_seq_num;
-
-		/*
-		 * FOR NOW, the host doesn't need to know the initial
-		 * sequence number for rx aggregation.
-		 * Thus, any value will do - specify 0.
-		 */
-		start_seq_num = 0;
-		peer_id = HTT_RX_ADDBA_PEER_ID_GET(*msg_word);
-		tid = HTT_RX_ADDBA_TID_GET(*msg_word);
-		win_sz = HTT_RX_ADDBA_WIN_SIZE_GET(*msg_word);
-		ol_rx_addba_handler(pdev->txrx_pdev, peer_id, tid,
-				    win_sz, start_seq_num,
-				    0 /* success */);
+		qdf_print("HTT_T2H_MSG_TYPE_RX_ADDBA not supported ");
 		break;
 	}
 	case HTT_T2H_MSG_TYPE_RX_DELBA:
 	{
-		uint16_t peer_id;
-		uint8_t tid;
-
-		peer_id = HTT_RX_DELBA_PEER_ID_GET(*msg_word);
-		tid = HTT_RX_DELBA_TID_GET(*msg_word);
-		ol_rx_delba_handler(pdev->txrx_pdev, peer_id, tid);
+		qdf_print("HTT_T2H_MSG_TYPE_RX_DELBA not supported ");
 		break;
 	}
 	case HTT_T2H_MSG_TYPE_PEER_MAP:
 	{
-		uint8_t mac_addr_deswizzle_buf[QDF_MAC_ADDR_SIZE];
+		uint8_t mac_addr_deswizzle_buf[HTT_MAC_ADDR_LEN];
 		uint8_t *peer_mac_addr;
 		uint16_t peer_id;
 		uint8_t vdev_id;
-
-		if (qdf_nbuf_len(htt_t2h_msg) < HTT_RX_PEER_MAP_BYTES) {
-			qdf_print("invalid nbuff len");
-			WARN_ON(1);
-			break;
-		}
 
 		peer_id = HTT_RX_PEER_MAP_PEER_ID_GET(*msg_word);
 		vdev_id = HTT_RX_PEER_MAP_VDEV_ID_GET(*msg_word);
@@ -413,12 +356,6 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 	{
 		uint16_t peer_id;
 
-		if (qdf_nbuf_len(htt_t2h_msg) < HTT_RX_PEER_UNMAP_BYTES) {
-			qdf_print("invalid nbuff len");
-			WARN_ON(1);
-			break;
-		}
-
 		peer_id = HTT_RX_PEER_UNMAP_PEER_ID_GET(*msg_word);
 		if (peer_id > ol_cfg_max_peer_id(pdev->ctrl_pdev)) {
 			qdf_print("%s: HTT_T2H_MSG_TYPE_PEER_UNMAP,"
@@ -436,12 +373,6 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 		uint16_t peer_id;
 		enum htt_sec_type sec_type;
 		int is_unicast;
-
-		if (qdf_nbuf_len(htt_t2h_msg) < HTT_SEC_IND_BYTES) {
-			qdf_print("invalid nbuff len");
-			WARN_ON(1);
-			break;
-		}
 
 		peer_id = HTT_SEC_IND_PEER_ID_GET(*msg_word);
 		sec_type = HTT_SEC_IND_SEC_TYPE_GET(*msg_word);
@@ -484,11 +415,6 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 			pdev->txrx_pdev, compl_msg->desc_id, 1,
 			0, compl_msg->status);
 
-		DPTRACE(qdf_dp_trace_credit_record(QDF_TX_COMP, QDF_CREDIT_INC,
-			1, qdf_atomic_read(&pdev->txrx_pdev->target_tx_credit),
-			qdf_atomic_read(&pdev->txrx_pdev->txq_grps[0].credit),
-			qdf_atomic_read(&pdev->txrx_pdev->txq_grps[1].credit)));
-
 		if (!ol_tx_get_is_mgmt_over_wmi_enabled()) {
 			ol_tx_single_completion_handler(pdev->txrx_pdev,
 							compl_msg->status,
@@ -520,14 +446,13 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 		uint32_t len = qdf_nbuf_len(htt_t2h_msg);
 
 		if (len < sizeof(*msg_word) + sizeof(uint32_t)) {
-			qdf_print("invalid nbuff len");
+			qdf_print("%s: invalid nbuff len \n", __func__);
 			WARN_ON(1);
 			break;
 		}
 
 		/*len is reduced by sizeof(*msg_word)*/
-		pktlog_process_fw_msg(OL_TXRX_PDEV_ID, msg_word + 1,
-				      len - sizeof(*msg_word));
+		pktlog_process_fw_msg(msg_word + 1, len - sizeof(*msg_word));
 		break;
 	}
 #endif
@@ -536,13 +461,6 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 		uint32_t htt_credit_delta_abs;
 		int32_t htt_credit_delta;
 		int sign, old_credit;
-		int msg_len = qdf_nbuf_len(htt_t2h_msg);
-
-		if (msg_len < HTT_TX_CREDIT_MSG_BYTES) {
-			qdf_print("invalid nbuff len");
-			WARN_ON(1);
-			break;
-		}
 
 		htt_credit_delta_abs =
 			HTT_TX_CREDIT_DELTA_ABS_GET(*msg_word);
@@ -552,20 +470,24 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 		old_credit = qdf_atomic_read(&pdev->htt_tx_credit.target_delta);
 		if (((old_credit + htt_credit_delta) > MAX_TARGET_TX_CREDIT) ||
 			((old_credit + htt_credit_delta) < -MAX_TARGET_TX_CREDIT)) {
-			qdf_err("invalid update,old_credit=%d, htt_credit_delta=%d",
-				old_credit, htt_credit_delta);
+			qdf_print("%s: invalid credit update,old_credit=%d,"
+				"htt_credit_delta=%d\n",
+				__func__,
+				old_credit,
+				htt_credit_delta);
 			break;
 		}
-		htt_credit_delta =
-		htt_t2h_adjust_bus_target_delta(pdev, htt_credit_delta);
-		htt_tx_group_credit_process(pdev, msg_word);
-		DPTRACE(qdf_dp_trace_credit_record(QDF_TX_CREDIT_UPDATE,
-			QDF_CREDIT_INC,	htt_credit_delta,
-			qdf_atomic_read(&pdev->txrx_pdev->target_tx_credit) +
-			htt_credit_delta,
-			qdf_atomic_read(&pdev->txrx_pdev->txq_grps[0].credit),
-			qdf_atomic_read(&pdev->txrx_pdev->txq_grps[1].credit)));
 
+		if (pdev->cfg.is_high_latency &&
+		    !pdev->cfg.default_tx_comp_req) {
+			HTT_TX_MUTEX_ACQUIRE(&pdev->credit_mutex);
+			qdf_atomic_add(htt_credit_delta,
+				       &pdev->htt_tx_credit.target_delta);
+			htt_credit_delta = htt_tx_credit_update(pdev);
+			HTT_TX_MUTEX_RELEASE(&pdev->credit_mutex);
+		}
+
+		htt_tx_group_credit_process(pdev, msg_word);
 		ol_tx_credit_completion_handler(pdev->txrx_pdev,
 						htt_credit_delta);
 		break;
@@ -638,68 +560,50 @@ static void htt_t2h_lp_msg_handler(void *context, qdf_nbuf_t htt_t2h_msg,
 		break;
 	}
 
-	case HTT_T2H_MSG_TYPE_FLOW_POOL_RESIZE:
-	{
-		struct htt_flow_pool_resize_t *msg;
-		int msg_len = qdf_nbuf_len(htt_t2h_msg);
-
-		if (msg_len < sizeof(struct htt_flow_pool_resize_t)) {
-			QDF_TRACE(QDF_MODULE_ID_HTT, QDF_TRACE_LEVEL_ERROR,
-				  "Invalid msg_word length in HTT_T2H_MSG_TYPE_FLOW_POOL_RESIZE");
-			WARN_ON(1);
-			break;
-		}
-
-		msg = (struct htt_flow_pool_resize_t *)msg_word;
-		ol_tx_flow_pool_resize_handler(msg->flow_pool_id,
-					       msg->flow_pool_new_size);
-
-		break;
-	}
-
 	case HTT_T2H_MSG_TYPE_RX_OFLD_PKT_ERR:
 	{
 		switch (HTT_RX_OFLD_PKT_ERR_MSG_SUB_TYPE_GET(*msg_word)) {
 		case HTT_RX_OFLD_PKT_ERR_TYPE_MIC_ERR:
 		{
+			struct ol_error_info err_info;
 			struct ol_txrx_vdev_t *vdev;
 			struct ol_txrx_peer_t *peer;
-			uint64_t pn;
-			uint32_t key_id;
-			uint16_t peer_id;
-			int msg_len = qdf_nbuf_len(htt_t2h_msg);
-
-			if (msg_len < HTT_RX_OFLD_PKT_ERR_MIC_ERR_BYTES) {
-				qdf_print("invalid nbuff len");
-				WARN_ON(1);
-				break;
-			}
-
-			peer_id = HTT_RX_OFLD_PKT_ERR_MIC_ERR_PEER_ID_GET
+			uint16_t peer_id =
+				 HTT_RX_OFLD_PKT_ERR_MIC_ERR_PEER_ID_GET
 				(*(msg_word + 1));
 
 			peer = ol_txrx_peer_find_by_id(pdev->txrx_pdev,
 				 peer_id);
 			if (!peer) {
-				qdf_print("invalid peer id %d", peer_id);
+				qdf_print("%s: invalid peer id %d\n",
+					 __func__, peer_id);
 				qdf_assert(0);
 				break;
 			}
 			vdev = peer->vdev;
-			key_id = HTT_RX_OFLD_PKT_ERR_MIC_ERR_KEYID_GET
+			err_info.u.mic_err.vdev_id = vdev->vdev_id;
+			err_info.u.mic_err.key_id =
+				HTT_RX_OFLD_PKT_ERR_MIC_ERR_KEYID_GET
 				(*(msg_word + 1));
-			qdf_mem_copy(&pn, (uint8_t *)(msg_word + 6), 6);
+			qdf_mem_copy(err_info.u.mic_err.da,
+				 (uint8_t *)(msg_word + 2),
+				 OL_TXRX_MAC_ADDR_LEN);
+			qdf_mem_copy(err_info.u.mic_err.sa,
+				 (uint8_t *)(msg_word + 4),
+				 OL_TXRX_MAC_ADDR_LEN);
+			qdf_mem_copy(&err_info.u.mic_err.pn,
+				 (uint8_t *)(msg_word + 6), 6);
+			qdf_mem_copy(err_info.u.mic_err.ta,
+				 peer->mac_addr.raw, OL_TXRX_MAC_ADDR_LEN);
 
-			ol_rx_send_mic_err_ind(vdev->pdev, vdev->vdev_id,
-					       peer->mac_addr.raw, 0, 0,
-					       OL_RX_ERR_TKIP_MIC, htt_t2h_msg,
-					       &pn, key_id);
+			wma_indicate_err(OL_RX_ERR_TKIP_MIC, &err_info);
 			break;
 		}
 		default:
 		{
-			qdf_print("unhandled error type %d",
-			    HTT_RX_OFLD_PKT_ERR_MSG_SUB_TYPE_GET(*msg_word));
+			qdf_print("%s: unhandled error type %d\n",
+			 __func__,
+			 HTT_RX_OFLD_PKT_ERR_MSG_SUB_TYPE_GET(*msg_word));
 		break;
 		}
 		}
@@ -891,14 +795,16 @@ void htt_t2h_msg_handler(void *context, HTC_PACKET *pkt)
 			}
 		}
 
-		if (pdev->cfg.is_high_latency &&
-		    !pdev->cfg.credit_update_enabled) {
+		if (pdev->cfg.is_high_latency) {
 			old_credit = qdf_atomic_read(
 						&pdev->htt_tx_credit.target_delta);
 			if (((old_credit + num_msdus) > MAX_TARGET_TX_CREDIT) ||
 				((old_credit + num_msdus) < -MAX_TARGET_TX_CREDIT)) {
-				qdf_err("invalid update,old_credit=%d, num_msdus=%d",
-					old_credit, num_msdus);
+				qdf_print("%s: invalid credit update,old_credit=%d,"
+					"num_msdus=%d\n",
+					__func__,
+					old_credit,
+					num_msdus);
 			} else {
 				if (!pdev->cfg.default_tx_comp_req) {
 					int credit_delta;
@@ -932,13 +838,6 @@ void htt_t2h_msg_handler(void *context, HTC_PACKET *pkt)
 		uint16_t peer_id;
 		uint8_t tid, pn_ie_cnt, *pn_ie = NULL;
 		uint16_t seq_num_start, seq_num_end;
-		int msg_len = qdf_nbuf_len(htt_t2h_msg);
-
-		if (msg_len < HTT_RX_PN_IND_BYTES) {
-			qdf_print("invalid nbuff len");
-			WARN_ON(1);
-			break;
-		}
 
 		/*First dword */
 		peer_id = HTT_RX_PN_IND_PEER_ID_GET(*msg_word);
@@ -950,13 +849,6 @@ void htt_t2h_msg_handler(void *context, HTC_PACKET *pkt)
 			HTT_RX_PN_IND_SEQ_NUM_START_GET(*msg_word);
 		seq_num_end = HTT_RX_PN_IND_SEQ_NUM_END_GET(*msg_word);
 		pn_ie_cnt = HTT_RX_PN_IND_PN_IE_CNT_GET(*msg_word);
-
-		if (msg_len - HTT_RX_PN_IND_BYTES <
-		    pn_ie_cnt * sizeof(uint8_t)) {
-			qdf_print("invalid pn_ie count");
-			WARN_ON(1);
-			break;
-		}
 
 		msg_word++;
 		/*Third dword */
@@ -1019,12 +911,15 @@ void htt_t2h_msg_handler(void *context, HTC_PACKET *pkt)
 		uint8_t offload_ind, frag_ind;
 
 		if (qdf_unlikely(!pdev->cfg.is_full_reorder_offload)) {
-			qdf_print("full reorder offload is disable");
+			qdf_print("HTT_T2H_MSG_TYPE_RX_IN_ORD_PADDR_IND not ");
+			qdf_print("supported when full reorder offload is ");
+			qdf_print("disabled in the configuration.\n");
 			break;
 		}
 
 		if (qdf_unlikely(pdev->cfg.is_high_latency)) {
-			qdf_print("full reorder offload not support in HL");
+			qdf_print("HTT_T2H_MSG_TYPE_RX_IN_ORD_PADDR_IND ");
+			qdf_print("not supported on high latency.\n");
 			break;
 		}
 
@@ -1034,8 +929,8 @@ void htt_t2h_msg_handler(void *context, HTC_PACKET *pkt)
 		frag_ind = HTT_RX_IN_ORD_PADDR_IND_FRAG_GET(*msg_word);
 
 #if defined(HELIUMPLUS_DEBUG)
-		qdf_print("peerid %d tid %d offloadind %d fragind %d",
-			  peer_id, tid, offload_ind,
+		qdf_print("%s %d: peerid %d tid %d offloadind %d fragind %d\n",
+			  __func__, __LINE__, peer_id, tid, offload_ind,
 			  frag_ind);
 #endif
 		if (qdf_unlikely(frag_ind)) {
@@ -1245,13 +1140,6 @@ void htt_t2h_msg_handler_fast(void *context, qdf_nbuf_t *cmpl_msdus,
 			u_int16_t peer_id;
 			u_int8_t tid, pn_ie_cnt, *pn_ie = NULL;
 			int seq_num_start, seq_num_end;
-			int msg_len = qdf_nbuf_len(htt_t2h_msg);
-
-			if (msg_len < HTT_RX_PN_IND_BYTES) {
-				qdf_print("invalid nbuff len");
-				WARN_ON(1);
-				break;
-			}
 
 			/*First dword */
 			peer_id = HTT_RX_PN_IND_PEER_ID_GET(*msg_word);
@@ -1265,13 +1153,6 @@ void htt_t2h_msg_handler_fast(void *context, qdf_nbuf_t *cmpl_msdus,
 				HTT_RX_PN_IND_SEQ_NUM_END_GET(*msg_word);
 			pn_ie_cnt =
 				HTT_RX_PN_IND_PN_IE_CNT_GET(*msg_word);
-
-			if (msg_len - HTT_RX_PN_IND_BYTES <
-				pn_ie_cnt * sizeof(uint8_t)) {
-				qdf_print("invalid pn_ie len");
-				WARN_ON(1);
-				break;
-			}
 
 			msg_word++;
 			/*Third dword*/
