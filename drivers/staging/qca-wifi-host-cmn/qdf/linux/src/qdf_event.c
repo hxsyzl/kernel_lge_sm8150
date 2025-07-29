@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2019 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014-2018 The Linux Foundation. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -28,7 +28,6 @@
 /* Include Files */
 #include "qdf_event.h"
 #include "qdf_mc_timer.h"
-#include "qdf_timer.h"
 #include <qdf_module.h>
 
 struct qdf_evt_node {
@@ -101,7 +100,6 @@ QDF_STATUS qdf_event_set(qdf_event_t *event)
 	if (event->cookie != LINUX_EVENT_COOKIE)
 		return QDF_STATUS_E_INVAL;
 
-	event->done = true;
 	complete(&event->complete);
 
 	return QDF_STATUS_SUCCESS;
@@ -135,7 +133,6 @@ QDF_STATUS qdf_event_reset(qdf_event_t *event)
 		return QDF_STATUS_E_INVAL;
 
 	/* (re)initialize event */
-	event->done = false;
 	event->force_set = false;
 	INIT_COMPLETION(event->complete);
 
@@ -214,9 +211,10 @@ QDF_STATUS qdf_wait_single_event(qdf_event_t *event, uint32_t timeout)
 	if (timeout) {
 		long ret;
 
-		ret = wait_for_completion_timeout(
-				&event->complete,
-				__qdf_scaled_msecs_to_jiffies(timeout));
+		/* update the timeout if it's on an emulation platform */
+		timeout *= qdf_timer_get_multiplier();
+		ret = wait_for_completion_timeout(&event->complete,
+						  msecs_to_jiffies(timeout));
 
 		if (ret <= 0)
 			return QDF_STATUS_E_TIMEOUT;
@@ -250,14 +248,12 @@ void qdf_complete_wait_events(void)
 	qdf_list_peek_front(&qdf_wait_event_list,
 			    &list_node);
 
-	while (list_node) {
+	while (list_node != NULL) {
 		event_node = qdf_container_of(list_node,
 						struct qdf_evt_node, node);
 
-		if (!event_node->pevent->done) {
-			event_node->pevent->force_set = true;
-			qdf_event_set(event_node->pevent);
-		}
+		event_node->pevent->force_set = true;
+		qdf_event_set(event_node->pevent);
 
 		status = qdf_list_peek_next(&qdf_wait_event_list,
 					&event_node->node, &list_node);
@@ -302,8 +298,10 @@ QDF_STATUS qdf_wait_for_event_completion(qdf_event_t *event, uint32_t timeout)
 		return QDF_STATUS_E_INVAL;
 
 	event_node = qdf_mem_malloc(sizeof(*event_node));
-	if (!event_node)
+	if (!event_node) {
+		qdf_err("Out of memory");
 		return QDF_STATUS_E_NOMEM;
+	}
 
 	event_node->pevent = event;
 

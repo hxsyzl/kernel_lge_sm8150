@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2019 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2018 The Linux Foundation. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -61,11 +61,6 @@ typedef QDF_STATUS (*pmo_get_beacon_interval)(uint8_t vdev_id, uint16_t *value);
 typedef  uint16_t(*pmo_get_pause_bitmap)(uint8_t vdev_id);
 
 /**
- * typedef for getting vdev datapath handle
- */
-typedef struct cdp_vdev * (*pmo_get_vdev_dp_handle)(uint8_t vdev_id);
-
-/**
  * typedef to know is deviec is in power save mode
  */
 typedef  bool (*pmo_is_device_in_low_pwr_mode)(uint8_t vdev_id);
@@ -121,8 +116,6 @@ typedef int (*pmo_pld_auto_resume_cb)(void);
  * @psoc_send_target_resume_req: fp to send target resume request
  * @psoc_send_d0wow_enable_req: fp to send D0 WOW enable request
  * @psoc_send_d0wow_disable_req: fp to send D0 WOW disable request
- * @psoc_send_idle_roam_suspend_mode: fp to send suspend mode for
- * idle roam  trigger to firmware.
  */
 struct wlan_pmo_tx_ops {
 	QDF_STATUS (*send_arp_offload_req)(struct wlan_objmgr_vdev *vdev,
@@ -134,13 +127,11 @@ struct wlan_pmo_tx_ops {
 	QDF_STATUS (*send_ns_offload_req)(struct wlan_objmgr_vdev *vdev,
 			struct pmo_arp_offload_params *arp_offload_req,
 			struct pmo_ns_offload_params *ns_offload_req);
-#ifdef WLAN_FEATURE_PACKET_FILTERING
 	QDF_STATUS(*send_set_pkt_filter)(struct wlan_objmgr_vdev *vdev,
 			struct pmo_rcv_pkt_fltr_cfg *pmo_set_pkt_fltr_req);
 	QDF_STATUS(*send_clear_pkt_filter)(struct wlan_objmgr_vdev *vdev,
 			struct pmo_rcv_pkt_fltr_clear_param
 						*pmo_clr_pkt_fltr_param);
-#endif
 	QDF_STATUS (*send_enable_wow_wakeup_event_req)(
 			struct wlan_objmgr_vdev *vdev,
 			uint32_t *bitmap);
@@ -209,7 +200,6 @@ struct wlan_pmo_tx_ops {
 			struct wlan_objmgr_psoc *psoc);
 	void (*update_target_suspend_flag)(
 		struct wlan_objmgr_psoc *psoc, uint8_t value);
-	bool (*is_target_suspended)(struct wlan_objmgr_psoc *psoc);
 	QDF_STATUS (*psoc_send_wow_enable_req)(struct wlan_objmgr_psoc *psoc,
 		struct pmo_wow_cmd_params *param);
 	QDF_STATUS (*psoc_send_supend_req)(struct wlan_objmgr_psoc *psoc,
@@ -224,8 +214,6 @@ struct wlan_pmo_tx_ops {
 			struct wlan_objmgr_psoc *psoc);
 	QDF_STATUS (*psoc_send_d0wow_disable_req)(
 			struct wlan_objmgr_psoc *psoc);
-	QDF_STATUS (*psoc_send_idle_roam_suspend_mode)(
-			struct wlan_objmgr_psoc *psoc, uint8_t val);
 
 };
 
