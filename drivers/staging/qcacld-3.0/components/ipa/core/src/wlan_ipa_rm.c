@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2019 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2013-2018 The Linux Foundation. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -17,7 +17,6 @@
  */
 
 /* Include Files */
-#include "qdf_delayed_work.h"
 #include "wlan_ipa_core.h"
 #include "wlan_ipa_main.h"
 #include "cdp_txrx_ipa.h"
@@ -27,41 +26,54 @@ QDF_STATUS wlan_ipa_set_perf_level(struct wlan_ipa_priv *ipa_ctx,
 				    uint64_t tx_packets,
 				    uint64_t rx_packets)
 {
+	uint32_t next_cons_bw, next_prod_bw;
 	int ret;
-	uint32_t next_bw;
-	uint64_t total_packets = tx_packets + rx_packets;
 
 	if ((!wlan_ipa_is_enabled(ipa_ctx->config)) ||
 		(!wlan_ipa_is_clk_scaling_enabled(ipa_ctx->config)))
 		return 0;
 
-	if (total_packets > (ipa_ctx->config->bus_bw_high / 2))
-		next_bw = ipa_ctx->config->ipa_bw_high;
-	else if (total_packets > (ipa_ctx->config->bus_bw_medium / 2))
-		next_bw = ipa_ctx->config->ipa_bw_medium;
+	if (tx_packets > (ipa_ctx->config->bus_bw_high / 2))
+		next_cons_bw = ipa_ctx->config->ipa_bw_high;
+	else if (tx_packets > (ipa_ctx->config->bus_bw_medium / 2))
+		next_cons_bw = ipa_ctx->config->ipa_bw_medium;
 	else
-		next_bw = ipa_ctx->config->ipa_bw_low;
+		next_cons_bw = ipa_ctx->config->ipa_bw_low;
 
-	if (ipa_ctx->curr_cons_bw != next_bw) {
-		ipa_debug("Requesting IPA perf curr: %d, next: %d",
-			  ipa_ctx->curr_cons_bw, next_bw);
+	if (rx_packets > (ipa_ctx->config->bus_bw_high / 2))
+		next_prod_bw = ipa_ctx->config->ipa_bw_high;
+	else if (rx_packets > (ipa_ctx->config->bus_bw_medium / 2))
+		next_prod_bw = ipa_ctx->config->ipa_bw_medium;
+	else
+		next_prod_bw = ipa_ctx->config->ipa_bw_low;
+
+	if (ipa_ctx->curr_cons_bw != next_cons_bw) {
+		ipa_debug("Requesting CONS perf curr: %d, next: %d",
+			  ipa_ctx->curr_cons_bw, next_cons_bw);
 		ret = cdp_ipa_set_perf_level(ipa_ctx->dp_soc,
 					     QDF_IPA_CLIENT_WLAN1_CONS,
-					     next_bw);
+					     next_cons_bw);
 		if (ret) {
 			ipa_err("RM CONS set perf profile failed: %d", ret);
 
 			return QDF_STATUS_E_FAILURE;
 		}
+		ipa_ctx->curr_cons_bw = next_cons_bw;
+		ipa_ctx->stats.num_cons_perf_req++;
+	}
+
+	if (ipa_ctx->curr_prod_bw != next_prod_bw) {
+		ipa_debug("Requesting PROD perf curr: %d, next: %d",
+			  ipa_ctx->curr_prod_bw, next_prod_bw);
 		ret = cdp_ipa_set_perf_level(ipa_ctx->dp_soc,
 					     QDF_IPA_CLIENT_WLAN1_PROD,
-					     next_bw);
+					     next_prod_bw);
 		if (ret) {
 			ipa_err("RM PROD set perf profile failed: %d", ret);
 			return QDF_STATUS_E_FAILURE;
 		}
-		ipa_ctx->curr_cons_bw = next_bw;
-		ipa_ctx->stats.num_cons_perf_req++;
+		ipa_ctx->curr_prod_bw = next_prod_bw;
+		ipa_ctx->stats.num_prod_perf_req++;
 	}
 
 	return QDF_STATUS_SUCCESS;
@@ -164,7 +176,7 @@ QDF_STATUS wlan_ipa_wdi_rm_request(struct wlan_ipa_priv *ipa_ctx)
 	}
 	qdf_spin_unlock_bh(&ipa_ctx->rm_lock);
 
-	qdf_delayed_work_stop_sync(&ipa_ctx->wake_lock_work);
+	qdf_cancel_delayed_work(&ipa_ctx->wake_lock_work);
 
 	return QDF_STATUS_SUCCESS;
 }
@@ -223,8 +235,9 @@ QDF_STATUS wlan_ipa_wdi_rm_try_release(struct wlan_ipa_priv *ipa_ctx)
 	 * while there is healthy amount of data transfer going on by
 	 * releasing the wake_lock after some delay.
 	 */
-	qdf_delayed_work_start(&ipa_ctx->wake_lock_work,
-			       WLAN_IPA_RX_INACTIVITY_MSEC_DELAY);
+	qdf_sched_delayed_work(&ipa_ctx->wake_lock_work,
+			       msecs_to_jiffies
+			       (WLAN_IPA_RX_INACTIVITY_MSEC_DELAY));
 
 	return QDF_STATUS_SUCCESS;
 }
@@ -399,7 +412,6 @@ static void wlan_ipa_rm_notify(void *user_data, qdf_ipa_rm_event_t event,
 QDF_STATUS wlan_ipa_wdi_setup_rm(struct wlan_ipa_priv *ipa_ctx)
 {
 	qdf_ipa_rm_create_params_t create_params;
-	QDF_STATUS status;
 	int ret;
 
 	if (!wlan_ipa_is_rm_enabled(ipa_ctx->config))
@@ -441,22 +453,15 @@ QDF_STATUS wlan_ipa_wdi_setup_rm(struct wlan_ipa_priv *ipa_ctx)
 		goto timer_init_failed;
 	}
 
-	status = qdf_delayed_work_create(&ipa_ctx->wake_lock_work,
-					 wlan_ipa_wake_lock_timer_func,
-					 ipa_ctx);
-	if (QDF_IS_STATUS_ERROR(status))
-		goto timer_destroy;
-
 	qdf_wake_lock_create(&ipa_ctx->wake_lock, "wlan_ipa");
+	qdf_create_delayed_work(&ipa_ctx->wake_lock_work,
+				wlan_ipa_wake_lock_timer_func, ipa_ctx);
 	qdf_spinlock_create(&ipa_ctx->rm_lock);
 	ipa_ctx->rm_state = WLAN_IPA_RM_RELEASED;
 	ipa_ctx->wake_lock_released = true;
 	qdf_atomic_set(&ipa_ctx->tx_ref_cnt, 0);
 
 	return QDF_STATUS_SUCCESS;
-
-timer_destroy:
-	qdf_ipa_rm_inactivity_timer_destroy(QDF_IPA_RM_RESOURCE_WLAN_PROD);
 
 timer_init_failed:
 	qdf_ipa_rm_delete_resource(QDF_IPA_RM_RESOURCE_APPS_CONS);
@@ -475,8 +480,8 @@ void wlan_ipa_wdi_destroy_rm(struct wlan_ipa_priv *ipa_ctx)
 	if (!wlan_ipa_is_rm_enabled(ipa_ctx->config))
 		return;
 
+	qdf_cancel_delayed_work(&ipa_ctx->wake_lock_work);
 	qdf_wake_lock_destroy(&ipa_ctx->wake_lock);
-	qdf_delayed_work_destroy(&ipa_ctx->wake_lock_work);
 	qdf_cancel_work(&ipa_ctx->uc_rm_work.work);
 	qdf_spinlock_destroy(&ipa_ctx->rm_lock);
 
