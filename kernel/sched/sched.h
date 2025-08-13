@@ -54,6 +54,11 @@ extern __read_mostly bool sched_predl;
 extern unsigned int sched_capacity_margin_up[NR_CPUS];
 extern unsigned int sched_capacity_margin_down[NR_CPUS];
 
+static inline unsigned long add_capacity_margin(unsigned long capacity, int cpu)
+{
+	return capacity * sched_capacity_margin_up[cpu] / 1024;
+}
+
 struct sched_walt_cpu_load {
 	unsigned long prev_window_util;
 	unsigned long nl;
@@ -2080,6 +2085,7 @@ static inline u64 sched_ktime_clock(void)
 #ifdef CONFIG_SMP
 extern void sched_avg_update(struct rq *rq);
 extern unsigned long sched_get_rt_rq_util(int cpu);
+#endif
 
 #ifndef arch_scale_freq_capacity
 static __always_inline
@@ -2279,10 +2285,6 @@ static inline unsigned long cpu_util_cfs(int cpu)
 	return min(util, capacity_orig_of(cpu));
 }
 
-static inline unsigned long cpu_util_rt(struct rq *rq)
-{
-	return READ_ONCE(rq->avg_rt.util_avg);
-}
 
 #ifdef CONFIG_UCLAMP_TASK
 unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
@@ -2338,6 +2340,17 @@ out:
 		return min_util;
 
 	return clamp(util, min_util, max_util);
+}
+
+static inline unsigned long cpu_util_rt(struct rq *rq)
+{
+	return rq->rt.avg.util_avg;
+}
+
+
+static inline unsigned long cpu_util_rt_by_cpu(int cpu)
+{
+    return cpu_util_rt(cpu_rq(cpu));
 }
 
 /* Is the rq being capped/throttled by uclamp_max? */
@@ -2404,20 +2417,7 @@ cpu_util_freq(int cpu, struct sched_walt_cpu_load *walt_load)
 #ifdef CONFIG_SCHED_WALT
 	return cpu_util_freq_walt(cpu, walt_load);
 }
-
-static inline unsigned long cpu_util_rt(int cpu)
-{
-	struct rt_rq *rt_rq = &(cpu_rq(cpu)->rt);
-
-	return rt_rq->avg.util_avg;
-}
-
 #else
-	struct rq *rq;
-
-	return min(cpu_util(cpu) + cpu_util_rt(rq), capacity_orig_of(cpu));
-#endif
-}
 
 extern unsigned long
 boosted_cpu_util(int cpu, struct sched_walt_cpu_load *walt_load);
@@ -3234,4 +3234,3 @@ static inline void sched_irq_work_queue(struct irq_work *work)
 		irq_work_queue_on(work, cpumask_any(cpu_online_mask));
 }
 #endif
-
