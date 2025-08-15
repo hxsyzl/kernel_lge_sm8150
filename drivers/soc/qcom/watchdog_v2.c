@@ -35,6 +35,7 @@
 #include <linux/sched/clock.h>
 #include <linux/cpumask.h>
 #include <uapi/linux/sched/types.h>
+#include <linux/migrate.h>
 
 #ifdef CONFIG_LGE_HANDLE_PANIC
 #include <soc/qcom/lge/lge_handle_panic.h>
@@ -416,6 +417,7 @@ static void keep_alive_response(void *info)
 	unsigned int this_cpu_bit = (unsigned long)info >> 32;
 	unsigned int final_alive_mask = (unsigned int)(long)info;
 	unsigned int old;
+	int cpu = smp_processor_id();
 
 	/* Wake up the watchdog task if we're the final pinged CPU */
 	old = atomic_fetch_or_relaxed(this_cpu_bit, &wdog_data->alive_mask);
@@ -445,7 +447,6 @@ static void ping_other_cpus(struct msm_watchdog_data *wdog_dd)
 	 * disabled (which is what smp_call_function_single() does in
 	 * synchronous mode).
 	 */
-	migrate_disable();
 	this_cpu = raw_smp_processor_id();
 	atomic_set(&wdog_dd->alive_mask, BIT(this_cpu));
 	online_mask = *cpumask_bits(cpu_online_mask) & ~BIT(this_cpu);
@@ -459,7 +460,6 @@ static void ping_other_cpus(struct msm_watchdog_data *wdog_dd)
 				    keep_alive_response,
 				    (void *)(BIT(cpu + 32) | final_alive_mask));
 	}
-	migrate_enable();
 
 	atomic_set(&wdog_dd->pinged_mask, final_alive_mask);
 	while (1) {

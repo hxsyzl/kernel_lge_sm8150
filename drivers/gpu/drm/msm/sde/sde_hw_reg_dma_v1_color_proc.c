@@ -1182,9 +1182,6 @@ void reg_dmav1_setup_dspp_pa_hsicv17(struct sde_hw_dspp *ctx, void *cfg)
 	struct drm_msm_pa_hsic *hsic_cfg;
     struct sde_hw_kcal *kcal = sde_hw_kcal_get();
 	u32 reg = 0, opcode = 0, local_opcode = 0;
-	#ifdef CONFIG_DRM_MSM_KCAL_CTRL
-	struct sde_hw_kcal *kcal = sde_hw_kcal_get();
-	#endif
 	int rc;
 
 	#ifdef CONFIG_DRM_MSM_KCAL_CTRL
