@@ -249,7 +249,7 @@ static ssize_t store_lpwg_notify(struct device *dev,
 	return count;
 }
 
-int tap2wake_status = 0;
+int tap2wake_status = 1;
 
 static ssize_t show_tap2wake(struct device *dev, char *buf)
 {

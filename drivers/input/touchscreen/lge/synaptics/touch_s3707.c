@@ -2595,6 +2595,31 @@ static int s3707_swipe_getdata(struct device *dev)
 	return ret;
 }
 
+#if defined(__SUPPORT_LONGPRESS)
+static bool s3707_check_longpress_around(struct device *dev)
+{
+	struct touch_core_data *ts = to_touch_core(dev);
+	int x = 0, y = 0;
+
+	x = ts->lpwg.code[0].x;
+	y = ts->lpwg.code[0].y;
+
+	if (((x > 0) && (x < ts->caps.max_x * 1 / 10)) ||
+		((x < ts->caps.max_x) && (x > ts->caps.max_x * 9 / 10))) {
+		TOUCH_I("longpress around x[%d]\n", x);
+		return true;
+	}
+
+	if (((y > 0) && (y < ts->caps.max_y * 1 / 10)) ||
+		((y < ts->caps.max_y) && (y > ts->caps.max_y * 9 / 10))) {
+		TOUCH_I("longpress around y[%d]\n", y);
+		return true;
+	}
+
+	return false;
+}
+#endif
+
 static int s3707_irq_lpwg(struct device *dev)
 {
 	struct touch_core_data *ts = to_touch_core(dev);
@@ -2621,7 +2646,17 @@ static int s3707_irq_lpwg(struct device *dev)
 		goto error;
 	}
 
-	if (status & LPWG_STATUS_DOUBLETAP) {
+	if (status == 0) {
+		ts->lpwg.wakeup_type = LONG_PRESS;
+		TOUCH_I("LPWG wakeup_type is LongPress\n");
+		s3707_tci_getdata(dev, 1);
+#if defined(__SUPPORT_LONGPRESS)
+		if (s3707_check_longpress_around(dev))
+			ts->intr_status = TOUCH_IRQ_LPWG_LONGPRESS_DOWN_AROUND;
+		else
+			ts->intr_status = TOUCH_IRQ_LPWG_LONGPRESS_DOWN;
+#endif
+	} else if (status & LPWG_STATUS_DOUBLETAP) {
 		ret = s3707_tci_getdata(dev, ts->tci.info[TCI_1].tap_count);
 		if (ret < 0) {
 			TOUCH_E("failed to DOUBLE_TAP get data (reg: %d)\n", ret);

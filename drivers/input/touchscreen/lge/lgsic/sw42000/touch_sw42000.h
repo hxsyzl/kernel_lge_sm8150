@@ -24,7 +24,7 @@
 //#define __SUPPORT_NOTIFY_LCD_EVENT_REG
 #define __SUPPORT_ABT
 //#define __SUPPORT_NOTIFY_CALL
-//#define __SUPPORT_LONGPRESS
+#define __SUPPORT_LONGPRESS
 
 /* report packet */
 struct sw42000_touch_data {
