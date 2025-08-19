@@ -27,6 +27,8 @@
 
 #define TYPE_S3707 8
 
+#define __SUPPORT_LONGPRESS
+
 /* S3707 Functions */
 #define S3707_FUNC_01		(u8)(1 << 0)
 #define S3707_FUNC_12		(u8)(1 << 1)

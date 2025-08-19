@@ -1048,6 +1048,23 @@ static int sw42000_get_swipe_data(struct device *dev)
 
 /* TBD */
 #if defined(__SUPPORT_LONGPRESS)
+static bool sw42000_check_longpress_around(struct device *dev)
+{
+	struct sw42000_data *d = to_sw42000_data(dev);
+	struct sw42000_active_area *area = &d->lpwg_longpress.border;
+	u32 rdata[3];
+
+	memcpy(&rdata, d->info.data, sizeof(u32) * 3);
+
+	if ((rdata[0] & 0xffff) >= area->x1 && (rdata[0] & 0xffff) <= area->x2 &&
+			(rdata[0] >> 16) >= area->y1 && (rdata[0] >> 16) <= area->y2) {
+		TOUCH_I("longpress around\n");
+		return true;
+	}
+
+	return false;
+}
+
 static void sw42000_get_longpress_info(struct device *dev)
 {
 	struct sw42000_data *d = to_sw42000_data(dev);
@@ -1061,12 +1078,20 @@ static void sw42000_get_longpress_info(struct device *dev)
 	d->lpwg_longpress.area.y2 = 2800;
 	d->lpwg_longpress.slop = 100;
 	d->lpwg_longpress.press_time = 200;
+	d->lpwg_longpress.border.x1 = 500;
+	d->lpwg_longpress.border.y1 = 2500;
+	d->lpwg_longpress.border.x2 = 900;
+	d->lpwg_longpress.border.y2 = 2800;
 
 	TOUCH_I("%s, Long Press: %s\n", __func__, d->lpwg_longpress.enable ? "Enable" : "Disable");
 	TOUCH_I("%s, Long Press  active_area(%d,%d)(%d,%d)\n",
 			__func__,
 			d->lpwg_longpress.area.x1, d->lpwg_longpress.area.y1,
 			d->lpwg_longpress.area.x2, d->lpwg_longpress.area.y2);
+	TOUCH_I("%s, Long Press  border_area(%d,%d)(%d,%d)\n",
+			__func__,
+			d->lpwg_longpress.border.x1, d->lpwg_longpress.border.y1,
+			d->lpwg_longpress.border.x2, d->lpwg_longpress.border.y2);
 
 }
 
@@ -1080,6 +1105,10 @@ static int sw42000_longpress_enable(struct device *dev, bool enable)
 		u16 start_y;
 		u16 end_x;
 		u16 end_y;
+		u16 border_start_x;
+		u16 border_start_y;
+		u16 border_end_x;
+		u16 border_end_y;
 		u32 slop;
 		u32 press_time;
 	} __packed;
@@ -1113,6 +1142,10 @@ static int sw42000_longpress_enable(struct device *dev, bool enable)
 		buf.start_y = area.y1;
 		buf.end_x = area.x2;
 		buf.end_y = area.y2;
+		buf.border_start_x = d->lpwg_longpress.border.x1;
+		buf.border_start_y = d->lpwg_longpress.border.y1;
+		buf.border_end_x = d->lpwg_longpress.border.x2;
+		buf.border_end_y = d->lpwg_longpress.border.y2;
 		buf.slop = d->lpwg_longpress.slop;
 		buf.press_time = d->lpwg_longpress.press_time;
 
@@ -3998,7 +4031,10 @@ int sw42000_irq_lpwg(struct device *dev)
 	} else if (d->info.wakeup_type == LONG_PRESS) {
 		TOUCH_I("LPWG wakeup_type is LongPress\n");
 #if defined(__SUPPORT_LONGPRESS)
-		ts->intr_status = TOUCH_IRQ_LONG_PRESS;
+		if (sw42000_check_longpress_around(dev))
+			ts->intr_status = TOUCH_IRQ_LPWG_LONGPRESS_DOWN_AROUND;
+		else
+			ts->intr_status = TOUCH_IRQ_LPWG_LONGPRESS_DOWN;
 #endif
 	} else if (d->info.wakeup_type == KNOCK_OVERTAP) {
 		TOUCH_I("LPWG wakeup_type is Overtap\n");
