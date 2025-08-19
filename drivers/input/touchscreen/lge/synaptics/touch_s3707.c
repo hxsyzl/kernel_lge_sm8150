@@ -33,6 +33,7 @@
 #include "touch_s3707_prd.h"
 #include "touch_s3707_f54_test.h"
 
+#define LONG_PRESS 7
 #define TCI_FAIL_NUM	9
 const char *tci_debug_str[TCI_FAIL_NUM] = {
 	"NONE",
@@ -2647,7 +2648,7 @@ static int s3707_irq_lpwg(struct device *dev)
 	}
 
 	if (status == 0) {
-		ts->lpwg.wakeup_type = LONG_PRESS;
+		ts->lpwg.mode = LONG_PRESS;
 		TOUCH_I("LPWG wakeup_type is LongPress\n");
 		s3707_tci_getdata(dev, 1);
 #if defined(__SUPPORT_LONGPRESS)
