@@ -127,4 +127,4 @@ kernel/configs/android-*.cfg
 out
 release
 
-anykernel3/
+anykernel3/*

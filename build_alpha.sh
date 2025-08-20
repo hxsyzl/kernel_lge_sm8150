@@ -21,6 +21,8 @@ fi
 
 # 2. 设置环境变量
 echo "Setting up environment variables..."
+export https_proxy=http://172.27.144.1:7890
+export http_proxy=http://172.27.144.1:7890 
 export ARCH=arm64
 export SUBARCH=arm64
 export CLANG_PATH=~/toolchains/zyc-clang/bin
@@ -51,16 +53,27 @@ make -j4 CC=clang AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdum
 # 6. 内核修补
 echo "Patching the kernel..."
 cd out/arch/arm64/boot
-if [ -f "Image.gz" ]; then
-    gunzip -k Image.gz
-fi
-wget https://github.com/SukiSU-Ultra/SukiSU_KernelPatch_patch/releases/download/0.12.0/kpimg
-wget https://github.com/SukiSU-Ultra/SukiSU_KernelPatch_patch/releases/download/0.12.0/patch_linux
-chmod 777 *
-./patch_linux -p -s 123 -i Image -k kpimg -o oImage
+    if [ ! -f "kpimg" ]; then
+        echo "Downloading kpimg..."
+        wget --timeout=30 --tries=3 https://github.com/SukiSU-Ultra/SukiSU_KernelPatch_patch/releases/download/0.12.0/kpimg
+        if [ $? -ne 0 ]; then
+            echo "Failed to download kpimg. Please check your network or download it manually."
+            exit 1
+        fi
+    fi
+    if [ ! -f "patch_linux" ]; then
+        echo "Downloading patch_linux..."
+        wget --timeout=30 --tries=3 https://github.com/SukiSU-Ultra/SukiSU_KernelPatch_patch/releases/download/0.12.0/patch_linux
+        if [ $? -ne 0 ]; then
+            echo "Failed to download patch_linux. Please check your network or download it manually."
+            exit 1
+        fi
+    fi
+    chmod +x patch_linux kpimg
+    ./patch_linux -p -s 123 -i Image -k kpimg -o oImage
 rm Image
 mv oImage Image
-cd ../../../../..
+cd ~/kernel_lge_sm8150
 
 
 # 7. 打包成可刷写的zip文件
