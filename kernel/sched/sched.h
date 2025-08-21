@@ -228,6 +228,11 @@ static inline bool valid_policy(int policy)
 		rt_policy(policy) || dl_policy(policy);
 }
 
+static inline int task_has_idle_policy(struct task_struct *p)
+{
+	return idle_policy(p->policy);
+}
+
 static inline int task_has_rt_policy(struct task_struct *p)
 {
 	return rt_policy(p->policy);
@@ -522,7 +527,7 @@ struct cfs_bandwidth { };
 /* CFS-related fields in a runqueue */
 struct cfs_rq {
 	struct load_weight load;
-	unsigned int nr_running, h_nr_running;
+	unsigned int nr_running, h_nr_running, idle_h_nr_running;
 
 	u64 exec_clock;
 	u64 min_vruntime;
@@ -2051,6 +2056,9 @@ static inline int hrtick_enabled(struct rq *rq)
 
 #endif /* CONFIG_SCHED_HRTICK */
 
+extern int update_irq_load_avg(struct rq *rq, u64 running);
+extern int update_dl_rq_load_avg(u64 now, int cpu, struct rq *rq, int running);
+
 #ifdef CONFIG_SCHED_WALT
 static inline int per_task_boost(struct task_struct *p)
 {
@@ -2396,10 +2404,15 @@ static inline bool uclamp_is_used(void)
 }
 #endif /* CONFIG_UCLAMP_TASK */
 
+#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || \
+	defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
 static inline unsigned long cpu_util_irq(struct rq *rq)
 {
 	return rq->avg_irq.util_avg;
 }
+#endif
+
+
 
 static inline
 unsigned long scale_irq_capacity(unsigned long util, unsigned long irq, unsigned long max)
