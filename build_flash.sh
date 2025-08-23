@@ -83,7 +83,7 @@ if [ -f "out/arch/arm64/boot/Image" ]; then
     cd anykernel3
     zip -r9 AnyKernel3-V50-4.14-V4-"$CURRENT_TIME".zip * -x .git README.md 
     cd ..
-    echo "Done! Flashable zip is at anykernel3/AnyKernel3-G8-4.14-V4-$CURRENT_TIME.zip"
+    echo "Done! Flashable zip is at anykernel3/AnyKernel3-V50-4.14-V4-$CURRENT_TIME.zip"
 else
     echo "Image not found. Compilation or patching failed."
 fi
