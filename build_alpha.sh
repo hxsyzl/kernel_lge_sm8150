@@ -35,18 +35,14 @@ echo "Environment variables set. Ready to compile."
 
 
 # 3. 执行 make defconfig
-if [ ! -f "out/.config" ]; then
-    echo "Running make defconfig..."
-    make CC=clang AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip O=out alpha_defconfig
-else
-    echo ".config already exists, skipping make defconfig."
-fi
+echo "Running make defconfig..."
+make CC=clang AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip O=out alpha_defconfig
 
 
 # 4. 修改 .config
 echo "Modifying .config..."
 CURRENT_TIME=$(date +"%Y%m%d-%H%M")
-sed -i 's/CONFIG_LOCALVERSION="-LGkernelV4"/CONFIG_LOCALVERSION="-LGkernelV4-'"$CURRENT_TIME"'/' out/.config
+sed -i 's/CONFIG_LOCALVERSION="-LGkernelV4"/CONFIG_LOCALVERSION="-LGkernelV4-'"$CURRENT_TIME"'"/' out/.config
 
 
 # 5. 执行 make
