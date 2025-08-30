@@ -1,0 +1,146 @@
+name: V50-main
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-copy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: walt-new
+
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}-ccache-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-
+
+      - name: Set up ccache
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ccache
+          echo "CC=ccache clang" >> $GITHUB_ENV
+          echo "AR=ccache llvm-ar" >> $GITHUB_ENV
+          echo "NM=ccache llvm-nm" >> $GITHUB_ENV
+          echo "OBJCOPY=ccache llvm-objcopy" >> $GITHUB_ENV
+          echo "OBJDUMP=ccache llvm-objdump" >> $GITHUB_ENV
+          echo "STRIP=ccache llvm-strip" >> $GITHUB_ENV
+          ccache -M 2G
+          ccache -s
+
+      - name: Cache Clang Toolchain
+        id: cache-clang
+        uses: actions/cache@v4
+        with:
+          path: ~/toolchains
+          key: clang-${{ hashFiles('**/Clang-20.0.0git-20241213.tar.gz') }}
+          restore-keys: |
+            clang-
+
+      - name: Set up Toolchains
+        if: steps.cache-clang.outputs.cache-hit != 'true'
+        run: |
+          # Install required tools and dependencies
+          sudo apt-get install -y build-essential git cmake ninja-build bc
+          # Download and install toolchains (adjust paths as needed)
+          mkdir -p ~/toolchains
+          cd ~/toolchains
+          wget -q https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20241213/release/Clang-20.0.0git-20241213.tar.gz
+          mkdir zyc-clang
+          tar -zxvf Clang-20.0.0git-20241213.tar.gz -C zyc-clang --strip-components=1
+
+      - name: Remove unused packages
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: false
+
+      - name: Set swap to 10G
+        uses: pierotofy/set-swap-space@master
+        with:
+            swap-size-gb: 10
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "John Doe"
+          git config --global user.email johndoe@example.com
+
+      - name: Initialize submodules
+        run: |
+          git submodule init
+          git submodule update --recursive --remote
+          cd KernelSU && git checkout susfs-main || true
+
+      - name: Set environment variables
+        run: |
+          echo "CURRENT_TIME=$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
+          echo "KBUILD_BUILD_HOST=Ubuntu-22.04" >> $GITHUB_ENV
+          echo "KBUILD_BUILD_USER=${GITHUB_ACTOR,,}" >> $GITHUB_ENV
+          echo "ARCH=arm64" >> $GITHUB_ENV
+          echo "SUBARCH=arm64" >> $GITHUB_ENV
+          echo "CLANG_PATH=${HOME}/toolchains/zyc-clang/bin" >> $GITHUB_ENV
+          PATH="${HOME}/toolchains/zyc-clang/bin:${PATH}" >> $GITHUB_ENV
+          echo "CROSS_COMPILE=aarch64-linux-gnu-" >> $GITHUB_ENV
+          echo "CROSS_COMPILE_ARM32=arm-linux-gnueabi-" >> $GITHUB_ENV
+          echo "CLANG_TRIPLE=aarch64-linux-gnu-" >> $GITHUB_ENV
+
+      - name: Configure kernel
+        run: |
+          make O=out flash_defconfig
+
+      - name: Enable KSU SUSFS
+        run: |
+          sed -i 's/CONFIG_KSU_SUSFS=n/CONFIG_KSU_SUSFS=y/' out/.config || true
+
+      - name: Modify LOCALVERSION
+        run: |
+          sed -i 's/CONFIG_LOCALVERSION="-LGkernelV4"/CONFIG_LOCALVERSION="-LGkernelV4-'${{ env.CURRENT_TIME }}'/' out/.config
+
+      - name: Build kernel
+        run: |
+          make -j$(nproc --all) O=out
+          ccache -s
+
+      - name: Patch kernel
+        run: |
+          cd out/arch/arm64/boot
+          wget -q https://github.com/SukiSU-Ultra/SukiSU_KernelPatch_patch/releases/download/0.12.0/kpimg
+          wget -q https://github.com/SukiSU-Ultra/SukiSU_KernelPatch_patch/releases/download/0.12.0/patch_linux
+          chmod 777 *
+          ./patch_linux -p -s 123 -i Image -k kpimg -o oImage
+          rm Image
+          mv oImage Image
+
+      - name: Make Anykernel3
+        run: |
+         git clone https://github.com/hxsyzl/AnyKernel3 AnyKernel3
+         cp out/arch/arm64/boot/Image AnyKernel3/
+         cd AnyKernel3
+         zip -r ../AnyKernel3-V50-V4-susfs-${{ env.CURRENT_TIME }}.zip *
+
+     - name: Upload build artifacts
+       uses: actions/upload-artifact@v4
+       with:
+         name: AnyKernel3-V50-V4-susfs-${{ env.CURRENT_TIME }}
+         path: AnyKernel3-V50-V4-susfs-${{ env.CURRENT_TIME }}.zip
+
+     - name: Create Release
+       uses: softprops/action-gh-release@v2
+       with:
+         tag_name: V50-V4-susfs-${{ env.CURRENT_TIME }}
+         name: V50 Build susfs ${{ env.CURRENT_TIME }}
+         body: |
+           Kernel build for LG V50 (SM8150)
+           Built with clang toolchain, ccache optimizations and SUSFS enabled
+         files: |
+           AnyKernel3-V50-V4-susfs-${{ env.CURRENT_TIME }}.zip
