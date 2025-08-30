@@ -7449,7 +7449,7 @@ LIST_HEAD(task_groups);
 
 /* Cacheline aligned slab cache for task_group */
 static struct kmem_cache *task_group_cache __read_mostly;
-#endif
+#endif /* CONFIG_CGROUP_SCHED */
 
 DECLARE_PER_CPU(cpumask_var_t, load_balance_mask);
 DECLARE_PER_CPU(cpumask_var_t, select_idle_mask);
@@ -7800,7 +7800,7 @@ void ia64_set_curr_task(int cpu, struct task_struct *p)
 	cpu_curr(cpu) = p;
 }
 
-#endif
+#endif /* defined(CONFIG_IA64) || defined(CONFIG_KGDB_KDB) */
 
 #ifdef CONFIG_CGROUP_SCHED
 /* task_group_lock serializes the addition/removal of task groups */
@@ -8867,8 +8867,10 @@ static struct cftype cpu_legacy_files[] = {
 		.write_u64 = sched_colocate_write,
 	},
 #endif /* CONFIG_SCHED_WALT */
+#endif /* CONFIG_RT_GROUP_SCHED */
 	{ }	/* Terminate */
 };
+
 
 static struct cftype cpu_files[] = {
 #ifdef CONFIG_CFS_BANDWIDTH
@@ -8922,7 +8924,6 @@ struct cgroup_subsys cpu_cgrp_subsys = {
 	.dfl_cftypes	= cpu_files,
 	.early_init	= true,
 };
-
 #endif	/* CONFIG_CGROUP_SCHED */
 
 void dump_cpu_task(int cpu)
