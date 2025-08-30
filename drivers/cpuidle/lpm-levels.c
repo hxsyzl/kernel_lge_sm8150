@@ -111,6 +111,21 @@ module_param_named(print_parsed_dt, print_parsed_dt, bool, 0664);
 static bool sleep_disabled;
 module_param_named(sleep_disabled, sleep_disabled, bool, 0664);
 
+#ifdef CONFIG_SEC_PM_DEBUG
+extern void sec_gpio_debug_print(void);
+extern void sec_clock_debug_print_enabled(void);
+extern void sec_debug_print_sleep_time(void);
+static int msm_pm_sleep_sec_debug;
+module_param_named(secdebug,
+	msm_pm_sleep_sec_debug, int, S_IRUGO | S_IWUSR | S_IWGRP);
+#endif
+
+bool lpm_sleep_disabled(void)
+{
+	return sleep_disabled;
+}
+EXPORT_SYMBOL(lpm_sleep_disabled);
+
 /**
  * msm_cpuidle_get_deep_idle_latency - Get deep idle latency value
  *
