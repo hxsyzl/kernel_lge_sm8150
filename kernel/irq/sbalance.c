@@ -30,7 +30,6 @@
 #include <linux/freezer.h>
 #include <linux/irq.h>
 #include <linux/list_sort.h>
-#include <linux/timer.h>
 #include "../sched/sched.h"
 #include "internals.h"
 
@@ -370,9 +369,9 @@ static void sbalance_wait(long poll_jiffies)
 	 * make the timer deferrable, so that it doesn't kick CPUs out of idle.
 	 */
 	freezer_do_not_count();
-	set_current_state(TASK_IDLE);
+	__set_current_state(TASK_IDLE);
 	timer.task = current;
-	timer_setup(&timer.timer, process_timeout, 0);
+	timer_setup_on_stack(&timer.timer, process_timeout, TIMER_DEFERRABLE);
 	timer.timer.expires = jiffies + poll_jiffies;
 	add_timer(&timer.timer);
 	schedule();
