@@ -38,7 +38,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/toolchains
-          key: clang-${{ hashFiles('**/Clang-20.0.0git-20241213.tar.gz') }}
+          key: clang-${{ hashFiles('**/Clang-22.0.0git-20250805.tar.gz') }}
           restore-keys: |
             clang-
 
@@ -51,11 +51,11 @@ jobs:
           mkdir -p ~/toolchains
           cd ~/toolchains
           echo "Downloading Clang toolchain..."
-          if wget -q https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20241213/release/Clang-20.0.0git-20241213.tar.gz; then
+          if wget -q https://github.com/ZyCromerZ/Clang/releases/download/22.0.0git-20250805-release/Clang-22.0.0git-20250805.tar.gz; then
             echo "Downloaded successfully"
             mkdir -p zyc-clang
             echo "Extracting toolchain..."
-            if tar -zxvf Clang-20.0.0git-20241213.tar.gz -C zyc-clang --strip-components=1; then
+            if tar -zxvf Clang-22.0.0git-20250805.tar.gz -C zyc-clang --strip-components=1; then
               echo "Extraction successful"
               ls -la zyc-clang/bin/ | head -10
             else
