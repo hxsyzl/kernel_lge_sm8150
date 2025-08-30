@@ -128,19 +128,19 @@ jobs:
          cd AnyKernel3
          zip -r ../AnyKernel3-G8-V4-susfs-${{ env.CURRENT_TIME }}.zip *
 
-     - name: Upload build artifacts
-       uses: actions/upload-artifact@v4
-       with:
-         name: AnyKernel3-G8-V4-susfs-${{ env.CURRENT_TIME }}
-         path: AnyKernel3-G8-V4-susfs-${{ env.CURRENT_TIME }}.zip
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: AnyKernel3-G8-V4-susfs-${{ env.CURRENT_TIME }}
+          path: AnyKernel3-G8-V4-susfs-${{ env.CURRENT_TIME }}.zip
 
-     - name: Create Release
-       uses: softprops/action-gh-release@v2
-       with:
-         tag_name: G8-V4-susfs-${{ env.CURRENT_TIME }}
-         name: G8 Build susfs ${{ env.CURRENT_TIME }}
-         body: |
-           Kernel build for LG G8 (SM8150)
-           Built with clang toolchain, ccache optimizations and SUSFS enabled
-         files: |
-           AnyKernel3-G8-V4-susfs-${{ env.CURRENT_TIME }}.zip
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: G8-V4-susfs-${{ env.CURRENT_TIME }}
+          name: G8 Build susfs ${{ env.CURRENT_TIME }}
+          body: |
+            Kernel build for LG G8 (SM8150)
+            Built with clang toolchain, ccache optimizations and SUSFS enabled
+          files: |
+            AnyKernel3-G8-V4-susfs-${{ env.CURRENT_TIME }}.zip
