@@ -50,9 +50,22 @@ jobs:
           # Download and install toolchains (adjust paths as needed)
           mkdir -p ~/toolchains
           cd ~/toolchains
-          wget -q https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20241213/release/Clang-20.0.0git-20241213.tar.gz
-          mkdir zyc-clang
-          tar -zxvf Clang-20.0.0git-20241213.tar.gz -C zyc-clang --strip-components=1
+          echo "Downloading Clang toolchain..."
+          if wget -q https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20241213/release/Clang-20.0.0git-20241213.tar.gz; then
+            echo "Downloaded successfully"
+            mkdir -p zyc-clang
+            echo "Extracting toolchain..."
+            if tar -zxvf Clang-20.0.0git-20241213.tar.gz -C zyc-clang --strip-components=1; then
+              echo "Extraction successful"
+              ls -la zyc-clang/bin/ | head -10
+            else
+              echo "Tar extraction failed with exit code $?"
+              exit 1
+            fi
+          else
+            echo "Download failed"
+            exit 1
+          fi
 
       - name: Remove unused packages
         uses: jlumbroso/free-disk-space@main
