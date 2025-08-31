@@ -32,9 +32,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/toolchains
-          key: clang-${{ hashFiles('**/Clang-22.0.0git-20250805.tar.gz') }}
+          key: ${{ runner.os }}-clang-22.0.0git-20250805-${{ hashFiles('**/Clang-22.0.0git-20250805.tar.gz') }}
           restore-keys: |
-            clang-
+            ${{ runner.os }}-clang-22.0.0git-20250805-
+            ${{ runner.os }}-clang-
 
       - name: Set up Toolchains
         if: steps.cache-clang.outputs.cache-hit != 'true'
@@ -52,6 +53,8 @@ jobs:
             if tar -zxvf Clang-22.0.0git-20250805.tar.gz -C zyc-clang --strip-components=1; then
               echo "Extraction successful"
               ls -la zyc-clang/bin/ | head -10
+              # Remove the downloaded tar.gz to save space
+              rm Clang-22.0.0git-20250805.tar.gz
             else
               echo "Tar extraction failed with exit code $?"
               exit 1
@@ -60,6 +63,11 @@ jobs:
             echo "Download failed"
             exit 1
           fi
+
+      - name: Save Clang Toolchain Cache
+        if: steps.cache-clang.outputs.cache-hit != 'true'
+        run: |
+          echo "Clang toolchain has been downloaded and extracted, caching will happen automatically at the end of the job"
 
       - name: Remove unused packages
         uses: jlumbroso/free-disk-space@main
@@ -89,8 +97,10 @@ jobs:
           cd KernelSU && git checkout susfs-main || true
 
       - name: Set environment variables
+        id: set-time
         run: |
           CURRENT_TIME=$(date +"%Y%m%d-%H%M")
+          echo "CURRENT_TIME=$CURRENT_TIME" >> $GITHUB_ENV
           export KBUILD_BUILD_HOST=Ubuntu-22.04
           export KBUILD_BUILD_USER=$(echo ${{ github.actor }} | tr A-Z a-z)
           export ARCH=arm64
@@ -103,7 +113,7 @@ jobs:
 
       - name: Configure kernel
         run: |
-          make O=out CC="ccache clang" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip alpha_defconfig
+          make ARCH=arm64 O=out CC="ccache clang" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip alpha_defconfig
 
       - name: Enable KSU SUSFS
         run: |
@@ -115,7 +125,7 @@ jobs:
 
       - name: Build kernel
         run: |
-          make -j$(nproc --all) O=out CC="ccache clang" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip
+          make -j$(nproc --all) ARCH=arm64 O=out CC="ccache clang" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip
           ccache -s
 
       - name: Patch kernel
