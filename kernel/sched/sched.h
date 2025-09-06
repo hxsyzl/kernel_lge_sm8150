@@ -2131,6 +2131,16 @@ static inline unsigned long __cpu_util(int cpu)
 	return min_t(unsigned long, util, capacity_orig_of(cpu));
 }
 
+#ifdef CONFIG_SMP
+static inline void sched_irq_work_queue(struct irq_work *work)
+{
+	if (likely(cpu_online(raw_smp_processor_id())))
+		irq_work_queue(work);
+	else
+		irq_work_queue_on(work, cpumask_any(cpu_online_mask));
+}
+#endif
+
 struct sched_walt_cpu_load {
 	unsigned long prev_window_util;
 	unsigned long nl;
