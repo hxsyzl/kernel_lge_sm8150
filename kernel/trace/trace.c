@@ -7946,10 +7946,10 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
 	trace_create_file("free_buffer", 0200, d_tracer,
 			  tr, &tracing_free_buffer_fops);
 
-	trace_create_file("trace_marker", 0220, d_tracer,
+	trace_create_file("trace_marker", 0222, d_tracer,
 			  tr, &tracing_mark_fops);
 
-	trace_create_file("trace_marker_raw", 0220, d_tracer,
+	trace_create_file("trace_marker_raw", 0222, d_tracer,
 			  tr, &tracing_mark_raw_fops);
 
 	trace_create_file("trace_clock", 0644, d_tracer, tr,
