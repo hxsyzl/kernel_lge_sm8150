@@ -143,6 +143,3 @@ SCHED_FEAT(SCHEDTUNE_BOOST_HOLD_ALL, false)
  * If disabled, boosts will only bias tasks to higher-capacity CPUs.
  */
 SCHED_FEAT(SCHEDTUNE_BOOST_UTIL, false)
-
-#define SCHED_FEAT_ALT_PERIOD 1
-#define SCHED_FEAT_BASE_SLICE 1
