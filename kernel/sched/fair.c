@@ -8708,7 +8708,6 @@ static void task_dead_fair(struct task_struct *p)
 {
 	remove_entity_load_avg(&p->se);
 }
-#endif /* CONFIG_SMP */
 
 static unsigned long
 wakeup_gran(struct sched_entity *curr, struct sched_entity *se)
