@@ -70,21 +70,13 @@ module_param_named(enable_lmk, enable_lmk, int, 0644);
 
 static u32 lowmem_debug_level = 1;
 static short lowmem_adj[6] = {
-	0,
-	1,
-	6,
-	12,
+	0, 1, 6, 12, 15, 16
 };
-
-static int lowmem_adj_size = 4;
+static int lowmem_adj_size = 6;
 static int lowmem_minfree[6] = {
-	3 * 512,	/* 6MB */
-	2 * 1024,	/* 8MB */
-	4 * 1024,	/* 16MB */
-	16 * 1024,	/* 64MB */
+	8192, 12288, 16384, 20480, 24576, 28672
 };
-
-static int lowmem_minfree_size = 4;
+static int lowmem_minfree_size = 6;
 static int lmk_fast_run = 1;
 
 static unsigned long lowmem_deathpending_timeout;
