@@ -1386,7 +1386,7 @@ static int __init wakeup_sources_debugfs_init(void)
 #endif
 #endif
 
-	debugfs_create_file("trace_marker", 0220, debugfs_create_dir("tracing", NULL), 1, NULL);
+	debugfs_create_file("trace_marker", 0644, debugfs_create_dir("tracing", NULL), 1, NULL);
         debugfs_create_dir("events",debugfs_create_dir("tracing", NULL));
 	return 0;
 }
