@@ -62,3 +62,11 @@ config ZRAM_MEMORY_TRACKING
 	  /sys/kernel/debug/zram/zramX/block_state.
 
 	  See Documentation/admin-guide/blockdev/zram.rst for more information.
+
+config ZRAM_SIZE_OVERRIDE
+	int "zram size to set from kernel"
+	range 1 8
+	default 4
+	help
+	  This option allows setting zram size from kernel configuration
+	  instead of dynamic allocation. Size = CONFIG_ZRAM_SIZE_OVERRIDE * 1GB.
