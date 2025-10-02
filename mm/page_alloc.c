@@ -4459,7 +4459,7 @@ got_pg:
 				"page allocation failure: order:%u", order);
 	return page;
 }
-
+}
 static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
 		int preferred_nid, nodemask_t *nodemask,
 		struct alloc_context *ac, gfp_t *alloc_mask,
