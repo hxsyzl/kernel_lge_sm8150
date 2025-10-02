@@ -283,6 +283,7 @@ void cpuidle_clear_idle_cpu(unsigned int cpu);
 #else
 static inline void cpuidle_set_idle_cpu(unsigned int cpu) { }
 static inline void cpuidle_clear_idle_cpu(unsigned int cpu) { }
+#endif /* CONFIG_SMP */
 #ifdef CONFIG_MSM_PM
 extern bool lpm_sleep_disabled(void);
 #else
