@@ -674,8 +674,6 @@ static int cpuidle_latency_notify(struct notifier_block *b,
 	cpus &= ~READ_ONCE(*cpumask_bits(cpu_isolated_mask));
 	if (cpus)
 		arch_send_wakeup_ipi_mask(to_cpumask(&cpus));
-	if (!lpm_sleep_disabled())
-		wake_up_idle_cpus(v);
 
 	return NOTIFY_OK;
 }
