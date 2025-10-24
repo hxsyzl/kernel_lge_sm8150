@@ -4,6 +4,7 @@
 
 #include <linux/thread_info.h>
 
+#define PREEMPT_NEED_RESCHED	BIT(32)
 #define PREEMPT_ENABLED	(PREEMPT_NEED_RESCHED)
 
 static inline int preempt_count(void)
