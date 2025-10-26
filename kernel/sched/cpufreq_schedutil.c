@@ -20,7 +20,6 @@
 #include <linux/binfmts.h>
 #include "sched.h"
 
-unsigned long boosted_cpu_util(int cpu);
 
 #define SUGOV_KTHREAD_PRIORITY	50
 
@@ -28,6 +27,7 @@ struct sugov_tunables {
 	struct gov_attr_set attr_set;
 	unsigned int		up_rate_limit_us;
 	unsigned int		down_rate_limit_us;
+	bool pl;
 	bool iowait_boost_enable;
 };
 
@@ -65,7 +65,9 @@ struct sugov_cpu {
 	unsigned int iowait_boost;
 	unsigned int iowait_boost_max;
 	u64 last_update;
-
+    
+	struct sched_walt_cpu_load walt_load;
+	
 	/* The fields below are only needed when sharing a policy. */
 	unsigned long util;
 	unsigned long max;
@@ -137,6 +139,11 @@ static bool sugov_up_down_rate_limit(struct sugov_policy *sg_policy, u64 time,
 			return true;
 
 	return false;
+}
+
+static inline bool use_pelt(void)
+{
+	return true;
 }
 
 static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
