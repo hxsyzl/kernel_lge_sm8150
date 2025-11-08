@@ -25,7 +25,9 @@
 #include <linux/module.h>
 #include <linux/input.h>
 #include <linux/kthread.h>
+#ifdef CONFIG_SCHED_CORE_CTL
 #include <linux/sched/core_ctl.h>
+#endif
 
 /*
  * Sched will provide the data for every 20ms window,
@@ -393,6 +395,7 @@ static int msm_perf_core_ctl_notify(struct notifier_block *nb,
 				    unsigned long unused,
 				    void *data)
 {
+#ifdef CONFIG_SCHED_CORE_CTL
 	static unsigned int tld, nrb, i;
 	static DECLARE_WORK(sysfs_notify_work, nr_notify_userspace);
 	struct core_ctl_notif_data *d = data;
@@ -410,6 +413,9 @@ static int msm_perf_core_ctl_notify(struct notifier_block *nb,
 		schedule_work(&sysfs_notify_work);
 	}
 	return NOTIFY_OK;
+#else
+	return 0;
+#endif
 }
 
 static struct notifier_block msm_perf_nb = {
@@ -429,10 +435,12 @@ static int set_core_ctl_register(const char *buf, const struct kernel_param *kp)
 	if (core_ctl_register == old_val)
 		return 0;
 
+#ifdef CONFIG_SCHED_CORE_CTL
 	if (core_ctl_register)
 		core_ctl_notifier_register(&msm_perf_nb);
 	else
 		core_ctl_notifier_unregister(&msm_perf_nb);
+#endif
 
 	return 0;
 }

@@ -29,7 +29,9 @@
 #include <linux/interrupt.h>
 #include <linux/cpumask.h>
 #include <linux/cpufreq.h>
+#ifdef CONFIG_SCHED_CORE_CTL
 #include <linux/sched/core_ctl.h>
+#endif
 #include "wil_platform.h"
 #include "msm_11ad.h"
 
@@ -1516,7 +1518,9 @@ static int ops_bus_request(void *handle, u32 kbps /* KBytes/Sec */)
 
 		if (was_boosted != needs_boost) {
 			if (needs_boost) {
+#ifdef CONFIG_SCHED_CORE_CTL
 				rc = core_ctl_set_boost(true);
+#endif
 				if (rc) {
 					dev_err(ctx->dev,
 						"Failed enable boost rc=%d\n",
@@ -1526,7 +1530,9 @@ static int ops_bus_request(void *handle, u32 kbps /* KBytes/Sec */)
 				msm_11ad_set_boost_affinity(ctx);
 				dev_dbg(ctx->dev, "CPU boost enabled\n");
 			} else {
+#ifdef CONFIG_SCHED_CORE_CTL
 				rc = core_ctl_set_boost(false);
+#endif
 				if (rc)
 					dev_err(ctx->dev,
 						"Failed disable boost rc=%d\n",

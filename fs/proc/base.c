@@ -1067,6 +1067,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
 			}
 		}
 	}
+	#endif
 #ifdef CONFIG_OOM_SCORE_NOTIFIER
 	old_oom_score_adj = task->signal->oom_score_adj;
 #endif

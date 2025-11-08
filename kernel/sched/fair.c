@@ -6946,7 +6946,6 @@ void __update_idle_core(struct rq *rq)
 	rcu_read_lock();
 	if (test_idle_cores(core))
 		goto unlock;
-
 	for_each_cpu(cpu, cpu_smt_mask(core)) {
 		if (cpu == core)
 			continue;

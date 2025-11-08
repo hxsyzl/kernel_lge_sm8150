@@ -1395,11 +1395,6 @@ queue_balance_callback(struct rq *rq,
 	rq->balance_callback = head;
 }
 
-#if SCHED_FEAT_TTWU_QUEUE
-extern void sched_ttwu_pending(void);
-#else
-static inline void sched_ttwu_pending(void) { }
-#endif
 
 #define rcu_dereference_check_sched_domain(p) \
 	rcu_dereference_check((p), \

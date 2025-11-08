@@ -313,27 +313,6 @@ void hdd_ipa_set_tx_flow_info(void)
 	}
 }
 
-/**
- * hdd_ipa_send_to_nw_stack() - Check if IPA supports NAPI
- * polling during RX
- * @skb : data buffer sent to network stack
- *
- * If IPA LAN RX supports NAPI polling mechanism use
- * netif_receive_skb instead of netif_rx_ni to forward the skb
- * to network stack.
- *
- * Return: Return value from netif_rx_ni/netif_receive_skb
- */
-static int hdd_ipa_send_to_nw_stack(qdf_nbuf_t skb)
-{
-	int result;
-
-	if (qdf_ipa_get_lan_rx_napi())
-		result = netif_receive_skb(skb);
-	else
-		result = netif_rx_ni(skb);
-	return result;
-}
 
 #ifdef QCA_CONFIG_SMP
 static int hdd_ipa_aggregated_rx_ind(qdf_nbuf_t skb)
@@ -390,15 +369,16 @@ void hdd_ipa_send_nbuf_to_network(qdf_nbuf_t nbuf, qdf_netdev_t dev)
 		struct qdf_mac_addr *src_mac =
 			(struct qdf_mac_addr *)(nbuf->data +
 			QDF_NBUF_SRC_MAC_OFFSET);
+		uint8_t sta_id;
 		if (QDF_STATUS_SUCCESS ==
-			hdd_softap_get_sta_id(adapter, src_mac, &staid))
-			hdd_inspect_dhcp_packet(adapter, staid, nbuf, QDF_RX);
+			hdd_softap_get_sta_id(adapter, src_mac, &sta_id))
+			hdd_inspect_dhcp_packet(adapter, sta_id, nbuf, QDF_RX);
 	}
 
 	qdf_dp_trace_set_track(nbuf, QDF_RX);
 
 	hdd_event_eapol_log(nbuf, QDF_RX);
-	qdf_dp_trace_log_pkt(adapter->vdev_id,
+	qdf_dp_trace_log_pkt(adapter->session_id,
 			     nbuf, QDF_RX, QDF_TRACE_DEFAULT_PDEV_ID);
 	DPTRACE(qdf_dp_trace(nbuf,
 			     QDF_DP_TRACE_RX_HDD_PACKET_PTR_RECORD,
@@ -426,19 +406,6 @@ void hdd_ipa_send_nbuf_to_network(qdf_nbuf_t nbuf, qdf_netdev_t dev)
 		adapter->stats.rx_bytes += nbuf->len;
 	}
 
-	qdf_dp_trace_set_track(nbuf, QDF_RX);
-
-	hdd_event_eapol_log(nbuf, QDF_RX);
-	qdf_dp_trace_log_pkt(adapter->session_id,
-			     nbuf, QDF_RX, QDF_TRACE_DEFAULT_PDEV_ID);
-	DPTRACE(qdf_dp_trace(nbuf,
-			     QDF_DP_TRACE_RX_HDD_PACKET_PTR_RECORD,
-			     QDF_TRACE_DEFAULT_PDEV_ID,
-			     qdf_nbuf_data_addr(nbuf),
-			     sizeof(qdf_nbuf_data(nbuf)), QDF_RX));
-	DPTRACE(qdf_dp_trace_data_pkt(nbuf, QDF_TRACE_DEFAULT_PDEV_ID,
-				      QDF_DP_TRACE_RX_PACKET_RECORD, 0,
-				      QDF_RX));
 
 	result = hdd_ipa_aggregated_rx_ind(nbuf);
 	if (result == NET_RX_SUCCESS)

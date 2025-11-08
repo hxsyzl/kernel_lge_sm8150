@@ -142,15 +142,15 @@ sd_alloc_ctl_energy_table(struct sched_group_energy *sge)
 		return NULL;
 
 	set_table_entry(&table[0], "nr_idle_states", &sge->nr_idle_states,
-			sizeof(int), 0444, proc_dointvec_minmax, false);
+	                sizeof(int), 0444, proc_dointvec_minmax);
 	set_table_entry(&table[1], "idle_states", &sge->idle_states[0].power,
-			sge->nr_idle_states*sizeof(struct idle_state), 0444,
-			proc_doulongvec_minmax, false);
+	                sge->nr_idle_states*sizeof(struct idle_state), 0444,
+	                proc_doulongvec_minmax);
 	set_table_entry(&table[2], "nr_cap_states", &sge->nr_cap_states,
-			sizeof(int), 0444, proc_dointvec_minmax, false);
+	                sizeof(int), 0444, proc_dointvec_minmax);
 	set_table_entry(&table[3], "cap_states", &sge->cap_states[0].cap,
-			sge->nr_cap_states*sizeof(struct capacity_state), 0444,
-			proc_doulongvec_minmax, false);
+	                sge->nr_cap_states*sizeof(struct capacity_state), 0444,
+	                proc_doulongvec_minmax);
 
 	return table;
 }
@@ -682,7 +682,6 @@ static void sched_debug_header(struct seq_file *m)
 	SEQ_printf(m, "  .%-40s: %Ld.%06ld\n", #x, SPLIT_NS(x))
 	PN(sysctl_sched_latency);
 	PN(sysctl_sched_min_granularity);
-	PN(sysctl_sched_idle_min_granularity);
 	PN(sysctl_sched_wakeup_granularity);
 	P(sysctl_sched_child_runs_first);
 #undef PN
@@ -931,7 +930,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 	P(se.avg.util_avg);
 	P(se.avg.last_update_time);
 	P(se.avg.util_est.ewma);
-	PM(se.avg.util_est.enqueued, ~UTIL_AVG_UNCHANGED);
+	seq_printf(m, "  .%-45s:%14Ld.%06ld\n", "util_est.enqueued", SPLIT_NS((long long)(p->se.avg.util_est.enqueued & ~UTIL_AVG_UNCHANGED)));
 #endif
 	P(policy);
 	P(prio);

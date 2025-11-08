@@ -37,7 +37,9 @@
 #include <linux/delay.h>
 #include <linux/compat.h>
 
+#ifdef CONFIG_SCHED_CORE_CTL
 #include <linux/sched/core_ctl.h>
+#endif
 #include <linux/pm_qos.h>
 
 #include <soc/qcom/lge/lge_mme_bus.h>
@@ -154,7 +156,11 @@ static int lge_mme_idle_pc_disable(int disable)
 	if (disable) {
 		int cpu;
 
+	#ifdef CONFIG_SCHED_CORE_CTL
 		core_ctl_set_boost(true);
+	#else
+		pr_debug("%s: core_ctl_set_boost not available\n", __func__);
+	#endif
 
 		lge_mme_bus_dev.pm_qos_req.type = PM_QOS_REQ_ALL_CORES;
 		pm_qos_add_request(&lge_mme_bus_dev.pm_qos_req, PM_QOS_CPU_DMA_LATENCY, 44);
@@ -164,7 +170,11 @@ static int lge_mme_idle_pc_disable(int disable)
 		}
 
 	} else {
+	#ifdef CONFIG_SCHED_CORE_CTL
 		core_ctl_set_boost(false);
+	#else
+		pr_debug("%s: core_ctl_set_boost not available\n", __func__);
+	#endif
 
 		pm_qos_remove_request(&lge_mme_bus_dev.pm_qos_req);
 
