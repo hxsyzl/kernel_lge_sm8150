@@ -85,7 +85,7 @@ static int __init init_perf_trace(void)
 	dir = debugfs_create_dir("msm_perf", NULL);
 	if (!dir)
 		return -ENOMEM;
-	file = debugfs_create_file("trace_marker", 0220, dir,
+	file = debugfs_create_file("trace_marker", 0777, dir,
 		&value, &perf_trace_fops);
 	if (!file)
 		return -ENOMEM;
