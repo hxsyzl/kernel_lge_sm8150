@@ -5102,8 +5102,7 @@ int kgsl_device_platform_probe(struct kgsl_device *device)
 				PM_QOS_CPU_DMA_LATENCY,
 				PM_QOS_DEFAULT_VALUE);
 
-	device->events_wq = alloc_workqueue("kgsl-events",
-		WQ_UNBOUND | WQ_MEM_RECLAIM | WQ_SYSFS, 0);
+	device->events_worker = kthread_create_worker(0, "kgsl-events");
 
 	/* Initialize the snapshot engine */
 	kgsl_device_snapshot_init(device);
