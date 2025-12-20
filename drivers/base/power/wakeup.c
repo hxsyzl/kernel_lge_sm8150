@@ -1385,8 +1385,6 @@ static int __init wakeup_sources_debugfs_init(void)
 		proc_create("wakeup_sources_active", 0444, NULL, &wakeup_sources_active_stats_fops);
 #endif
 #endif
-	debugfs_create_file("trace_marker", 0777, debugfs_create_dir("tracing", NULL), NULL, NULL);
-	return 0;
 }
 
 postcore_initcall(wakeup_sources_debugfs_init);
