@@ -2,8 +2,6 @@ name: G8 Kernel Build
 
 on:
   workflow_dispatch:
-   branches:
-      - publicandroid
     inputs:
       build_type:
         description: 'Build type'
@@ -13,6 +11,8 @@ on:
         options:
           - release
           - debug
+   branches:
+      - publicandroid
 
 jobs:
   build:
