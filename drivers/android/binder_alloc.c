@@ -22,6 +22,9 @@
 #include <asm/cacheflush.h>
 #include <linux/uaccess.h>
 #include <linux/highmem.h>
+#ifdef CONFIG_MOON_OPLUS_HANS_FREEZE
+#include <linux/hans.h>
+#endif /* CONFIG_MOON_OPLUS_HANS_FREEZE */
 #include <linux/sizes.h>
 #include "binder_internal.h"
 #include "binder_trace.h"
@@ -440,6 +443,18 @@ static bool debug_low_async_space_locked(struct binder_alloc *alloc)
 		alloc->oneway_spam_detected = false;
 		return false;
 	}
+#ifdef CONFIG_MOON_OPLUS_HANS_FREEZE
+	if (is_async
+		&& (alloc->free_async_space < 3 * (size + sizeof(struct binder_buffer))
+		|| (alloc->free_async_space < ((alloc->buffer_size / 2) * 9 / 10)))) {
+		rcu_read_lock();
+		p = find_task_by_vpid(alloc->pid);
+		rcu_read_unlock();
+		if (p != NULL && is_frozen_tg(p)) {
+			hans_report(ASYNC_BINDER, task_tgid_nr(current), task_uid(current).val, task_tgid_nr(p), task_uid(p).val, "free_buffer_full", -1);
+		}
+	}
+#endif /* CONFIG_MOON_OPLUS_HANS_FREEZE */
 
 	for (n = rb_first(&alloc->allocated_buffers); n != NULL;
 		 n = rb_next(n)) {
@@ -479,6 +494,9 @@ static struct binder_buffer *binder_alloc_new_buf_locked(
 	struct rb_node *n = alloc->free_buffers.rb_node;
 	struct rb_node *best_fit = NULL;
 	struct binder_buffer *buffer;
+#ifdef CONFIG_MOON_OPLUS_HANS_FREEZE
+	struct task_struct *p = NULL;
+#endif /* CONFIG_MOON_OPLUS_HANS_FREEZE */
 	unsigned long next_used_page;
 	unsigned long curr_last_page;
 	size_t buffer_size;

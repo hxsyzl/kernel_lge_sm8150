@@ -45,6 +45,9 @@
 #include <linux/oom.h>
 #include <linux/capability.h>
 #include <linux/cgroup.h>
+#ifdef CONFIG_MOON_OPLUS_HANS_FREEZE
+#include <linux/hans.h>
+#endif /* CONFIG_MOON_OPLUS_HANS_FREEZE */
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/signal.h>
@@ -1228,6 +1231,14 @@ int do_send_sig_info(int sig, struct siginfo *info, struct task_struct *p,
 		rekernel_report(SIGNAL, sig, task_tgid_nr(current), current, task_tgid_nr(p), p, false, NULL);
 #endif /* CONFIG_REKERNEL */
 
+#ifdef CONFIG_MOON_OPLUS_HANS_FREEZE
+	if (is_frozen_tg(p)  /*signal receiver thread group is frozen?*/
+		&& (sig == SIGKILL || sig == SIGTERM || sig == SIGABRT || sig == SIGQUIT)) {
+		if (hans_report(SIGNAL, task_tgid_nr(current), task_uid(current).val, task_tgid_nr(p), task_uid(p).val, "signal", -1) == HANS_ERROR) {
+			printk(KERN_ERR "HANS: report signal-freeze failed, sig = %d, caller = %d, target_uid = %d\n", sig, task_tgid_nr(current), task_uid(p).val);
+		}
+	}
+#endif /* CONFIG_MOON_OPLUS_HANS_FREEZE */
 	if (lock_task_sighand(p, &flags)) {
 		ret = send_signal(sig, info, p, group);
 		unlock_task_sighand(p, &flags);

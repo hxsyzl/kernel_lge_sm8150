@@ -1,0 +1,11 @@
+config MOON_OPLUS_FEATURE
+	bool "moon-rom ColorOS Feature config"
+	depends on MOON_KERNEL_FEATURE
+
+config MOON_OPLUS_VIRTUAL_NET
+	bool "moon oplus virtual net device"
+	depends on MOON_OPLUS_FEATURE
+
+config MOON_OPLUS_HANS_FREEZE
+	bool "moon oplus hans freeze manager"
+	depends on MOON_OPLUS_FEATURE

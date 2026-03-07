@@ -32,6 +32,10 @@
 #define NETLINK_SOCKEV		23	/* Socket Administrative Events */
 #define NETLINK_INET_DIAG	NETLINK_SOCK_DIAG
 
+#ifdef CONFIG_MOON_OPLUS_HANS_FREEZE
+#define NETLINK_OPPO_HANS	29	/* Socket for freezing solution */
+#endif /* CONFIG_MOON_OPLUS_HANS_FREEZE */
+
 #define MAX_LINKS 32		
 
 struct sockaddr_nl {
