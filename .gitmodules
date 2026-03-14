@@ -1,4 +1,4 @@
 [submodule "KernelSU"]
 	path = KernelSU
-	url = https://github.com/SukiSU-Ultra/SukiSU-Ultra
-	branch = nongki
+	url = https://github.com/rsuntk/KernelSU
+	branch = main
