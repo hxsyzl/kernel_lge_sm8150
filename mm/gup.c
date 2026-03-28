@@ -69,7 +69,7 @@ static int follow_pfn_pte(struct vm_area_struct *vma, unsigned long address,
 
 #ifdef CONFIG_CMA_PINPAGE_MIGRATION
 static struct page *__alloc_nonmovable_userpage(struct page *page,
-				unsigned long private, int **result)
+				unsigned long private)
 {
 	return alloc_page(GFP_HIGHUSER);
 }

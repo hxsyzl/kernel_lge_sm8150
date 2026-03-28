@@ -430,18 +430,6 @@ static int __scm_call_armv8_64(u64 x0, u64 x1, u64 x2, u64 x3, u64 x4, u64 x5,
 	return r0;
 }
 
-static int __scm_call_armv8_64(u64 x0, u64 x1, u64 x2, u64 x3, u64 x4, u64 x5,
-				u64 *ret1, u64 *ret2, u64 *ret3)
-{
-	atomic_t *cnt = per_cpu_ptr(&scm_call_count, raw_smp_processor_id());
-	int ret;
-
-	atomic_inc(cnt);
-	ret = ___scm_call_armv8_64(x0, x1, x2, x3, x4, x5, ret1, ret2, ret3);
-	atomic_dec(cnt);
-
-	return ret;
-}
 
 static int ___scm_call_armv8_32(u32 w0, u32 w1, u32 w2, u32 w3, u32 w4, u32 w5,
 				u64 *ret1, u64 *ret2, u64 *ret3)

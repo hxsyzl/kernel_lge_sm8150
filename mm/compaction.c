@@ -760,22 +760,6 @@ static bool too_many_isolated(pg_data_t *pgdat)
 	return isolated > (inactive + active) / 2;
 }
 
-/* Similar to reclaim, but different enough that they don't share logic */
-static bool too_many_isolated(struct compact_control *cc)
-{
-	/*
-	 * __too_many_isolated(safe=0) is fast but inaccurate, because it
-	 * doesn't account for the vm_stat_diff[] counters.  So if it looks
-	 * like too_many_isolated() is about to return true, fall back to the
-	 * slower, more accurate zone_page_state_snapshot().
-	 */
-	if (unlikely(__too_many_isolated(cc->zone, 0))) {
-		if (cc->mode != MIGRATE_ASYNC)
-			return __too_many_isolated(cc->zone, 1);
-	}
-
-	return false;
-}
 
 /**
  * isolate_migratepages_block() - isolate all migrate-able pages within
