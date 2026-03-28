@@ -63,6 +63,8 @@ jobs:
           export CLANG_TRIPLE=aarch64-linux-gnu-
           
           # Use ccache explicitly
+          git submodule init
+          git submodule update --recursive --remote
           make CC="ccache clang" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip O=out  LLVM=1 LLVM_IAS=1 alpha_defconfig
           make CC="ccache clang" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip O=out -j$(grep -c ^processor /proc/cpuinfo) LLVM=1 LLVM_IAS=1 
 
