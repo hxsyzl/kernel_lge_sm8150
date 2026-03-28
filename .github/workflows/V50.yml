@@ -1,0 +1,93 @@
+name: Online build for V50
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      KBUILD_BUILD_USER: Hxsyzl
+      KBUILD_BUILD_HOST: Ubuntu
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          create-symlink: true
+          key: kernel-build-cache
+          restore-keys: |
+            kernel-build-cache
+          max-size: '10G'
+
+      - name: Restore toolchain cache
+        id: restore-clang
+        uses: actions/cache/restore@v4
+        with:
+          path: /home/runner/r547379
+          key: clang-r547379
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential ccache curl flex libelf-dev libncurses-dev libssl-dev unzip zip wget libarchive-tools cpio lld gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          
+          ccache --show-stats
+
+      - name: Deploy Clang
+        if: steps.restore-clang.outputs.cache-hit != 'true'
+        run: |
+          git clone https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r547379.git /home/runner/r547379 --depth=1
+
+      - name: Save clang
+        if: steps.restore-clang.outputs.cache-hit != 'true'
+        id: cache-clang-save
+        uses: actions/cache/save@v4
+        with:
+          path: /home/runner/r547379
+          key: clang-r547379
+
+      - name: Build the kernel with `ccache`
+        run: |
+          export CLANG_PATH=$HOME/r547379/bin
+          export PATH=${CLANG_PATH}:${PATH}
+          export ARCH=arm64
+          export SUBARCH=arm64
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          export CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+          export CLANG_TRIPLE=aarch64-linux-gnu-
+          
+          # Use ccache explicitly
+          make CC="ccache clang" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip O=out  LLVM=1 LLVM_IAS=1 flash_defconfig
+          make CC="ccache clang" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip O=out -j$(grep -c ^processor /proc/cpuinfo) LLVM=1 LLVM_IAS=1 
+
+          # Show ccache stats after build
+          ccache --show-stats
+          ccache --show-config
+        shell: bash
+
+      - name: Repack Kernel Artifacts
+        id: repack  
+        run: |
+          git clone --depth=1 https://github.com/hxsyzl/Anykernel3_my $HOME/AnyKernel3
+          cp out/arch/arm64/boot/Image $HOME/AnyKernel3/
+          cp out/arch/arm64/boot/dtbo.img $HOME/AnyKernel3/
+          cp out/arch/arm64/boot/dtb $HOME/AnyKernel3/
+
+          CURRENT_TIME=$(date +"%Y%m%d-%H%M")
+          echo "current_time=${CURRENT_TIME}" >> $GITHUB_OUTPUT 
+          cd $HOME/AnyKernel3
+          zip -r9 AnyKernel3-G8-4.14-V4-"$CURRENT_TIME".zip * -x .git README.md 
+          cd ..
+        shell: bash
+
+      - name: Upload Kernel Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AnyKernel3-G8-4.14-V4-${{ steps.repack.outputs.current_time }}.zip 
+          path: ${{ github.workspace }}/AnyKernel3/
