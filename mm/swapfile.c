@@ -1035,7 +1035,7 @@ noswap:
 }
 
 #ifdef CONFIG_HSWAP
-unsigned long get_lowest_prio_swapper_space_nrpages()
+unsigned long get_lowest_prio_swapper_space_nrpages(void)
 {
 	int i;
 	int lp_prio;
