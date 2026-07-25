@@ -71,6 +71,15 @@ config ANDROID_SPOOF_KERNEL_VERSION_FOR_BPF
 	  Spoofs the kernel version for bpfloader/netbpfload to allow
 	  booting newer Android versions without system-side patches.
 	  Also pretends to support ANY attach_type and prog_type.
+	  
+config ANDROID_VENDOR_HOOKS
+	bool "Android Vendor Hooks"
+	default n
+	help
+	  Enable support for vendor specific hooks.
+
+	  This is used by some vendors to improve performance on their devices.
+	  For example, it provides some hooks for scheduler, binder, etc.
 
 endif # if ANDROID
 
