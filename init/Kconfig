@@ -301,6 +301,12 @@ config FHANDLE
 	  get renamed. Enables open_by_handle_at(2) and name_to_handle_at(2)
 	  syscalls.
 
+config MIHW
+	bool "MI driver"
+	default n
+	help
+	  Mi driver code
+	  
 config USELIB
 	bool "uselib syscall"
 	def_bool ALPHA || M68K || SPARC || X86_32 || IA32_EMULATION
